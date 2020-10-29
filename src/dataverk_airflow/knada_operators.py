@@ -1,6 +1,7 @@
 import os
 import kubernetes.client as k8s
 
+from datetime import datetime
 from pathlib import Path
 from airflow import DAG
 from airflow.kubernetes.volume import Volume
@@ -27,12 +28,24 @@ def create_knada_nb_pod_operator(dag: DAG,
     :param repo: str: Github repo
     :param nb_path: str: Path to notebook in repo
     :param namespace: str: K8S namespace for pod
+    :param email: str: Email of owner
     :param branch: str: Branch in repo, default "master"
     :param public: bool: Publish to public or internal data catalog, default internal
     :param log_output: bool: Write logs from notebook to stdout
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu)
     :return: KubernetesPodOperator
     """
+
+    def on_failure(context):
+        send_email = EmailOperator(
+            task_id="send-email-on-error",
+            to=email,
+            subject=f'Airflow task {name} error',
+            html_content=f'<p>Error: Airflow task {name} failed in namespace {namespace} '
+                         f'at {datetime.now().isoformat()}</p>',
+            dag=dag
+        )
+        send_email.execute(context)
 
     envs = [{"name": "HTTPS_PROXY", "value": os.environ["HTTPS_PROXY"]},
             {"name": "https_proxy", "value": os.environ["HTTPS_PROXY"]}]
@@ -49,18 +62,10 @@ def create_knada_nb_pod_operator(dag: DAG,
         args=[repo, branch, "/repo"]
     )
 
-    send_email = EmailOperator(
-        task_id="send_email",
-        to=email,
-        subject='airflow task error',
-        html_content='<p> Error <p>',
-        dag=dag
-    )
-
     return KubernetesPodOperator(
         init_containers=[git_clone_init_container],
         dag=dag,
-        on_failure_callback=send_email.execute,
+        on_failure_callback=on_failure,
         name=name,
         namespace=namespace,
         task_id=name,
