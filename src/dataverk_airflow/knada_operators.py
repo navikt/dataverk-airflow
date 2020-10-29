@@ -6,6 +6,7 @@ from airflow import DAG
 from airflow.kubernetes.volume import Volume
 from airflow.kubernetes.volume_mount import VolumeMount
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.operators.email_operator import EmailOperator
 
 
 def create_knada_nb_pod_operator(dag: DAG,
@@ -13,9 +14,11 @@ def create_knada_nb_pod_operator(dag: DAG,
                                  repo: str,
                                  nb_path: str,
                                  namespace: str,
+                                 email: str,
                                  branch: str="master",
                                  public: bool=False,
-                                 log_output: bool=False
+                                 log_output: bool=False,
+                                 resources: dict=None
                                  ):
     """ Factory function for creating KubernetesPodOperator for executing knada jupyter notebooks
 
@@ -27,6 +30,7 @@ def create_knada_nb_pod_operator(dag: DAG,
     :param branch: str: Branch in repo, default "master"
     :param public: bool: Publish to public or internal data catalog, default internal
     :param log_output: bool: Write logs from notebook to stdout
+    :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu)
     :return: KubernetesPodOperator
     """
 
@@ -45,9 +49,18 @@ def create_knada_nb_pod_operator(dag: DAG,
         args=[repo, branch, "/repo"]
     )
 
+    send_email = EmailOperator(
+        task_id="send_email",
+        to=email,
+        subject='airflow task error',
+        html_content='<p> Error <p>',
+        dag=dag
+    )
+
     return KubernetesPodOperator(
         init_containers=[git_clone_init_container],
         dag=dag,
+        on_failure_callback=send_email.execute,
         name=name,
         namespace=namespace,
         task_id=name,
@@ -66,6 +79,7 @@ def create_knada_nb_pod_operator(dag: DAG,
         volume_mounts=[
             VolumeMount(name="dags-data", mount_path="/repo", sub_path=None, read_only=True)
         ],
+        service_account_name="airflow",
         volumes=[
             Volume(name='dags-data', configs={}),
             Volume(name="git-clone-secret", configs={
@@ -77,5 +91,6 @@ def create_knada_nb_pod_operator(dag: DAG,
         ],
         annotations={
             "sidecar.istio.io/inject": "false"
-        }
+        },
+        resources=resources
     )
