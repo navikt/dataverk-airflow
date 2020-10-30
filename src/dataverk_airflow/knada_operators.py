@@ -17,7 +17,7 @@ def create_knada_nb_pod_operator(
     repo: str,
     nb_path: str,
     namespace: str,
-    email: str,
+    email: str=None,
     slack_channel: str=None,
     branch: str = "master",
     public: bool = False,
@@ -45,17 +45,18 @@ def create_knada_nb_pod_operator(
     """
 
     def on_failure(context):
-        send_email = EmailOperator(
-            task_id="send-email-on-error",
-            to=email,
-            subject=f"Airflow task {name} error",
-            html_content=f"<p>Error: Airflow task {name} feiler i namespace {namespace} "
-            f"at {datetime.now().isoformat()}. "
-            f'Sjekk logger på {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}</p>',
-            dag=dag
-        )
+        if email:
+            send_email = EmailOperator(
+                task_id="send-email-on-error",
+                to=email,
+                subject=f"Airflow task {name} error",
+                html_content=f"<p>Error: Airflow task {name} feiler i namespace {namespace} "
+                f"at {datetime.now().isoformat()}. "
+                f'Sjekk logger på {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}</p>',
+                dag=dag
+            )
 
-        send_email.execute(context)
+            send_email.execute(context)
 
         if slack_channel:
             slack_notification = SlackWebhookOperator(
