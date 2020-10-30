@@ -50,9 +50,9 @@ def create_knada_nb_pod_operator(
                 task_id="send-email-on-error",
                 to=email,
                 subject=f"Airflow task {name} error",
-                html_content=f"<p>Error: Airflow task {name} feiler i namespace {namespace} "
-                f"at {datetime.now().isoformat()}. "
-                f'Sjekk logger på {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}</p>',
+                html_content=f"Error: Airflow task {name} feiler i namespace {namespace} "
+                             f"at {datetime.now().isoformat()}. "
+                             f"Sjekk logger på {os.environ['AIRFLOW__WEBSERVER__BASE_URL']}",
                 dag=dag
             )
 
