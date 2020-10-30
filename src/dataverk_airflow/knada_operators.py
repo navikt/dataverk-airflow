@@ -1,7 +1,7 @@
 import os
 import kubernetes.client as k8s
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from airflow import DAG
 from airflow.kubernetes.volume import Volume
@@ -19,7 +19,9 @@ def create_knada_nb_pod_operator(dag: DAG,
                                  branch: str="master",
                                  public: bool=False,
                                  log_output: bool=False,
-                                 resources: dict=None
+                                 resources: dict=None,
+                                 retries: int=3,
+                                 retry_delay: timedelta=timedelta(seconds=5)
                                  ):
     """ Factory function for creating KubernetesPodOperator for executing knada jupyter notebooks
 
@@ -33,6 +35,8 @@ def create_knada_nb_pod_operator(dag: DAG,
     :param public: bool: Publish to public or internal data catalog, default internal
     :param log_output: bool: Write logs from notebook to stdout
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu)
+    :param retries: int: Number of retries for task before DAG fails
+    :param retry_delay: timedelta: Time inbetween retries
     :return: KubernetesPodOperator
     """
 
@@ -69,6 +73,7 @@ def create_knada_nb_pod_operator(dag: DAG,
         name=name,
         namespace=namespace,
         task_id=name,
+        # is_delete_operator_pod=True,
         image='navikt/knada-airflow-nb:6',
         env_vars={
             "LOG_ENABLED": "true" if log_output else "false",
@@ -97,5 +102,7 @@ def create_knada_nb_pod_operator(dag: DAG,
         annotations={
             "sidecar.istio.io/inject": "false"
         },
-        resources=resources
+        resources=resources,
+        retries=retries,
+        retry_delay=retry_delay
     )
