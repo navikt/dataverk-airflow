@@ -73,7 +73,7 @@ def create_knada_nb_pod_operator(dag: DAG,
         name=name,
         namespace=namespace,
         task_id=name,
-        # is_delete_operator_pod=True,
+        is_delete_operator_pod=True,
         image='navikt/knada-airflow-nb:6',
         env_vars={
             "LOG_ENABLED": "true" if log_output else "false",
