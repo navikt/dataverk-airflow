@@ -62,10 +62,10 @@ def create_knada_nb_pod_operator(
             slack_notification = SlackWebhookOperator(
                 task_id='airflow_task_failed',
                 webhook_token=os.environ["SLACK_WEBHOOK_TOKEN"],
-                message=f'@here DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. '
+                message=f'<@here> DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. '
                         f'Logger: {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}',
                 channel=slack_channel,
-                icon_emoji=':red_circle:',
+                icon_emoji=':sadpanda:',
                 proxy=os.environ["HTTPS_PROXY"]
             )
 
