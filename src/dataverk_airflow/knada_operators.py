@@ -50,9 +50,9 @@ def create_knada_nb_pod_operator(
                 task_id="send-email-on-error",
                 to=email,
                 subject=f"Airflow task {name} error",
-                html_content=f"<p> Error: Airflow task {name} feiler i namespace {namespace} "
-                             f"at {datetime.now().isoformat()}. "
-                             f"Sjekk logger paa {os.environ['AIRFLOW__WEBSERVER__BASE_URL']} </p>",
+                html_content=f"<p> Airflow task {name} feiler i namespace {namespace} "
+                             f"kl. {datetime.now().isoformat()}. "
+                             f"Logger: {os.environ['AIRFLOW__WEBSERVER__BASE_URL']} </p>",
                 dag=dag
             )
 
@@ -61,10 +61,9 @@ def create_knada_nb_pod_operator(
         if slack_channel:
             slack_notification = SlackWebhookOperator(
                 task_id='airflow_task_failed',
-                http_conn_id=os.environ["SLACK_API_URL"],
                 webhook_token=os.environ["SLACK_WEBHOOK_TOKEN"],
                 message=f'@here DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. '
-                        f'Sjekk logger paa {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}',
+                        f'Logger: {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}',
                 channel=slack_channel,
                 icon_emoji=':red_circle:',
                 proxy=os.environ["HTTPS_PROXY"]
