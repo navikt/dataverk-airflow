@@ -50,9 +50,9 @@ def create_knada_nb_pod_operator(
                 task_id="send-email-on-error",
                 to=email,
                 subject=f"Airflow task {name} error",
-                html_content=f"Error: Airflow task {name} feiler i namespace {namespace} "
+                html_content=f"<p> Error: Airflow task {name} feiler i namespace {namespace} "
                              f"at {datetime.now().isoformat()}. "
-                             f"Sjekk logger på {os.environ['AIRFLOW__WEBSERVER__BASE_URL']}",
+                             f"Sjekk logger paa {os.environ['AIRFLOW__WEBSERVER__BASE_URL']} </p>",
                 dag=dag
             )
 
@@ -64,7 +64,7 @@ def create_knada_nb_pod_operator(
                 http_conn_id=os.environ["SLACK_API_URL"],
                 webhook_token=os.environ["SLACK_WEBHOOK_TOKEN"],
                 message=f'@here DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. '
-                        f'Sjekk logger på {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}',
+                        f'Sjekk logger paa {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}',
                 channel=slack_channel,
                 icon_emoji=':red_circle:',
                 proxy=os.environ["HTTPS_PROXY"]
