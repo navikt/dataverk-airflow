@@ -17,10 +17,9 @@ def create_knada_nb_pod_operator(
     repo: str,
     nb_path: str,
     namespace: str,
-    email: str=None,
-    slack_channel: str=None,
+    email: str = None,
+    slack_channel: str = None,
     branch: str = "master",
-    public: bool = False,
     log_output: bool = False,
     resources: dict = None,
     retries: int = 3,
@@ -36,7 +35,6 @@ def create_knada_nb_pod_operator(
     :param email: str: Email of owner
     :param slack_channel: Name of slack channel, default None (no slack notification)
     :param branch: str: Branch in repo, default "master"
-    :param public: bool: Publish to public or internal data catalog, default internal
     :param log_output: bool: Write logs from notebook to stdout, default False
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param retries: int: Number of retries for task before DAG fails, default 3
@@ -51,23 +49,23 @@ def create_knada_nb_pod_operator(
                 to=email,
                 subject=f"Airflow task {name} error",
                 html_content=f"<p> Airflow task {name} feiler i namespace {namespace} "
-                             f"kl. {datetime.now().isoformat()}. "
-                             f"Logger: {os.environ['AIRFLOW__WEBSERVER__BASE_URL']} </p>",
-                dag=dag
+                f"kl. {datetime.now().isoformat()}. "
+                f"Logger: {os.environ['AIRFLOW__WEBSERVER__BASE_URL']} </p>",
+                dag=dag,
             )
 
             send_email.execute(context)
 
         if slack_channel:
             slack_notification = SlackWebhookOperator(
-                task_id='airflow_task_failed',
+                task_id="airflow_task_failed",
                 webhook_token=os.environ["SLACK_WEBHOOK_TOKEN"],
-                message=f'@here DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. '
-                        f'Logger: {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}',
+                message=f"@here DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. "
+                f'Logger: {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}',
                 channel=slack_channel,
                 link_names=True,
-                icon_emoji=':sadpanda:',
-                proxy=os.environ["HTTPS_PROXY"]
+                icon_emoji=":sadpanda:",
+                proxy=os.environ["HTTPS_PROXY"],
             )
 
             slack_notification.execute(context)
@@ -93,7 +91,7 @@ def create_knada_nb_pod_operator(
         ],
         env=envs,
         command=["/bin/sh", "/git-clone.sh"],
-        args=[repo, branch, "/repo"]
+        args=[repo, branch, "/repo"],
     )
 
     return KubernetesPodOperator(
@@ -137,5 +135,5 @@ def create_knada_nb_pod_operator(
         annotations={"sidecar.istio.io/inject": "false"},
         resources=resources,
         retries=retries,
-        retry_delay=retry_delay
+        retry_delay=retry_delay,
     )
