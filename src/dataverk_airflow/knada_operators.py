@@ -241,7 +241,7 @@ def create_knada_python_pod_operator(
         },
         volume_mounts=[
             VolumeMount(
-                name="dags-data", mount_path="/repo", sub_path=None, read_only=True
+                name="dags-data", mount_path="/repo", sub_path=None, read_only=False
             )
         ],
         service_account_name="airflow",
