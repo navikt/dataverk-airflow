@@ -116,7 +116,7 @@ def create_knada_nb_pod_operator(
         },
         volume_mounts=[
             VolumeMount(
-                name="dags-data", mount_path="/repo", sub_path=None, read_only=True
+                name="dags-data", mount_path="/repo", sub_path=None, read_only=False
             )
         ],
         service_account_name="airflow",
@@ -230,7 +230,7 @@ def create_knada_python_pod_operator(
         is_delete_operator_pod=True,
         image="navikt/knada-airflow-python:1",
         env_vars={
-            "SCRIPT_PATH": f"/repo/{Path(script_path).parent}",
+            "SCRIPT_PATH": f"~/repo/{Path(script_path).parent}",
             "SCRIPT_NAME": Path(script_path).name,
             "DATAVERK_API_ENDPOINT": os.environ["DATAVERK_API_ENDPOINT"],
             "DATAVERK_BUCKET_ENDPOINT": os.environ["DATAVERK_BUCKET_ENDPOINT"],
@@ -241,7 +241,7 @@ def create_knada_python_pod_operator(
         },
         volume_mounts=[
             VolumeMount(
-                name="dags-data", mount_path="/repo", sub_path=None, read_only=False
+                name="dags-data", mount_path="~/repo", sub_path=None, read_only=False
             )
         ],
         service_account_name="airflow",
