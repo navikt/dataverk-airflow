@@ -23,6 +23,7 @@ def create_knada_nb_pod_operator(
     log_output: bool = False,
     resources: dict = None,
     retries: int = 3,
+    delete_on_finish: bool = True,
     retry_delay: timedelta = timedelta(seconds=5),
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada jupyter notebooks
@@ -38,6 +39,7 @@ def create_knada_nb_pod_operator(
     :param log_output: bool: Write logs from notebook to stdout, default False
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param retries: int: Number of retries for task before DAG fails, default 3
+    :param delete_on_finish: bool: Whether to delete pod on completion
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :return: KubernetesPodOperator
     """
@@ -101,7 +103,7 @@ def create_knada_nb_pod_operator(
         name=name,
         namespace=namespace,
         task_id=name,
-        is_delete_operator_pod=True,
+        is_delete_operator_pod=delete_on_finish,
         image="navikt/knada-airflow-nb:6",
         env_vars={
             "LOG_ENABLED": "true" if log_output else "false",
@@ -150,6 +152,7 @@ def create_knada_python_pod_operator(
     branch: str = "master",
     resources: dict = None,
     retries: int = 3,
+    delete_on_finish: bool = True,
     retry_delay: timedelta = timedelta(seconds=5),
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada jupyter notebooks
@@ -164,6 +167,7 @@ def create_knada_python_pod_operator(
     :param branch: str: Branch in repo, default "master"
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param retries: int: Number of retries for task before DAG fails, default 3
+    :param delete_on_finish: bool: Whether to delete pod on completion
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :return: KubernetesPodOperator
     """
@@ -227,7 +231,7 @@ def create_knada_python_pod_operator(
         name=name,
         namespace=namespace,
         task_id=name,
-        is_delete_operator_pod=True,
+        is_delete_operator_pod=delete_on_finish,
         image="navikt/knada-airflow-python:1",
         env_vars={
             "SCRIPT_PATH": f"~/repo/{Path(script_path).parent}",
