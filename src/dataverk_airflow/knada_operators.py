@@ -1,14 +1,14 @@
 import os
-import kubernetes.client as k8s
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from pathlib import Path
 from airflow import DAG
-from airflow.contrib.operators.slack_webhook_operator import SlackWebhookOperator
 from airflow.kubernetes.volume import Volume
 from airflow.kubernetes.volume_mount import VolumeMount
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from airflow.operators.email_operator import EmailOperator
+
+from dataverk_airflow.init_containers import create_git_clone_init_container
+from dataverk_airflow.notifications import create_email_notification, create_slack_notification
 
 
 def create_knada_nb_pod_operator(
@@ -46,68 +46,25 @@ def create_knada_nb_pod_operator(
 
     def on_failure(context):
         if email:
-            send_email = EmailOperator(
-                task_id="send-email-on-error",
-                to=email,
-                subject=f"Airflow task {name} error",
-                html_content=f"<p> Airflow task {name} feiler i namespace {namespace} "
-                f"kl. {datetime.now().isoformat()}. "
-                f"Logger: {os.environ['AIRFLOW__WEBSERVER__BASE_URL']} </p>",
-                dag=dag,
-            )
-
+            send_email = create_email_notification(email, name, namespace, dag)
             send_email.execute(context)
 
         if slack_channel:
-            slack_notification = SlackWebhookOperator(
-                task_id="airflow_task_failed",
-                webhook_token=os.environ["SLACK_WEBHOOK_TOKEN"],
-                message=f"@here DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. "
-                f'Logger: {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}',
-                channel=slack_channel,
-                link_names=True,
-                icon_emoji=":sadpanda:",
-                proxy=os.environ["HTTPS_PROXY"],
-            )
-
+            slack_notification = create_slack_notification(slack_channel, name, namespace)
             slack_notification.execute(context)
 
-    envs = [
-        {"name": "HTTPS_PROXY", "value": os.environ["HTTPS_PROXY"]},
-        {"name": "https_proxy", "value": os.environ["HTTPS_PROXY"]},
-    ]
-
-    git_clone_init_container = k8s.V1Container(
-        name="clone-repo",
-        image="navikt/knada-git-sync:2020-10-23-98963f6",
-        volume_mounts=[
-            k8s.V1VolumeMount(
-                name="dags-data", mount_path="/repo", sub_path=None, read_only=False
-            ),
-            k8s.V1VolumeMount(
-                name="git-clone-secret",
-                mount_path="/keys",
-                sub_path=None,
-                read_only=False,
-            ),
-        ],
-        env=envs,
-        command=["/bin/sh", "/git-clone.sh"],
-        args=[repo, branch, "/repo"],
-    )
-
     return KubernetesPodOperator(
-        init_containers=[git_clone_init_container],
+        init_containers=[create_git_clone_init_container(repo, branch)],
         dag=dag,
         on_failure_callback=on_failure,
         name=name,
         namespace=namespace,
         task_id=name,
         is_delete_operator_pod=delete_on_finish,
-        image="navikt/knada-airflow-nb:6",
+        image=os.getenv("KNADA_NOTEBOOK_OP_IMAGE", "navikt/knada-airflow-nb:6"),
         env_vars={
             "LOG_ENABLED": "true" if log_output else "false",
-            "NOTEBOOK_PATH": f"/repo/{Path(nb_path).parent}",
+            "NOTEBOOK_PATH": f"~/repo/{Path(nb_path).parent}",
             "NOTEBOOK_NAME": Path(nb_path).name,
             "DATAVERK_API_ENDPOINT": os.environ["DATAVERK_API_ENDPOINT"],
             "DATAVERK_BUCKET_ENDPOINT": os.environ["DATAVERK_BUCKET_ENDPOINT"],
@@ -118,7 +75,7 @@ def create_knada_nb_pod_operator(
         },
         volume_mounts=[
             VolumeMount(
-                name="dags-data", mount_path="/repo", sub_path=None, read_only=False
+                name="dags-data", mount_path="~/repo", sub_path=None, read_only=False
             )
         ],
         service_account_name="airflow",
@@ -155,7 +112,7 @@ def create_knada_python_pod_operator(
     delete_on_finish: bool = True,
     retry_delay: timedelta = timedelta(seconds=5),
 ):
-    """ Factory function for creating KubernetesPodOperator for executing knada jupyter notebooks
+    """ Factory function for creating KubernetesPodOperator for executing knada python scripts
 
     :param dag: DAG: owner DAG
     :param name: str: Name of task
@@ -174,65 +131,22 @@ def create_knada_python_pod_operator(
 
     def on_failure(context):
         if email:
-            send_email = EmailOperator(
-                task_id="send-email-on-error",
-                to=email,
-                subject=f"Airflow task {name} error",
-                html_content=f"<p> Airflow task {name} feiler i namespace {namespace} "
-                f"kl. {datetime.now().isoformat()}. "
-                f"Logger: {os.environ['AIRFLOW__WEBSERVER__BASE_URL']} </p>",
-                dag=dag,
-            )
-
+            send_email = create_email_notification(email, name, namespace, dag)
             send_email.execute(context)
 
         if slack_channel:
-            slack_notification = SlackWebhookOperator(
-                task_id="airflow_task_failed",
-                webhook_token=os.environ["SLACK_WEBHOOK_TOKEN"],
-                message=f"@here DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. "
-                f'Logger: {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}',
-                channel=slack_channel,
-                link_names=True,
-                icon_emoji=":sadpanda:",
-                proxy=os.environ["HTTPS_PROXY"],
-            )
-
+            slack_notification = create_slack_notification(slack_channel, name, namespace)
             slack_notification.execute(context)
 
-    envs = [
-        {"name": "HTTPS_PROXY", "value": os.environ["HTTPS_PROXY"]},
-        {"name": "https_proxy", "value": os.environ["HTTPS_PROXY"]},
-    ]
-
-    git_clone_init_container = k8s.V1Container(
-        name="clone-repo",
-        image="navikt/knada-git-sync:2020-10-23-98963f6",
-        volume_mounts=[
-            k8s.V1VolumeMount(
-                name="dags-data", mount_path="/repo", sub_path=None, read_only=False
-            ),
-            k8s.V1VolumeMount(
-                name="git-clone-secret",
-                mount_path="/keys",
-                sub_path=None,
-                read_only=False,
-            ),
-        ],
-        env=envs,
-        command=["/bin/sh", "/git-clone.sh"],
-        args=[repo, branch, "/repo"],
-    )
-
     return KubernetesPodOperator(
-        init_containers=[git_clone_init_container],
+        init_containers=[create_git_clone_init_container(repo, branch)],
         dag=dag,
         on_failure_callback=on_failure,
         name=name,
         namespace=namespace,
         task_id=name,
         is_delete_operator_pod=delete_on_finish,
-        image="navikt/knada-airflow-python:1",
+        image=os.getenv("KNADA_PYTHON_POD_OP_IMAGE", "navikt/knada-airflow-python:1"),
         env_vars={
             "SCRIPT_PATH": f"~/repo/{Path(script_path).parent}",
             "SCRIPT_NAME": Path(script_path).name,
