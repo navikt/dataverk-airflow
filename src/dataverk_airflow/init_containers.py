@@ -46,3 +46,31 @@ def change_permissions_init_container(
         ],
         command=['sh', '-c', f'chmod -R 777 {mount_path}'],
     )
+
+
+def dbt_read_gcs_bucket(
+    mount_path: str,
+    seed_source: dict,
+    profiles_dir: str
+):
+    gcs_envs = envs.copy()
+    gcs_envs.append({"DTP_PROFILES_DIR": profiles_dir})
+    gcs_envs.append({"GOOGLE_APPLICATION_CREDENTIALS": "/var/run/secrets/google-creds/creds.json"})
+    return k8s.V1Container(
+        name="read-gcs-blob",
+        image=os.getenv("KNADA_READ_GCS_BLOB_IMAGE", "navikt/knada-gcs-read-blob:1"),
+        env=gcs_envs,
+        volume_mounts=[
+            k8s.V1VolumeMount(
+                name="dags-data", mount_path=mount_path, sub_path=None, read_only=False
+            ),
+            k8s.V1VolumeMount(
+                name="google-creds",
+                mount_path="/var/run/secrets/google-creds",
+                sub_path=None,
+                read_only=False,
+            ),
+        ],
+        command=["python3", "/read-gcs-blob.py"],
+        args=[seed_source["gcs_bucket"], seed_source["blob_name"], profiles_dir + "/data"]
+    )
