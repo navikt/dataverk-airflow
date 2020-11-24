@@ -207,7 +207,7 @@ def create_knada_dbt_seed_operator(
     startup_timeout_seconds: int = 120,
     retry_delay: timedelta = timedelta(seconds=5),
 ):
-    """ Factory function for creating KubernetesPodOperator for executing knada python scripts
+    """ Factory function for creating KubernetesPodOperator for executing knada dbt seed
 
     :param dag: DAG: owner DAG
     :param name: str: Name of task
@@ -266,10 +266,23 @@ def create_knada_dbt_seed_operator(
                 sub_path=None,
                 read_only=False,
             ),
+            VolumeMount(
+                name="ca-bundle-pem",
+                mount_path="/etc/pki/tls/certs/ca-bundle.crt",
+                read_only=True,
+                sub_path="ca-bundle.pem"
+            ),
         ],
         service_account_name="airflow",
         volumes=[
             Volume(name="dags-data", configs={}),
+            Volume(name="ca-bundle-pem",
+                   configs={
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "ca-bundle-pem"
+                        }
+                   }),
             Volume(
                 name="git-clone-secret",
                 configs={

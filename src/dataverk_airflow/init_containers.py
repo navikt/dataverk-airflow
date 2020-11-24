@@ -42,7 +42,7 @@ def change_permissions_init_container(
         volume_mounts=[
             k8s.V1VolumeMount(
                 name="dags-data", mount_path=mount_path, sub_path=None, read_only=False
-            )
+            ),
         ],
         command=['sh', '-c', f'chmod -R 777 {mount_path}'],
     )
@@ -68,6 +68,12 @@ def dbt_read_gcs_bucket(
                 mount_path="/var/run/secrets/google-creds",
                 sub_path=None,
                 read_only=False,
+            ),
+            k8s.V1VolumeMount(
+                name="ca-bundle-pem",
+                mount_path="/etc/pki/tls/certs/ca-bundle.crt",
+                read_only=True,
+                sub_path="ca-bundle.pem"
             ),
         ],
         command=["python3", "/read-gcs-blob.py"],
