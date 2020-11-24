@@ -246,7 +246,7 @@ def create_knada_dbt_seed_operator(
         namespace=namespace,
         task_id=name,
         is_delete_operator_pod=delete_on_finish,
-        image=os.getenv("KNADA_PYTHON_POD_OP_IMAGE", "navikt/knada-dbt:1"),
+        image=os.getenv("KNADA_DBT_IMAGE", "navikt/knada-dbt:1"),
         env_vars={
             "GOOGLE_APPLICATION_CREDENTIALS": "/home/jovyan/creds.json",
             "HTTPS_PROXY": os.environ["HTTPS_PROXY"],
