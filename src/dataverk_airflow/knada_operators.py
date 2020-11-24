@@ -25,6 +25,7 @@ def create_knada_nb_pod_operator(
     resources: dict = None,
     retries: int = 3,
     delete_on_finish: bool = True,
+    startup_timeout_seconds: int = 120,
     retry_delay: timedelta = timedelta(seconds=5),
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada jupyter notebooks
@@ -41,6 +42,7 @@ def create_knada_nb_pod_operator(
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param retries: int: Number of retries for task before DAG fails, default 3
     :param delete_on_finish: bool: Whether to delete pod on completion
+    :param startup_timeout_seconds: int: pod startup timeout
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :return: KubernetesPodOperator
     """
@@ -62,6 +64,7 @@ def create_knada_nb_pod_operator(
         name=name,
         namespace=namespace,
         task_id=name,
+        startup_timeout_seconds=startup_timeout_seconds,
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_NOTEBOOK_OP_IMAGE", "navikt/knada-airflow-nb:6"),
         env_vars={
@@ -112,6 +115,7 @@ def create_knada_python_pod_operator(
     resources: dict = None,
     retries: int = 3,
     delete_on_finish: bool = True,
+    startup_timeout_seconds: int = 120,
     retry_delay: timedelta = timedelta(seconds=5),
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada python scripts
@@ -127,6 +131,7 @@ def create_knada_python_pod_operator(
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param retries: int: Number of retries for task before DAG fails, default 3
     :param delete_on_finish: bool: Whether to delete pod on completion
+    :param startup_timeout_seconds: int: pod startup timeout
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :return: KubernetesPodOperator
     """
@@ -145,6 +150,7 @@ def create_knada_python_pod_operator(
                          change_permissions_init_container("/repo")],
         dag=dag,
         on_failure_callback=on_failure,
+        startup_timeout_seconds=startup_timeout_seconds,
         name=name,
         namespace=namespace,
         task_id=name,
@@ -198,6 +204,7 @@ def create_knada_dbt_seed_operator(
     resources: dict = None,
     retries: int = 3,
     delete_on_finish: bool = True,
+    startup_timeout_seconds: int = 120,
     retry_delay: timedelta = timedelta(seconds=5),
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada python scripts
@@ -214,6 +221,7 @@ def create_knada_dbt_seed_operator(
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param retries: int: Number of retries for task before DAG fails, default 3
     :param delete_on_finish: bool: Whether to delete pod on completion
+    :param startup_timeout_seconds: int: pod startup timeout
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :return: KubernetesPodOperator
     """
@@ -233,6 +241,7 @@ def create_knada_dbt_seed_operator(
                          change_permissions_init_container("/repo")],
         dag=dag,
         on_failure_callback=on_failure,
+        startup_timeout_seconds=startup_timeout_seconds,
         name=name,
         namespace=namespace,
         task_id=name,
