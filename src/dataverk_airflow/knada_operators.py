@@ -229,7 +229,7 @@ def create_knada_dbt_seed_operator(
 
     return KubernetesPodOperator(
         init_containers=[create_git_clone_init_container(repo, branch, "/repo"),
-                         dbt_read_gcs_bucket("repo", seed_source, dbt_dir),
+                         dbt_read_gcs_bucket("/repo", seed_source, dbt_dir),
                          change_permissions_init_container("/repo")],
         dag=dag,
         on_failure_callback=on_failure,
@@ -246,7 +246,7 @@ def create_knada_dbt_seed_operator(
             "no_proxy": os.environ["NO_PROXY"],
         },
         cmds=["dbt", "seed"],
-        arguments=["--profiles-dir", dbt_dir, "--project-dir", dbt_dir],
+        arguments=["--profiles-dir", f"/repo/{dbt_dir}", "--project-dir", f"/repo/{dbt_dir}"],
         volume_mounts=[
             VolumeMount(
                 name="dags-data", mount_path="/repo", sub_path=None, read_only=False

@@ -54,11 +54,10 @@ def dbt_read_gcs_bucket(
     profiles_dir: str
 ):
     gcs_envs = envs.copy()
-    gcs_envs.append({"DTP_PROFILES_DIR": profiles_dir})
     gcs_envs.append({"GOOGLE_APPLICATION_CREDENTIALS": "/var/run/secrets/google-creds/creds.json"})
     return k8s.V1Container(
         name="read-gcs-blob",
-        image=os.getenv("KNADA_READ_GCS_BLOB_IMAGE", "navikt/knada-gcs-read-blob:1"),
+        image=os.getenv("KNADA_READ_GCS_BLOB_IMAGE", "navikt/knada-gcs-read-blob:2"),
         env=gcs_envs,
         volume_mounts=[
             k8s.V1VolumeMount(
@@ -72,5 +71,5 @@ def dbt_read_gcs_bucket(
             ),
         ],
         command=["python3", "/read-gcs-blob.py"],
-        args=[seed_source["gcs_bucket"], seed_source["blob_name"], profiles_dir + "/data"]
+        args=[seed_source["gcs_bucket"], seed_source["blob_name"], f"{mount_path}/{profiles_dir}/data"]
     )
