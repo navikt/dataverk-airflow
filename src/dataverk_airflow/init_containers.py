@@ -77,7 +77,7 @@ def dbt_read_gcs_bucket(
             ),
         ],
         command=["python3", "/read-gcs-blob.py"],
-        args=[seed_source["gcs_bucket"], seed_source["blob_name"], f"{mount_path}/{profiles_dir}/data"]
+        args=[seed_source["bucket"], seed_source["blob_name"], f"{mount_path}/{profiles_dir}/data"]
     )
 
 
