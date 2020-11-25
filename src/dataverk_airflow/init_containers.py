@@ -86,8 +86,13 @@ def dbt_read_s3_bucket(
     seed_source: dict,
     profiles_dir: str
 ):
+    s3_envs = envs.copy()
+    s3_envs.append({"name": "VKS_VAULT_ADDR", "value": os.environ["VKS_VAULT_ADDR"]})
+    s3_envs.append({"name": "VKS_AUTH_PATH", "value": os.environ["VKS_AUTH_PATH"]})
+    s3_envs.append({"name": "VKS_KV_PATH", "value": os.environ["VKS_KV_PATH"]})
+    s3_envs.append({"name": "K8S_SERVICEACCOUNT_PATH", "value": os.environ["K8S_SERVICEACCOUNT_PATH"]})
     return k8s.V1Container(
-        name="read-gcs-blob",
+        name="read-s3-blob",
         image=os.getenv("KNADA_READ_BLOB_IMAGE", "navikt/knada-read-blob:1"),
         env=envs,
         volume_mounts=[
