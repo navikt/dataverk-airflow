@@ -8,7 +8,7 @@ from airflow.kubernetes.volume_mount import VolumeMount
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
 from dataverk_airflow.init_containers import create_git_clone_init_container, change_permissions_init_container, \
-    dbt_read_gcs_bucket
+    dbt_read_gcs_bucket, dbt_read_s3_bucket
 from dataverk_airflow.notifications import create_email_notification, create_slack_notification
 
 
@@ -213,7 +213,7 @@ def create_knada_dbt_seed_operator(
     :param name: str: Name of task
     :param repo: str: Github repo
     :param dbt_dir: str: Path to dbt directory
-    :param seed_source: dict: Dictionary with keys for bucket_name (name of gcs bucket name) and blob_name (name of blob in bucket)
+    :param seed_source: dict: Dictionary with keys for host (gcs or s3), bucket_name and blob_name
     :param namespace: str: K8S namespace for pod
     :param email: str: Email of owner
     :param slack_channel: Name of slack channel, default None (no slack notification)
@@ -237,7 +237,8 @@ def create_knada_dbt_seed_operator(
 
     return KubernetesPodOperator(
         init_containers=[create_git_clone_init_container(repo, branch, "/repo"),
-                         dbt_read_gcs_bucket("/repo", seed_source, dbt_dir),
+                         dbt_read_gcs_bucket("/repo", seed_source, dbt_dir) if seed_source["host"] == "gcs" else
+                         dbt_read_s3_bucket("/repo", seed_source, dbt_dir),
                          change_permissions_init_container("/repo")],
         dag=dag,
         on_failure_callback=on_failure,

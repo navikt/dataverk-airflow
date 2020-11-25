@@ -57,7 +57,7 @@ def dbt_read_gcs_bucket(
     gcs_envs.append({"name": "GOOGLE_APPLICATION_CREDENTIALS", "value": "/var/run/secrets/google-creds/creds.json"})
     return k8s.V1Container(
         name="read-gcs-blob",
-        image=os.getenv("KNADA_READ_GCS_BLOB_IMAGE", "navikt/knada-gcs-read-blob:2"),
+        image=os.getenv("KNADA_READ_BLOB_IMAGE", "navikt/knada-read-blob:1"),
         env=gcs_envs,
         volume_mounts=[
             k8s.V1VolumeMount(
@@ -78,4 +78,29 @@ def dbt_read_gcs_bucket(
         ],
         command=["python3", "/read-gcs-blob.py"],
         args=[seed_source["gcs_bucket"], seed_source["blob_name"], f"{mount_path}/{profiles_dir}/data"]
+    )
+
+
+def dbt_read_s3_bucket(
+    mount_path: str,
+    seed_source: dict,
+    profiles_dir: str
+):
+    return k8s.V1Container(
+        name="read-gcs-blob",
+        image=os.getenv("KNADA_READ_BLOB_IMAGE", "navikt/knada-read-blob:1"),
+        env=envs,
+        volume_mounts=[
+            k8s.V1VolumeMount(
+                name="dags-data", mount_path=mount_path, sub_path=None, read_only=False
+            ),
+            k8s.V1VolumeMount(
+                name="ca-bundle-pem",
+                mount_path="/etc/pki/tls/certs/ca-bundle.crt",
+                read_only=True,
+                sub_path="ca-bundle.pem"
+            ),
+        ],
+        command=["python3", "/read-s3-blob.py"],
+        args=[seed_source["bucket"], seed_source["blob_name"], f"{mount_path}/{profiles_dir}/data"]
     )
