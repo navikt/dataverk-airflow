@@ -325,7 +325,7 @@ def create_knada_dbt_run_operator(
     startup_timeout_seconds: int = 120,
     retry_delay: timedelta = timedelta(seconds=5),
 ):
-    """ Factory function for creating KubernetesPodOperator for executing knada dbt seed
+    """ Factory function for creating KubernetesPodOperator for executing knada dbt run
 
     :param dag: DAG: owner DAG
     :param name: str: Name of task

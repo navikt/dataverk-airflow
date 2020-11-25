@@ -5,6 +5,8 @@ import kubernetes.client as k8s
 envs = [
     {"name": "HTTPS_PROXY", "value": os.environ["HTTPS_PROXY"]},
     {"name": "https_proxy", "value": os.environ["HTTPS_PROXY"]},
+    {"name": "NO_PROXY", "value": os.environ["NO_PROXY"]},
+    {"name": "no_proxy", "value": os.environ["NO_PROXY"]},
 ]
 
 
