@@ -94,7 +94,7 @@ def dbt_read_s3_bucket(
     return k8s.V1Container(
         name="read-s3-blob",
         image=os.getenv("KNADA_READ_BLOB_IMAGE", "navikt/knada-read-blob:1"),
-        env=envs,
+        env=s3_envs,
         volume_mounts=[
             k8s.V1VolumeMount(
                 name="dags-data", mount_path=mount_path, sub_path=None, read_only=False
