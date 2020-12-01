@@ -47,6 +47,27 @@ def create_knada_nb_pod_operator(
     :return: KubernetesPodOperator
     """
 
+    envs.append({})
+    envs.append({"name": "VKS_AUTH_PATH", "value": os.environ["VKS_AUTH_PATH"]})
+    envs.append({"name": "VKS_KV_PATH", "value": os.environ["VKS_KV_PATH"]})
+    envs.append({"name": "K8S_SERVICEACCOUNT_PATH", "value": os.environ["K8S_SERVICEACCOUNT_PATH"]})
+
+    env_vars = {
+        "LOG_ENABLED": "true" if log_output else "false",
+        "NOTEBOOK_PATH": f"/repo/{Path(nb_path).parent}",
+        "NOTEBOOK_NAME": Path(nb_path).name,
+        "DATAVERK_API_ENDPOINT": os.environ["DATAVERK_API_ENDPOINT"],
+        "DATAVERK_BUCKET_ENDPOINT": os.environ["DATAVERK_BUCKET_ENDPOINT"],
+        "HTTPS_PROXY": os.environ["HTTPS_PROXY"],
+        "https_proxy": os.environ["HTTPS_PROXY"],
+        "NO_PROXY": os.environ["NO_PROXY"],
+        "no_proxy": os.environ["NO_PROXY"],
+        "VKS_VAULT_ADDR": os.environ["VKS_VAULT_ADDR"],
+        "VKS_AUTH_PATH": os.environ["VKS_AUTH_PATH"],
+        "VKS_KV_PATH": os.environ["VKS_KV_PATH"],
+        "K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
+    }
+
     def on_failure(context):
         if email:
             send_email = create_email_notification(email, name, namespace, dag)
@@ -67,17 +88,7 @@ def create_knada_nb_pod_operator(
         startup_timeout_seconds=startup_timeout_seconds,
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_NOTEBOOK_OP_IMAGE", "navikt/knada-airflow-nb:6"),
-        env_vars={
-            "LOG_ENABLED": "true" if log_output else "false",
-            "NOTEBOOK_PATH": f"/repo/{Path(nb_path).parent}",
-            "NOTEBOOK_NAME": Path(nb_path).name,
-            "DATAVERK_API_ENDPOINT": os.environ["DATAVERK_API_ENDPOINT"],
-            "DATAVERK_BUCKET_ENDPOINT": os.environ["DATAVERK_BUCKET_ENDPOINT"],
-            "HTTPS_PROXY": os.environ["HTTPS_PROXY"],
-            "https_proxy": os.environ["HTTPS_PROXY"],
-            "NO_PROXY": os.environ["NO_PROXY"],
-            "no_proxy": os.environ["NO_PROXY"],
-        },
+        env_vars=env_vars,
         volume_mounts=[
             VolumeMount(
                 name="dags-data", mount_path="/repo", sub_path=None, read_only=False
@@ -136,6 +147,21 @@ def create_knada_python_pod_operator(
     :return: KubernetesPodOperator
     """
 
+    env_vars = {
+        "NOTEBOOK_PATH": f"/repo/{Path(script_path).parent}",
+        "NOTEBOOK_NAME": Path(script_path).name,
+        "DATAVERK_API_ENDPOINT": os.environ["DATAVERK_API_ENDPOINT"],
+        "DATAVERK_BUCKET_ENDPOINT": os.environ["DATAVERK_BUCKET_ENDPOINT"],
+        "HTTPS_PROXY": os.environ["HTTPS_PROXY"],
+        "https_proxy": os.environ["HTTPS_PROXY"],
+        "NO_PROXY": os.environ["NO_PROXY"],
+        "no_proxy": os.environ["NO_PROXY"],
+        "VKS_VAULT_ADDR": os.environ["VKS_VAULT_ADDR"],
+        "VKS_AUTH_PATH": os.environ["VKS_AUTH_PATH"],
+        "VKS_KV_PATH": os.environ["VKS_KV_PATH"],
+        "K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
+    }
+
     def on_failure(context):
         if email:
             send_email = create_email_notification(email, name, namespace, dag)
@@ -156,16 +182,7 @@ def create_knada_python_pod_operator(
         task_id=name,
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_PYTHON_POD_OP_IMAGE", "navikt/knada-airflow-python:1"),
-        env_vars={
-            "SCRIPT_PATH": f"/repo/{Path(script_path).parent}",
-            "SCRIPT_NAME": Path(script_path).name,
-            "DATAVERK_API_ENDPOINT": os.environ["DATAVERK_API_ENDPOINT"],
-            "DATAVERK_BUCKET_ENDPOINT": os.environ["DATAVERK_BUCKET_ENDPOINT"],
-            "HTTPS_PROXY": os.environ["HTTPS_PROXY"],
-            "https_proxy": os.environ["HTTPS_PROXY"],
-            "NO_PROXY": os.environ["NO_PROXY"],
-            "no_proxy": os.environ["NO_PROXY"],
-        },
+        env_vars=env_vars,
         volume_mounts=[
             VolumeMount(
                 name="dags-data", mount_path="/repo", sub_path=None, read_only=False
