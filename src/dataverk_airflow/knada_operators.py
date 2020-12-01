@@ -25,7 +25,7 @@ def create_knada_nb_pod_operator(
     resources: dict = None,
     retries: int = 3,
     delete_on_finish: bool = True,
-    startup_timeout_seconds: int = 120,
+    startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=5),
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada jupyter notebooks
@@ -115,7 +115,7 @@ def create_knada_python_pod_operator(
     resources: dict = None,
     retries: int = 3,
     delete_on_finish: bool = True,
-    startup_timeout_seconds: int = 120,
+    startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=5),
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada python scripts
