@@ -47,11 +47,6 @@ def create_knada_nb_pod_operator(
     :return: KubernetesPodOperator
     """
 
-    envs.append({})
-    envs.append({"name": "VKS_AUTH_PATH", "value": os.environ["VKS_AUTH_PATH"]})
-    envs.append({"name": "VKS_KV_PATH", "value": os.environ["VKS_KV_PATH"]})
-    envs.append({"name": "K8S_SERVICEACCOUNT_PATH", "value": os.environ["K8S_SERVICEACCOUNT_PATH"]})
-
     env_vars = {
         "LOG_ENABLED": "true" if log_output else "false",
         "NOTEBOOK_PATH": f"/repo/{Path(nb_path).parent}",
