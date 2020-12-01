@@ -61,6 +61,7 @@ def create_knada_nb_pod_operator(
         "VKS_AUTH_PATH": os.environ["VKS_AUTH_PATH"],
         "VKS_KV_PATH": os.environ["VKS_KV_PATH"],
         "K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
+        "REQUESTS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt"
     }
 
     def on_failure(context):
@@ -87,6 +88,12 @@ def create_knada_nb_pod_operator(
         volume_mounts=[
             VolumeMount(
                 name="dags-data", mount_path="/repo", sub_path=None, read_only=False
+            ),
+            VolumeMount(
+                name="ca-bundle-pem",
+                mount_path="/etc/pki/tls/certs/ca-bundle.crt",
+                read_only=True,
+                sub_path="ca-bundle.pem"
             )
         ],
         service_account_name="airflow",
@@ -100,6 +107,15 @@ def create_knada_nb_pod_operator(
                         "secretName": os.environ["K8S_GIT_CLONE_SECRET"],
                     }
                 },
+            ),
+            Volume(
+                name="ca-bundle-pem",
+                configs={
+                    "configMap": {
+                        "defaultMode": 420,
+                        "name": "ca-bundle-pem"
+                    }
+                }
             ),
         ],
         annotations={"sidecar.istio.io/inject": "false"},
@@ -155,6 +171,7 @@ def create_knada_python_pod_operator(
         "VKS_AUTH_PATH": os.environ["VKS_AUTH_PATH"],
         "VKS_KV_PATH": os.environ["VKS_KV_PATH"],
         "K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
+        "REQUESTS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt"
     }
 
     def on_failure(context):
@@ -181,6 +198,12 @@ def create_knada_python_pod_operator(
         volume_mounts=[
             VolumeMount(
                 name="dags-data", mount_path="/repo", sub_path=None, read_only=False
+            ),
+            VolumeMount(
+                name="ca-bundle-pem",
+                mount_path="/etc/pki/tls/certs/ca-bundle.crt",
+                read_only=True,
+                sub_path="ca-bundle.pem"
             )
         ],
         service_account_name="airflow",
@@ -194,6 +217,15 @@ def create_knada_python_pod_operator(
                         "secretName": os.environ["K8S_GIT_CLONE_SECRET"],
                     }
                 },
+            ),
+            Volume(
+                name="ca-bundle-pem",
+                configs={
+                    "configMap": {
+                        "defaultMode": 420,
+                        "name": "ca-bundle-pem"
+                    }
+                }
             ),
         ],
         annotations={"sidecar.istio.io/inject": "false"},
