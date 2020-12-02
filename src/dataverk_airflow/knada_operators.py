@@ -74,8 +74,7 @@ def create_knada_nb_pod_operator(
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[create_git_clone_init_container(repo, branch, "/repo"),
-                         change_permissions_init_container("/repo")],
+        init_containers=[create_git_clone_init_container(repo, branch, "/repo")],
         dag=dag,
         on_failure_callback=on_failure,
         name=name,

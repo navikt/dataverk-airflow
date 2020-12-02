@@ -30,8 +30,8 @@ def create_git_clone_init_container(
             ),
         ],
         env=envs,
-        command=["/bin/sh", "/git-clone.sh"],
-        args=[repo, branch, "/repo"],
+        command=["/bin/sh", "-c"],
+        args=[f"/git-clone.sh {repo} {branch} {mount_path}; chmod -R 777 {mount_path}"],
     )
 
 
