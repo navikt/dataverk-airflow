@@ -14,6 +14,7 @@ from dataverk_airflow.notifications import create_email_notification, create_sla
 
 POD_WORKSPACE_DIR = "/workspace"
 CA_BUNDLE_PATH = "/etc/pki/tls/certs/ca-bundle.crt"
+CREDS_DIR = "/var/run/secrets"
 
 
 def create_knada_nb_pod_operator(
@@ -306,7 +307,7 @@ def create_knada_dbt_seed_operator(
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_DBT_IMAGE", "navikt/knada-dbt:1"),
         env_vars={
-            "GOOGLE_APPLICATION_CREDENTIALS": f"{POD_WORKSPACE_DIR}/creds.json",
+            "GOOGLE_APPLICATION_CREDENTIALS": f"{CREDS_DIR}/creds.json",
             "HTTPS_PROXY": os.environ["HTTPS_PROXY"],
             "https_proxy": os.environ["HTTPS_PROXY"],
             "NO_PROXY": os.environ["NO_PROXY"],
@@ -320,7 +321,7 @@ def create_knada_dbt_seed_operator(
             ),
             VolumeMount(
                 name="google-creds",
-                mount_path=POD_WORKSPACE_DIR,
+                mount_path=f"{CREDS_DIR}",
                 sub_path=None,
                 read_only=False,
             ),
@@ -420,7 +421,7 @@ def create_knada_dbt_run_operator(
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_DBT_IMAGE", "navikt/knada-dbt:3"),
         env_vars={
-            "GOOGLE_APPLICATION_CREDENTIALS": f"{POD_WORKSPACE_DIR}/creds.json",
+            "GOOGLE_APPLICATION_CREDENTIALS": f"{CREDS_DIR}/creds.json",
             "HTTPS_PROXY": os.environ["HTTPS_PROXY"],
             "https_proxy": os.environ["HTTPS_PROXY"],
             "NO_PROXY": os.environ["NO_PROXY"],
@@ -434,7 +435,7 @@ def create_knada_dbt_run_operator(
             ),
             VolumeMount(
                 name="google-creds",
-                mount_path=POD_WORKSPACE_DIR,
+                mount_path=f"{CREDS_DIR}",
                 sub_path=None,
                 read_only=False,
             ),
@@ -498,12 +499,10 @@ def create_knada_bq_operator(
 
     :param dag: DAG: owner DAG
     :param name: str: Name of task
-    :param repo: str: Github repo
     :param bq_cmd: list: BigQuery command
     :param namespace: str: K8S namespace for pod
     :param email: str: Email of owner
     :param slack_channel: Name of slack channel, default None (no slack notification)
-    :param branch: str: Branch in repo, default "master"
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param retries: int: Number of retries for task before DAG fails, default 3
     :param delete_on_finish: bool: Whether to delete pod on completion
@@ -540,15 +539,12 @@ def create_knada_bq_operator(
         },
         cmds=["/bin/bash", "-c"],
         arguments=[f"gcloud config set core/custom_ca_certs_file {CA_BUNDLE_PATH}; "
-                   f"gcloud auth activate-service-account --key-file={POD_WORKSPACE_DIR}/creds.json; "
+                   f"gcloud auth activate-service-account --key-file={CREDS_DIR}/creds.json; "
                    f"{bq_cmd}"],
         volume_mounts=[
             VolumeMount(
-                name="dags-data", mount_path=POD_WORKSPACE_DIR, sub_path=None, read_only=False
-            ),
-            VolumeMount(
                 name="google-creds",
-                mount_path=POD_WORKSPACE_DIR,
+                mount_path=CREDS_DIR,
                 sub_path=None,
                 read_only=False,
             ),
@@ -561,7 +557,6 @@ def create_knada_bq_operator(
         ],
         service_account_name="airflow",
         volumes=[
-            Volume(name="dags-data", configs={}),
             Volume(name="ca-bundle-pem",
                    configs={
                         "configMap": {
