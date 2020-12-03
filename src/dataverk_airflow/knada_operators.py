@@ -12,6 +12,10 @@ from dataverk_airflow.init_containers import create_git_clone_init_container, db
 from dataverk_airflow.notifications import create_email_notification, create_slack_notification
 
 
+POD_WORKSPACE_DIR = "/workspace"
+CA_BUNDLE_PATH = "/etc/pki/tls/certs/ca-bundle.crt"
+
+
 def create_knada_nb_pod_operator(
     dag: DAG,
     name: str,
@@ -51,7 +55,7 @@ def create_knada_nb_pod_operator(
 
     env_vars = {
         "LOG_ENABLED": "true" if log_output else "false",
-        "NOTEBOOK_PATH": f"/repo/{Path(nb_path).parent}",
+        "NOTEBOOK_PATH": f"{POD_WORKSPACE_DIR}/{Path(nb_path).parent}",
         "NOTEBOOK_NAME": Path(nb_path).name,
         "DATAVERK_API_ENDPOINT": os.environ["DATAVERK_API_ENDPOINT"],
         "DATAVERK_BUCKET_ENDPOINT": os.environ["DATAVERK_BUCKET_ENDPOINT"],
@@ -63,7 +67,7 @@ def create_knada_nb_pod_operator(
         "VKS_AUTH_PATH": os.environ["VKS_AUTH_PATH"],
         "VKS_KV_PATH": os.environ["VKS_KV_PATH"],
         "K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
-        "REQUESTS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt"
+        "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH
     }
 
     if extra_envs:
@@ -79,7 +83,7 @@ def create_knada_nb_pod_operator(
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[create_git_clone_init_container(repo, branch, "/repo")],
+        init_containers=[create_git_clone_init_container(repo, branch, POD_WORKSPACE_DIR)],
         dag=dag,
         on_failure_callback=on_failure,
         name=name,
@@ -91,11 +95,11 @@ def create_knada_nb_pod_operator(
         env_vars=env_vars,
         volume_mounts=[
             VolumeMount(
-                name="dags-data", mount_path="/repo", sub_path=None, read_only=False
+                name="dags-data", mount_path=POD_WORKSPACE_DIR, sub_path=None, read_only=False
             ),
             VolumeMount(
                 name="ca-bundle-pem",
-                mount_path="/etc/pki/tls/certs/ca-bundle.crt",
+                mount_path=CA_BUNDLE_PATH,
                 read_only=True,
                 sub_path="ca-bundle.pem"
             )
@@ -165,7 +169,7 @@ def create_knada_python_pod_operator(
     """
 
     env_vars = {
-        "NOTEBOOK_PATH": f"/repo/{Path(script_path).parent}",
+        "NOTEBOOK_PATH": f"{POD_WORKSPACE_DIR}/{Path(script_path).parent}",
         "NOTEBOOK_NAME": Path(script_path).name,
         "DATAVERK_API_ENDPOINT": os.environ["DATAVERK_API_ENDPOINT"],
         "DATAVERK_BUCKET_ENDPOINT": os.environ["DATAVERK_BUCKET_ENDPOINT"],
@@ -177,7 +181,7 @@ def create_knada_python_pod_operator(
         "VKS_AUTH_PATH": os.environ["VKS_AUTH_PATH"],
         "VKS_KV_PATH": os.environ["VKS_KV_PATH"],
         "K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
-        "REQUESTS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt"
+        "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH
     }
 
     if extra_envs:
@@ -193,7 +197,7 @@ def create_knada_python_pod_operator(
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[create_git_clone_init_container(repo, branch, "/repo")],
+        init_containers=[create_git_clone_init_container(repo, branch, POD_WORKSPACE_DIR)],
         dag=dag,
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
@@ -205,11 +209,11 @@ def create_knada_python_pod_operator(
         env_vars=env_vars,
         volume_mounts=[
             VolumeMount(
-                name="dags-data", mount_path="/repo", sub_path=None, read_only=False
+                name="dags-data", mount_path=POD_WORKSPACE_DIR, sub_path=None, read_only=False
             ),
             VolumeMount(
                 name="ca-bundle-pem",
-                mount_path="/etc/pki/tls/certs/ca-bundle.crt",
+                mount_path=CA_BUNDLE_PATH,
                 read_only=True,
                 sub_path="ca-bundle.pem"
             )
@@ -289,9 +293,9 @@ def create_knada_dbt_seed_operator(
 
     return KubernetesPodOperator(
         init_containers=[
-            create_git_clone_init_container(repo, branch, "/repo"),
-            dbt_read_gcs_bucket("/repo", seed_source, dbt_dir) if seed_source["host"] == "gcs" else
-            dbt_read_s3_bucket("/repo", seed_source, dbt_dir),
+            create_git_clone_init_container(repo, branch, POD_WORKSPACE_DIR),
+            dbt_read_gcs_bucket(POD_WORKSPACE_DIR, seed_source, dbt_dir) if seed_source["host"] == "gcs" else
+            dbt_read_s3_bucket(POD_WORKSPACE_DIR, seed_source, dbt_dir),
         ],
         dag=dag,
         on_failure_callback=on_failure,
@@ -302,27 +306,27 @@ def create_knada_dbt_seed_operator(
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_DBT_IMAGE", "navikt/knada-dbt:1"),
         env_vars={
-            "GOOGLE_APPLICATION_CREDENTIALS": "/repo/creds.json",
+            "GOOGLE_APPLICATION_CREDENTIALS": f"{POD_WORKSPACE_DIR}/creds.json",
             "HTTPS_PROXY": os.environ["HTTPS_PROXY"],
             "https_proxy": os.environ["HTTPS_PROXY"],
             "NO_PROXY": os.environ["NO_PROXY"],
             "no_proxy": os.environ["NO_PROXY"],
         },
         cmds=["dbt", "seed"],
-        arguments=["--profiles-dir", f"/repo/{dbt_dir}", "--project-dir", f"/repo/{dbt_dir}"],
+        arguments=["--profiles-dir", f"{POD_WORKSPACE_DIR}/{dbt_dir}", "--project-dir", f"{POD_WORKSPACE_DIR}/{dbt_dir}"],
         volume_mounts=[
             VolumeMount(
-                name="dags-data", mount_path="/repo", sub_path=None, read_only=False
+                name="dags-data", mount_path=POD_WORKSPACE_DIR, sub_path=None, read_only=False
             ),
             VolumeMount(
                 name="google-creds",
-                mount_path="/repo",
+                mount_path=POD_WORKSPACE_DIR,
                 sub_path=None,
                 read_only=False,
             ),
             VolumeMount(
                 name="ca-bundle-pem",
-                mount_path="/etc/pki/tls/certs/ca-bundle.crt",
+                mount_path=CA_BUNDLE_PATH,
                 read_only=True,
                 sub_path="ca-bundle.pem"
             ),
@@ -406,7 +410,7 @@ def create_knada_dbt_run_operator(
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[create_git_clone_init_container(repo, branch, "/repo")],
+        init_containers=[create_git_clone_init_container(repo, branch, POD_WORKSPACE_DIR)],
         dag=dag,
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
@@ -416,27 +420,27 @@ def create_knada_dbt_run_operator(
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_DBT_IMAGE", "navikt/knada-dbt:3"),
         env_vars={
-            "GOOGLE_APPLICATION_CREDENTIALS": "/repo/creds.json",
+            "GOOGLE_APPLICATION_CREDENTIALS": f"{POD_WORKSPACE_DIR}/creds.json",
             "HTTPS_PROXY": os.environ["HTTPS_PROXY"],
             "https_proxy": os.environ["HTTPS_PROXY"],
             "NO_PROXY": os.environ["NO_PROXY"],
             "no_proxy": os.environ["NO_PROXY"],
         },
         cmds=["dbt", "run"],
-        arguments=["--profiles-dir", f"/repo/{dbt_dir}", "--project-dir", f"/repo/{dbt_dir}"],
+        arguments=["--profiles-dir", f"{POD_WORKSPACE_DIR}/{dbt_dir}", "--project-dir", f"{POD_WORKSPACE_DIR}/{dbt_dir}"],
         volume_mounts=[
             VolumeMount(
-                name="dags-data", mount_path="/repo", sub_path=None, read_only=False
+                name="dags-data", mount_path=POD_WORKSPACE_DIR, sub_path=None, read_only=False
             ),
             VolumeMount(
                 name="google-creds",
-                mount_path="/repo",
+                mount_path=POD_WORKSPACE_DIR,
                 sub_path=None,
                 read_only=False,
             ),
             VolumeMount(
                 name="ca-bundle-pem",
-                mount_path="/etc/pki/tls/certs/ca-bundle.crt",
+                mount_path=CA_BUNDLE_PATH,
                 read_only=True,
                 sub_path="ca-bundle.pem"
             ),
@@ -480,12 +484,10 @@ def create_knada_dbt_run_operator(
 def create_knada_bq_operator(
     dag: DAG,
     name: str,
-    repo: str,
     namespace: str,
     bq_cmd: str,
     email: str = None,
     slack_channel: str = None,
-    branch: str = "master",
     resources: dict = None,
     retries: int = 3,
     delete_on_finish: bool = True,
@@ -520,7 +522,6 @@ def create_knada_bq_operator(
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[create_git_clone_init_container(repo, branch, "/repo")],
         dag=dag,
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
@@ -530,28 +531,28 @@ def create_knada_bq_operator(
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_GCLOUD_IMAGE", "google/cloud-sdk:319.0.0"),
         env_vars={
-            "GOOGLE_APPLICATION_CREDENTIALS": "/repo/creds.json",
+            "GOOGLE_APPLICATION_CREDENTIALS": f"{POD_WORKSPACE_DIR}/creds.json",
             "HTTPS_PROXY": os.environ["HTTPS_PROXY"],
             "https_proxy": os.environ["HTTPS_PROXY"],
             "NO_PROXY": os.environ["NO_PROXY"],
             "no_proxy": os.environ["NO_PROXY"],
-            "REQUESTS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt"
+            "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH
         },
         cmds=["/bin/bash", "-c"],
-        arguments=[f"gcloud auth activate-service-account --key-file=/repo/creds.json; {bq_cmd}"],
+        arguments=[f"gcloud auth activate-service-account --key-file={POD_WORKSPACE_DIR}/creds.json; {bq_cmd}"],
         volume_mounts=[
             VolumeMount(
-                name="dags-data", mount_path="/repo", sub_path=None, read_only=False
+                name="dags-data", mount_path=POD_WORKSPACE_DIR, sub_path=None, read_only=False
             ),
             VolumeMount(
                 name="google-creds",
-                mount_path="/repo",
+                mount_path=POD_WORKSPACE_DIR,
                 sub_path=None,
                 read_only=False,
             ),
             VolumeMount(
                 name="ca-bundle-pem",
-                mount_path="/etc/pki/tls/certs/ca-bundle.crt",
+                mount_path=CA_BUNDLE_PATH,
                 read_only=True,
                 sub_path="ca-bundle.pem"
             ),
