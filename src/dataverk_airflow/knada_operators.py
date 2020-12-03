@@ -525,7 +525,7 @@ def create_knada_bq_operator(
             "NO_PROXY": os.environ["NO_PROXY"],
             "no_proxy": os.environ["NO_PROXY"],
         },
-        cmds=["/bin/sh", "-c"],
+        cmds=["/bin/bash", "-c"],
         arguments=bq_cmd,
         volume_mounts=[
             VolumeMount(
