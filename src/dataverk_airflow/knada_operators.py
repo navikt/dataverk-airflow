@@ -539,7 +539,9 @@ def create_knada_bq_operator(
             "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH
         },
         cmds=["/bin/bash", "-c"],
-        arguments=[f"gcloud auth activate-service-account --key-file={POD_WORKSPACE_DIR}/creds.json; {bq_cmd}"],
+        arguments=[f"gcloud config set core/custom_ca_certs_file {CA_BUNDLE_PATH}; "
+                   f"gcloud auth activate-service-account --key-file={POD_WORKSPACE_DIR}/creds.json; "
+                   f"{bq_cmd}"],
         volume_mounts=[
             VolumeMount(
                 name="dags-data", mount_path=POD_WORKSPACE_DIR, sub_path=None, read_only=False
