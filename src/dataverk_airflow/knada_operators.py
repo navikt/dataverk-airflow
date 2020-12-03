@@ -277,9 +277,11 @@ def create_knada_dbt_seed_operator(
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[dbt_read_gcs_bucket("/repo", seed_source, dbt_dir) if seed_source["host"] == "gcs" else
-                         dbt_read_s3_bucket("/repo", seed_source, dbt_dir),
-                         create_git_clone_init_container(repo, branch, "/repo")],
+        init_containers=[
+            create_git_clone_init_container(repo, branch, "/repo"),
+            dbt_read_gcs_bucket("/repo", seed_source, dbt_dir) if seed_source["host"] == "gcs" else
+            dbt_read_s3_bucket("/repo", seed_source, dbt_dir),
+        ],
         dag=dag,
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
