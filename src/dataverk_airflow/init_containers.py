@@ -17,7 +17,7 @@ def create_git_clone_init_container(
 ):
     return k8s.V1Container(
         name="clone-repo",
-        image=os.getenv("CLONE_REPO_IMAGE", "navikt/knada-git-sync:2020-10-23-98963f6"),
+        image=os.getenv("CLONE_REPO_IMAGE", "navikt/knada-git-sync:2020-12-02-df3d995"),
         volume_mounts=[
             k8s.V1VolumeMount(
                 name="dags-data", mount_path=mount_path, sub_path=None, read_only=False
@@ -32,21 +32,6 @@ def create_git_clone_init_container(
         env=envs,
         command=["/bin/sh", "-c"],
         args=[f"/git-clone.sh {repo} {branch} {mount_path}; chmod -R 777 {mount_path}"],
-    )
-
-
-def change_permissions_init_container(
-    mount_path: str
-):
-    return k8s.V1Container(
-        name="change-permissions",
-        image="busybox",
-        volume_mounts=[
-            k8s.V1VolumeMount(
-                name="dags-data", mount_path=mount_path, sub_path=None, read_only=False
-            ),
-        ],
-        command=['sh', '-c', f'chmod -R 777 {mount_path}'],
     )
 
 

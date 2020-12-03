@@ -7,8 +7,7 @@ from airflow.kubernetes.volume import Volume
 from airflow.kubernetes.volume_mount import VolumeMount
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
-from dataverk_airflow.init_containers import create_git_clone_init_container, change_permissions_init_container, \
-    dbt_read_gcs_bucket, dbt_read_s3_bucket
+from dataverk_airflow.init_containers import create_git_clone_init_container, dbt_read_gcs_bucket, dbt_read_s3_bucket
 from dataverk_airflow.notifications import create_email_notification, create_slack_notification
 
 
@@ -183,8 +182,7 @@ def create_knada_python_pod_operator(
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[create_git_clone_init_container(repo, branch, "/repo"),
-                         change_permissions_init_container("/repo")],
+        init_containers=[create_git_clone_init_container(repo, branch, "/repo")],
         dag=dag,
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
@@ -279,10 +277,9 @@ def create_knada_dbt_seed_operator(
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[create_git_clone_init_container(repo, branch, "/repo"),
-                         dbt_read_gcs_bucket("/repo", seed_source, dbt_dir) if seed_source["host"] == "gcs" else
+        init_containers=[dbt_read_gcs_bucket("/repo", seed_source, dbt_dir) if seed_source["host"] == "gcs" else
                          dbt_read_s3_bucket("/repo", seed_source, dbt_dir),
-                         change_permissions_init_container("/repo")],
+                         create_git_clone_init_container(repo, branch, "/repo")],
         dag=dag,
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
@@ -396,8 +393,7 @@ def create_knada_dbt_run_operator(
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[create_git_clone_init_container(repo, branch, "/repo"),
-                         change_permissions_init_container("/repo")],
+        init_containers=[create_git_clone_init_container(repo, branch, "/repo")],
         dag=dag,
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
