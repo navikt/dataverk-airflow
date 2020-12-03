@@ -482,7 +482,7 @@ def create_knada_bq_operator(
     name: str,
     repo: str,
     namespace: str,
-    bq_cmd: list,
+    bq_cmd: str,
     email: str = None,
     slack_channel: str = None,
     branch: str = "master",
@@ -535,6 +535,7 @@ def create_knada_bq_operator(
             "https_proxy": os.environ["HTTPS_PROXY"],
             "NO_PROXY": os.environ["NO_PROXY"],
             "no_proxy": os.environ["NO_PROXY"],
+            "REQUESTS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt"
         },
         cmds=["/bin/bash", "-c"],
         arguments=[f"gcloud auth activate-service-account --key-file=/repo/creds.json; {bq_cmd}"],
