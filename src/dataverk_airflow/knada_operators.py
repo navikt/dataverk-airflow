@@ -2,6 +2,7 @@ import os
 
 from datetime import timedelta
 from pathlib import Path
+
 from airflow import DAG
 from airflow.kubernetes.volume import Volume
 from airflow.kubernetes.volume_mount import VolumeMount
@@ -23,6 +24,7 @@ def create_knada_nb_pod_operator(
     log_output: bool = False,
     resources: dict = None,
     retries: int = 3,
+    extra_envs: dict = None,
     delete_on_finish: bool = True,
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=5),
@@ -40,6 +42,7 @@ def create_knada_nb_pod_operator(
     :param log_output: bool: Write logs from notebook to stdout, default False
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param retries: int: Number of retries for task before DAG fails, default 3
+    :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param delete_on_finish: bool: Whether to delete pod on completion
     :param startup_timeout_seconds: int: pod startup timeout
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
@@ -62,6 +65,9 @@ def create_knada_nb_pod_operator(
         "K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
         "REQUESTS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt"
     }
+
+    if extra_envs:
+        env_vars = dict(env_vars, **extra_envs)
 
     def on_failure(context):
         if email:
@@ -134,6 +140,7 @@ def create_knada_python_pod_operator(
     branch: str = "master",
     resources: dict = None,
     retries: int = 3,
+    extra_envs: dict = None,
     delete_on_finish: bool = True,
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=5),
@@ -150,6 +157,7 @@ def create_knada_python_pod_operator(
     :param branch: str: Branch in repo, default "master"
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param retries: int: Number of retries for task before DAG fails, default 3
+    :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param delete_on_finish: bool: Whether to delete pod on completion
     :param startup_timeout_seconds: int: pod startup timeout
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
@@ -171,6 +179,9 @@ def create_knada_python_pod_operator(
         "K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
         "REQUESTS_CA_BUNDLE": "/etc/pki/tls/certs/ca-bundle.crt"
     }
+
+    if extra_envs:
+        env_vars = dict(env_vars, **extra_envs)
 
     def on_failure(context):
         if email:
@@ -526,7 +537,7 @@ def create_knada_bq_operator(
             "no_proxy": os.environ["NO_PROXY"],
         },
         cmds=["/bin/bash", "-c"],
-        arguments=bq_cmd,
+        arguments=[f"gcloud auth activate-service-account --key-file=/repo/creds.json; {bq_cmd}"],
         volume_mounts=[
             VolumeMount(
                 name="dags-data", mount_path="/repo", sub_path=None, read_only=False
