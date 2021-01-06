@@ -33,6 +33,7 @@ def create_knada_nb_pod_operator(
     delete_on_finish: bool = True,
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=5),
+    nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8"
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada jupyter notebooks
 
@@ -51,6 +52,7 @@ def create_knada_nb_pod_operator(
     :param delete_on_finish: bool: Whether to delete pod on completion
     :param startup_timeout_seconds: int: pod startup timeout
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
+    :param nls_lang: str: Configure locale and character sets with NLS_LANG environment variable in k8s pod, defaults to Norwegian
     :return: KubernetesPodOperator
     """
 
@@ -69,7 +71,8 @@ def create_knada_nb_pod_operator(
         "VKS_AUTH_PATH": os.environ["VKS_AUTH_PATH"],
         "VKS_KV_PATH": os.environ["VKS_KV_PATH"],
         "K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
-        "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH
+        "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH,
+        "NLS_LANG": nls_lang
     }
 
     if extra_envs:
@@ -150,6 +153,7 @@ def create_knada_python_pod_operator(
     delete_on_finish: bool = True,
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=5),
+    nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8"
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada python scripts
 
@@ -167,6 +171,7 @@ def create_knada_python_pod_operator(
     :param delete_on_finish: bool: Whether to delete pod on completion
     :param startup_timeout_seconds: int: pod startup timeout
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
+    :param nls_lang: str: Configure locale and character sets with NLS_LANG environment variable in k8s pod, defaults to Norwegian
     :return: KubernetesPodOperator
     """
 
@@ -184,7 +189,8 @@ def create_knada_python_pod_operator(
         "VKS_AUTH_PATH": os.environ["VKS_AUTH_PATH"],
         "VKS_KV_PATH": os.environ["VKS_KV_PATH"],
         "K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
-        "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH
+        "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH,
+        "NLS_LANG": nls_lang
     }
 
     if extra_envs:
