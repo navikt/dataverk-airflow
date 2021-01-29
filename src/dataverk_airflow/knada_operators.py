@@ -33,6 +33,7 @@ def create_knada_nb_pod_operator(
     delete_on_finish: bool = True,
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=5),
+    do_xcom_push: bool = False,
     nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8"
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada jupyter notebooks
@@ -52,6 +53,7 @@ def create_knada_nb_pod_operator(
     :param delete_on_finish: bool: Whether to delete pod on completion
     :param startup_timeout_seconds: int: pod startup timeout
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
+    :param do_xcom_push: bool: Whether to push xcom pod output, default False
     :param nls_lang: str: Configure locale and character sets with NLS_LANG environment variable in k8s pod, defaults to Norwegian
     :return: KubernetesPodOperator
     """
@@ -99,6 +101,7 @@ def create_knada_nb_pod_operator(
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_NOTEBOOK_OP_IMAGE", "navikt/knada-airflow-nb:6"),
         env_vars=env_vars,
+        do_xcom_push=do_xcom_push,
         volume_mounts=[
             VolumeMount(
                 name="dags-data", mount_path=POD_WORKSPACE_DIR, sub_path=None, read_only=False
