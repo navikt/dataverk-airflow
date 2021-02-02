@@ -2,6 +2,7 @@ import os
 
 from datetime import timedelta
 from pathlib import Path
+from typing import Callable
 
 from airflow import DAG
 from airflow.kubernetes.volume import Volume
@@ -34,6 +35,7 @@ def create_knada_nb_pod_operator(
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=5),
     do_xcom_push: bool = False,
+    on_success_callback: Callable = None,
     nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8"
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada jupyter notebooks
@@ -55,6 +57,7 @@ def create_knada_nb_pod_operator(
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param do_xcom_push: bool: Whether to push xcom pod output, default False
     :param nls_lang: str: Configure locale and character sets with NLS_LANG environment variable in k8s pod, defaults to Norwegian
+    :param on_success_callback: Callable
     :return: KubernetesPodOperator
     """
 
@@ -138,6 +141,7 @@ def create_knada_nb_pod_operator(
         annotations={"sidecar.istio.io/inject": "false"},
         resources=resources,
         retries=retries,
+        on_success_callback=on_success_callback,
         retry_delay=retry_delay,
     )
 
