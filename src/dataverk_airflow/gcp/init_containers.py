@@ -12,6 +12,6 @@ def create_read_bucket_init_container(bucket_dbt_path: str):
         ],
         command=["/bin/sh", "-c"],
         args=[
-            f"gsutil cp -r gs://{bucket_dbt_path}/* dbt-data/; chmod -R 777 dbt-data"
+            f"gsutil cp -r {bucket_dbt_path}/* dbt-data/; chmod -R 777 dbt-data"
         ],
     )
