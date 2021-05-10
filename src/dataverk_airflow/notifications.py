@@ -1,13 +1,13 @@
 import os
 
-from typing import Sequence
+from typing import Sequence, Union, List
 
-from airflow.contrib.operators.slack_webhook_operator import SlackWebhookOperator
-from airflow.operators.email_operator import EmailOperator
+from airflow.providers.slack.operators.slack_webhook import SlackWebhookOperator
+from airflow.operators.email import EmailOperator
 from datetime import datetime
 
 
-def create_email_notification(email: Sequence, name: str, namespace: str, dag):
+def create_email_notification(email: Union[List[str], str], name: str, namespace: str, dag):
     return EmailOperator(
                 task_id="send-email-on-error",
                 to=email,
@@ -22,6 +22,7 @@ def create_email_notification(email: Sequence, name: str, namespace: str, dag):
 def create_slack_notification(slack_channel: str, name: str, namespace: str):
     return SlackWebhookOperator(
         task_id="airflow_task_failed",
+        http_conn_id=None,
         webhook_token=os.environ["SLACK_WEBHOOK_TOKEN"],
         message=f"@here DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. "
                 f'Logger: {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}',
