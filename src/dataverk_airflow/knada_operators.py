@@ -272,6 +272,7 @@ def create_knada_python_pod_operator(
         resources=resources,
         retries=retries,
         retry_delay=retry_delay,
+        do_xcom_push=True,
     )
 
 
