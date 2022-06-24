@@ -95,19 +95,24 @@ def create_knada_nb_pod_operator(
             send_email.execute(context)
 
         if slack_channel:
-            slack_notification = create_slack_notification(slack_channel, name, namespace)
+            slack_notification = create_slack_notification(
+                slack_channel, name, namespace)
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[create_git_clone_init_container(repo, branch, POD_WORKSPACE_DIR)],
+        init_containers=[create_git_clone_init_container(
+            repo, branch, POD_WORKSPACE_DIR)],
+        image_pull_secrets=os.environ["K8S_IMAGE_PULL_SECRETS"],
         dag=dag,
         on_failure_callback=on_failure,
         name=name,
+        cmd=["/bin/bash", "/execute_notebook.sh"],
         namespace=namespace,
         task_id=name,
         startup_timeout_seconds=startup_timeout_seconds,
         is_delete_operator_pod=delete_on_finish,
-        image=os.getenv("KNADA_NOTEBOOK_OP_IMAGE", "navikt/knada-airflow-nb:6"),
+        image=os.getenv("KNADA_NOTEBOOK_OP_IMAGE",
+                        "ghcr.io/navikt/knada-airflow:2022-05-25-bd8c92b"),
         env_vars=env_vars,
         do_xcom_push=do_xcom_push,
         volume_mounts=[
@@ -223,19 +228,24 @@ def create_knada_python_pod_operator(
             send_email.execute(context)
 
         if slack_channel:
-            slack_notification = create_slack_notification(slack_channel, name, namespace)
+            slack_notification = create_slack_notification(
+                slack_channel, name, namespace)
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[create_git_clone_init_container(repo, branch, POD_WORKSPACE_DIR)],
+        init_containers=[create_git_clone_init_container(
+            repo, branch, POD_WORKSPACE_DIR)],
+        image_pull_secrets=os.environ["K8S_IMAGE_PULL_SECRETS"],
         dag=dag,
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
         name=name,
+        cmd=["/bin/bash", "/execute_notebook.sh"],
         namespace=namespace,
         task_id=name,
         is_delete_operator_pod=delete_on_finish,
-        image=os.getenv("KNADA_PYTHON_POD_OP_IMAGE", "navikt/knada-airflow-python:1"),
+        image=os.getenv("KNADA_PYTHON_POD_OP_IMAGE",
+                        "ghcr.io/navikt/knada-airflow:2022-05-25-bd8c92b"),
         env_vars=env_vars,
         volume_mounts=[
             VolumeMount(
@@ -319,7 +329,8 @@ def create_knada_dbt_seed_operator(
             send_email.execute(context)
 
         if slack_channel:
-            slack_notification = create_slack_notification(slack_channel, name, namespace)
+            slack_notification = create_slack_notification(
+                slack_channel, name, namespace)
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
@@ -344,7 +355,8 @@ def create_knada_dbt_seed_operator(
             "no_proxy": os.environ["NO_PROXY"],
         },
         cmds=["dbt", "seed"],
-        arguments=["--profiles-dir", f"{POD_WORKSPACE_DIR}/{dbt_dir}", "--project-dir", f"{POD_WORKSPACE_DIR}/{dbt_dir}"],
+        arguments=["--profiles-dir", f"{POD_WORKSPACE_DIR}/{dbt_dir}",
+                   "--project-dir", f"{POD_WORKSPACE_DIR}/{dbt_dir}"],
         volume_mounts=[
             VolumeMount(
                 name="dags-data", mount_path=POD_WORKSPACE_DIR, sub_path=None, read_only=False
@@ -437,11 +449,13 @@ def create_knada_dbt_run_operator(
             send_email.execute(context)
 
         if slack_channel:
-            slack_notification = create_slack_notification(slack_channel, name, namespace)
+            slack_notification = create_slack_notification(
+                slack_channel, name, namespace)
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[create_git_clone_init_container(repo, branch, POD_WORKSPACE_DIR)],
+        init_containers=[create_git_clone_init_container(
+            repo, branch, POD_WORKSPACE_DIR)],
         dag=dag,
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
@@ -458,7 +472,8 @@ def create_knada_dbt_run_operator(
             "no_proxy": os.environ["NO_PROXY"],
         },
         cmds=["dbt", "run"],
-        arguments=["--profiles-dir", f"{POD_WORKSPACE_DIR}/{dbt_dir}", "--project-dir", f"{POD_WORKSPACE_DIR}/{dbt_dir}"],
+        arguments=["--profiles-dir", f"{POD_WORKSPACE_DIR}/{dbt_dir}",
+                   "--project-dir", f"{POD_WORKSPACE_DIR}/{dbt_dir}"],
         volume_mounts=[
             VolumeMount(
                 name="dags-data", mount_path=POD_WORKSPACE_DIR, sub_path=None, read_only=False
@@ -547,7 +562,8 @@ def create_knada_bq_operator(
             send_email.execute(context)
 
         if slack_channel:
-            slack_notification = create_slack_notification(slack_channel, name, namespace)
+            slack_notification = create_slack_notification(
+                slack_channel, name, namespace)
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
@@ -618,4 +634,3 @@ def create_knada_bq_operator(
         retries=retries,
         retry_delay=retry_delay,
     )
-
