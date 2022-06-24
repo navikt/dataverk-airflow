@@ -240,7 +240,7 @@ def create_knada_python_pod_operator(
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
         name=name,
-        cmd=["/bin/bash", "/execute_notebook.sh"],
+        cmd=["/bin/bash", "/execute_python.sh"],
         namespace=namespace,
         task_id=name,
         is_delete_operator_pod=delete_on_finish,
