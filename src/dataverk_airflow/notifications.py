@@ -29,5 +29,4 @@ def create_slack_notification(slack_channel: str, name: str, namespace: str):
         channel=slack_channel,
         link_names=True,
         icon_emoji=":sadpanda:",
-        proxy=os.environ["HTTPS_PROXY"],
     )
