@@ -15,7 +15,6 @@ from dataverk_airflow.notifications import create_email_notification, create_sla
 
 POD_WORKSPACE_DIR = "/workspace"
 CA_BUNDLE_PATH = "/etc/pki/tls/certs/ca-bundle.crt"
-CREDS_DIR = "/var/run/secrets"
 
 
 def create_knada_nb_pod_operator(
