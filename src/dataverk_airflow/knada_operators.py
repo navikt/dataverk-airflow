@@ -90,7 +90,7 @@ def create_knada_nb_pod_operator(
         on_failure_callback=on_failure,
         name=name,
         cmds=["/bin/bash", "/execute_notebook.sh"],
-        namespace=namespace,
+        namespace="team-"+os.getenv("TEAM") if os.getenv("TEAM") else namespace,
         task_id=name,
         startup_timeout_seconds=startup_timeout_seconds,
         is_delete_operator_pod=delete_on_finish,
@@ -109,7 +109,7 @@ def create_knada_nb_pod_operator(
                 sub_path="ca-bundle.pem"
             )
         ],
-        service_account_name="airflow",
+        service_account_name=os.getenv("TEAM", "airflow"),
         volumes=[
             Volume(name="dags-data", configs={}),
             Volume(
