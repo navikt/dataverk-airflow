@@ -66,7 +66,8 @@ def create_knada_nb_pod_operator(
         "NOTEBOOK_NAME": Path(nb_path).name,
         "TZ": os.environ["TZ"],
         "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH,
-        "NLS_LANG": nls_lang
+        "NLS_LANG": nls_lang,
+        "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"]
     }
 
     if extra_envs:
