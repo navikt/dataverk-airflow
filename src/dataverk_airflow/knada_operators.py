@@ -35,7 +35,7 @@ def create_knada_nb_pod_operator(
     retry_delay: timedelta = timedelta(seconds=5),
     do_xcom_push: bool = False,
     on_success_callback: Callable = None,
-    nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8"
+    nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8",
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada jupyter notebooks
 
@@ -95,7 +95,7 @@ def create_knada_nb_pod_operator(
         startup_timeout_seconds=startup_timeout_seconds,
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_NOTEBOOK_OP_IMAGE",
-                        "ghcr.io/navikt/knada-airflow:2022-05-25-bd8c92b"),
+                        "ghcr.io/navikt/knada-airflow:2022-10-14-8ec3b2c"),
         env_vars=env_vars,
         do_xcom_push=do_xcom_push,
         volume_mounts=[
