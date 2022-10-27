@@ -208,7 +208,7 @@ def create_knada_python_pod_operator(
         startup_timeout_seconds=startup_timeout_seconds,
         name=name,
         cmds=["/bin/bash", "/execute_python.sh"],
-        namespace=namespace,
+        namespace="team-"+os.getenv("TEAM") if os.getenv("TEAM") else namespace,
         task_id=name,
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_PYTHON_POD_OP_IMAGE",
@@ -225,7 +225,7 @@ def create_knada_python_pod_operator(
                 sub_path="ca-bundle.pem"
             )
         ],
-        service_account_name="airflow",
+        service_account_name=os.getenv("TEAM", "airflow"),
         volumes=[
             Volume(name="dags-data", configs={}),
             Volume(
