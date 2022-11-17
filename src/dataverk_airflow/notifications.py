@@ -13,7 +13,7 @@ def create_email_notification(email: Union[List[str], str], name: str, namespace
                 to=email,
                 subject=f"Airflow task {name} error",
                 html_content=f"<p> Airflow task {name} feiler i namespace {namespace} "
-                f"kl. {datetime.now().isoformat()}. "
+                f"kl. {datetime.now().isoformat()}. ",
                 dag=dag,
             )
 
@@ -23,7 +23,7 @@ def create_slack_notification(slack_channel: str, name: str, namespace: str):
         task_id="airflow_task_failed",
         http_conn_id=None,
         webhook_token=os.environ["SLACK_TOKEN"],
-        message=f"@here DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. "
+        message=f"@here DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. ",
         channel=slack_channel,
         link_names=True,
         icon_emoji=":sadpanda:",
