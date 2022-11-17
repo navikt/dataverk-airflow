@@ -23,7 +23,7 @@ def create_slack_notification(slack_channel: str, name: str, namespace: str):
     return SlackWebhookOperator(
         task_id="airflow_task_failed",
         http_conn_id=None,
-        webhook_token=os.environ["SLACK_WEBHOOK_TOKEN"],
+        webhook_token=os.environ["SLACK_TOKEN"],
         message=f"@here DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. "
                 f'Logger: {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}',
         channel=slack_channel,
