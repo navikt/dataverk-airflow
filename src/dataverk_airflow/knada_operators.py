@@ -118,7 +118,7 @@ def create_knada_nb_pod_operator(
                 configs={
                     "secret": {
                         "defaultMode": 448,
-                        "secretName": os.getenv("K8S_GIT_CLONE_SECRET", "airflow-git-secret"),
+                        "secretName": os.getenv("K8S_GIT_CLONE_SECRET", "github-app-secret"),
                     }
                 },
             ),
@@ -233,7 +233,7 @@ def create_knada_python_pod_operator(
                 configs={
                     "secret": {
                         "defaultMode": 448,
-                        "secretName": os.getenv("K8S_GIT_CLONE_SECRET", "airflow-git-secret"),
+                        "secretName": os.getenv("K8S_GIT_CLONE_SECRET", "github-app-secret"),
                     }
                 },
             ),
