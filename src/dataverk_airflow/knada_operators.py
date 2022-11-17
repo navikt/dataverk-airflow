@@ -69,6 +69,8 @@ def create_knada_nb_pod_operator(
         "NLS_LANG": nls_lang,
         "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"]
     }
+    
+    namespace = os.getenv("TEAM") if os.getenv("TEAM") else namespace
 
     if extra_envs:
         env_vars = dict(env_vars, **extra_envs)
@@ -91,7 +93,7 @@ def create_knada_nb_pod_operator(
         on_failure_callback=on_failure,
         name=name,
         cmds=["/bin/bash", "/execute_notebook.sh"],
-        namespace=os.getenv("TEAM") if os.getenv("TEAM") else namespace,
+        namespace=namespace,
         task_id=name,
         startup_timeout_seconds=startup_timeout_seconds,
         is_delete_operator_pod=delete_on_finish,
@@ -186,6 +188,8 @@ def create_knada_python_pod_operator(
         "NLS_LANG": nls_lang
     }
 
+    namespace = os.getenv("TEAM") if os.getenv("TEAM") else namespace
+
     if extra_envs:
         env_vars = dict(env_vars, **extra_envs)
 
@@ -208,7 +212,7 @@ def create_knada_python_pod_operator(
         startup_timeout_seconds=startup_timeout_seconds,
         name=name,
         cmds=["/bin/bash", "/execute_python.sh"],
-        namespace=os.getenv("TEAM") if os.getenv("TEAM") else namespace,
+        namespace=namespace,
         task_id=name,
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_PYTHON_POD_OP_IMAGE",
