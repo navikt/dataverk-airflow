@@ -14,7 +14,6 @@ def create_email_notification(email: Union[List[str], str], name: str, namespace
                 subject=f"Airflow task {name} error",
                 html_content=f"<p> Airflow task {name} feiler i namespace {namespace} "
                 f"kl. {datetime.now().isoformat()}. "
-                f"Logger: {os.environ['AIRFLOW__WEBSERVER__BASE_URL']} </p>",
                 dag=dag,
             )
 
@@ -25,7 +24,6 @@ def create_slack_notification(slack_channel: str, name: str, namespace: str):
         http_conn_id=None,
         webhook_token=os.environ["SLACK_TOKEN"],
         message=f"@here DAG {name} feilet i namespace {namespace} kl. {datetime.now().isoformat()}. "
-                f'Logger: {os.environ["AIRFLOW__WEBSERVER__BASE_URL"]}',
         channel=slack_channel,
         link_names=True,
         icon_emoji=":sadpanda:",
