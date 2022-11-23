@@ -70,7 +70,7 @@ def create_knada_nb_pod_operator(
         "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"]
     }
     
-    namespace = "team-"+os.getenv("TEAM") if os.getenv("TEAM") else namespace
+    namespace = namespace if namespace else os.getenv("NAMESPACE")
 
     if extra_envs:
         env_vars = dict(env_vars, **extra_envs)
@@ -188,7 +188,7 @@ def create_knada_python_pod_operator(
         "NLS_LANG": nls_lang
     }
 
-    namespace = "team-"+os.getenv("TEAM") if os.getenv("TEAM") else namespace
+    namespace = namespace if namespace else os.getenv("NAMESPACE")
 
     if extra_envs:
         env_vars = dict(env_vars, **extra_envs)
