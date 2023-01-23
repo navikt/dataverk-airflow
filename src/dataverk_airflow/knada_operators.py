@@ -5,8 +5,10 @@ from pathlib import Path
 from typing import Callable
 
 from airflow import DAG
-from airflow.kubernetes.volume import Volume
-from airflow.kubernetes.volume_mount import VolumeMount
+from kubernetes.client.models.V1Volume import V1Volume
+from kubernetes.client.models.V1SecretVolumeSource import V1SecretVolumeSource
+from kubernetes.client.models.V1ConfigMapVolumeSource import V1ConfigMapVolumeSource
+from kubernetes.client.models.V1VolumeMount import V1VolumeMount
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
 from dataverk_airflow.init_containers import create_git_clone_init_container
@@ -102,10 +104,13 @@ def create_knada_nb_pod_operator(
         env_vars=env_vars,
         do_xcom_push=do_xcom_push,
         volume_mounts=[
-            VolumeMount(
-                name="dags-data", mount_path=POD_WORKSPACE_DIR, sub_path=None, read_only=False
+            V1VolumeMount(
+                name="dags-data",
+                mount_path=POD_WORKSPACE_DIR,
+                sub_path=None,
+                read_only=False
             ),
-            VolumeMount(
+            V1VolumeMount(
                 name="ca-bundle-pem",
                 mount_path=CA_BUNDLE_PATH,
                 read_only=True,
@@ -114,24 +119,22 @@ def create_knada_nb_pod_operator(
         ],
         service_account_name=os.getenv("TEAM", "airflow"),
         volumes=[
-            Volume(name="dags-data", configs={}),
-            Volume(
-                name="airflow-git-secret",
-                configs={
-                    "secret": {
-                        "defaultMode": 448,
-                        "secretName": os.getenv("K8S_GIT_CLONE_SECRET", "github-app-secret"),
-                    }
-                },
+            V1Volume(
+                name="dags-data"
             ),
-            Volume(
+            V1Volume(
+                name="airflow-git-secret",
+                secret=V1SecretVolumeSource(
+                    default_mode=448,
+                    secret_name: os.getenv("K8S_GIT_CLONE_SECRET", "github-app-secret"),
+                )
+            ),
+            V1Volume(
                 name="ca-bundle-pem",
-                configs={
-                    "configMap": {
-                        "defaultMode": 420,
-                        "name": "ca-bundle-pem"
-                    }
-                }
+                config_map=V1ConfigMapVolumeSource(
+                    default_mode=420,
+                    name="ca-bundle-pem",
+                )
             ),
         ],
         resources=resources,
@@ -219,10 +222,13 @@ def create_knada_python_pod_operator(
                         "ghcr.io/navikt/knada-airflow:2022-05-25-bd8c92b"),
         env_vars=env_vars,
         volume_mounts=[
-            VolumeMount(
-                name="dags-data", mount_path=POD_WORKSPACE_DIR, sub_path=None, read_only=False
+            V1VolumeMount(
+                name="dags-data",
+                mount_path=POD_WORKSPACE_DIR,
+                sub_path=None,
+                read_only=False
             ),
-            VolumeMount(
+            V1VolumeMount(
                 name="ca-bundle-pem",
                 mount_path=CA_BUNDLE_PATH,
                 read_only=True,
@@ -231,24 +237,22 @@ def create_knada_python_pod_operator(
         ],
         service_account_name=os.getenv("TEAM", "airflow"),
         volumes=[
-            Volume(name="dags-data", configs={}),
-            Volume(
-                name="airflow-git-secret",
-                configs={
-                    "secret": {
-                        "defaultMode": 448,
-                        "secretName": os.getenv("K8S_GIT_CLONE_SECRET", "github-app-secret"),
-                    }
-                },
+            V1Volume(
+                name="dags-data"
             ),
-            Volume(
+            V1Volume(
+                name="airflow-git-secret",
+                secret=V1SecretVolumeSource(
+                    default_mode=448,
+                    secret_name: os.getenv("K8S_GIT_CLONE_SECRET", "github-app-secret"),
+                )
+            ),
+            V1Volume(
                 name="ca-bundle-pem",
-                configs={
-                    "configMap": {
-                        "defaultMode": 420,
-                        "name": "ca-bundle-pem"
-                    }
-                }
+                config_map=V1ConfigMapVolumeSource(
+                    default_mode=420,
+                    name="ca-bundle-pem",
+                )
             ),
         ],
         resources=resources,
