@@ -5,10 +5,7 @@ from pathlib import Path
 from typing import Callable
 
 from airflow import DAG
-from kubernetes.client.models.V1Volume import V1Volume
-from kubernetes.client.models.V1SecretVolumeSource import V1SecretVolumeSource
-from kubernetes.client.models.V1ConfigMapVolumeSource import V1ConfigMapVolumeSource
-from kubernetes.client.models.V1VolumeMount import V1VolumeMount
+from kubernetes.client.models import V1Volume, V1SecretVolumeSource, V1ConfigMapVolumeSource, V1VolumeMount
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
 from dataverk_airflow.init_containers import create_git_clone_init_container
@@ -126,7 +123,7 @@ def create_knada_nb_pod_operator(
                 name="airflow-git-secret",
                 secret=V1SecretVolumeSource(
                     default_mode=448,
-                    secret_name: os.getenv("K8S_GIT_CLONE_SECRET", "github-app-secret"),
+                    secret_name=os.getenv("K8S_GIT_CLONE_SECRET", "github-app-secret"),
                 )
             ),
             V1Volume(
@@ -244,7 +241,7 @@ def create_knada_python_pod_operator(
                 name="airflow-git-secret",
                 secret=V1SecretVolumeSource(
                     default_mode=448,
-                    secret_name: os.getenv("K8S_GIT_CLONE_SECRET", "github-app-secret"),
+                    secret_name=os.getenv("K8S_GIT_CLONE_SECRET", "github-app-secret"),
                 )
             ),
             V1Volume(
