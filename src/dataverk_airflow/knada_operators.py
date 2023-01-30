@@ -7,6 +7,7 @@ from typing import Callable
 from airflow import DAG
 from kubernetes.client.models import V1Volume, V1SecretVolumeSource, V1ConfigMapVolumeSource, V1VolumeMount
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from kubernetes import client
 
 from dataverk_airflow.init_containers import create_git_clone_init_container
 from dataverk_airflow.notifications import create_email_notification, create_slack_notification
@@ -26,7 +27,7 @@ def create_knada_nb_pod_operator(
     slack_channel: str = None,
     branch: str = "master",
     log_output: bool = False,
-    resources: dict = None,
+    resources: client.V1ResourceRequirements = None,
     retries: int = 3,
     extra_envs: dict = None,
     delete_on_finish: bool = True,
@@ -134,7 +135,7 @@ def create_knada_nb_pod_operator(
                 )
             ),
         ],
-        resources=resources,
+        container_resources=resources,
         retries=retries,
         on_success_callback=on_success_callback,
         retry_delay=retry_delay,
@@ -150,7 +151,7 @@ def create_knada_python_pod_operator(
     email: str = None,
     slack_channel: str = None,
     branch: str = "master",
-    resources: dict = None,
+    resources: client.V1ResourceRequirements = None,
     retries: int = 3,
     extra_envs: dict = None,
     delete_on_finish: bool = True,
@@ -252,7 +253,7 @@ def create_knada_python_pod_operator(
                 )
             ),
         ],
-        resources=resources,
+        container_resources=resources,
         retries=retries,
         retry_delay=retry_delay,
         do_xcom_push=do_xcom_push,
