@@ -36,6 +36,7 @@ def create_knada_nb_pod_operator(
     do_xcom_push: bool = False,
     on_success_callback: Callable = None,
     nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8",
+    allowlist: list = [],
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada jupyter notebooks
 
@@ -57,6 +58,7 @@ def create_knada_nb_pod_operator(
     :param do_xcom_push: bool: Whether to push xcom pod output, default False
     :param nls_lang: str: Configure locale and character sets with NLS_LANG environment variable in k8s pod, defaults to Norwegian
     :param on_success_callback: Callable
+    :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
     :return: KubernetesPodOperator
     """
 
@@ -69,7 +71,12 @@ def create_knada_nb_pod_operator(
         "NLS_LANG": nls_lang,
         "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"]
     }
-    
+
+    allowlist_str = "hooks.slack.com"
+
+    if len(allowlist):
+        allowlist_str += "," + ",".join(allowlist)
+
     namespace = namespace if namespace else os.getenv("NAMESPACE")
 
     if extra_envs:
@@ -99,6 +106,11 @@ def create_knada_nb_pod_operator(
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_NOTEBOOK_OP_IMAGE",
                         "ghcr.io/navikt/knada-airflow:2022-10-14-8ec3b2c"),
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist": allowlist_str})
+            )
+        },
         env_vars=env_vars,
         do_xcom_push=do_xcom_push,
         volume_mounts=[
@@ -158,7 +170,8 @@ def create_knada_python_pod_operator(
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=5),
     nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8",
-    do_xcom_push: bool = False
+    do_xcom_push: bool = False,
+    allowlist: list = [],
 ):
     """ Factory function for creating KubernetesPodOperator for executing knada python scripts
 
@@ -178,6 +191,7 @@ def create_knada_python_pod_operator(
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param nls_lang: str: Configure locale and character sets with NLS_LANG environment variable in k8s pod, defaults to Norwegian
     :param do_xcom_push: bool: Enable xcom push of content in file '/airflow/xcom/return.json'
+    :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
     :return: KubernetesPodOperator
     """
 
@@ -189,6 +203,11 @@ def create_knada_python_pod_operator(
         "NLS_LANG": nls_lang,
         "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"]
     }
+
+    allowlist_str = "hooks.slack.com"
+
+    if len(allowlist):
+        allowlist_str += "," + ",".join(allowlist)
 
     namespace = namespace if namespace else os.getenv("NAMESPACE")
 
@@ -218,6 +237,11 @@ def create_knada_python_pod_operator(
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_PYTHON_POD_OP_IMAGE",
                         "ghcr.io/navikt/knada-airflow:2022-05-25-bd8c92b"),
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist": allowlist_str})
+            )
+        },
         env_vars=env_vars,
         volume_mounts=[
             V1VolumeMount(
