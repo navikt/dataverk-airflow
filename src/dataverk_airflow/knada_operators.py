@@ -238,7 +238,7 @@ def create_knada_python_pod_operator(
         task_id=name,
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_PYTHON_POD_OP_IMAGE",
-                        "ghcr.io/navikt/knada-airflow:2022-05-25-bd8c92b"),
+                        "europe-west1-docker.pkg.dev/knada-gcp/knada/airflow:2023-03-08-d3684b7"),
         executor_config={
             "pod_override": client.V1Pod(
                 metadata=client.V1ObjectMeta(annotations={"allowlist": allowlist_str})
