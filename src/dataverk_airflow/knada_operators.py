@@ -106,7 +106,7 @@ def create_knada_nb_pod_operator(
         startup_timeout_seconds=startup_timeout_seconds,
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_NOTEBOOK_OP_IMAGE",
-                        "ghcr.io/navikt/knada-airflow:2022-10-14-8ec3b2c"),
+                        "europe-west1-docker.pkg.dev/knada-gcp/knada/airflow-notebooks:2023-03-08-d3684b7"),
         executor_config={
             "pod_override": client.V1Pod(
                 metadata=client.V1ObjectMeta(annotations={"allowlist": allowlist_str})
