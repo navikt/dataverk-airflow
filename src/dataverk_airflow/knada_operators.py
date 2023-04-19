@@ -31,6 +31,7 @@ def create_knada_nb_pod_operator(
     retries: int = 3,
     extra_envs: dict = None,
     delete_on_finish: bool = True,
+    image: str = None,
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=5),
     do_xcom_push: bool = False,
@@ -53,6 +54,7 @@ def create_knada_nb_pod_operator(
     :param retries: int: Number of retries for task before DAG fails, default 3
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param delete_on_finish: bool: Whether to delete pod on completion
+    :param image: str: Dockerimage the pod should use
     :param startup_timeout_seconds: int: pod startup timeout
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param do_xcom_push: bool: Whether to push xcom pod output, default False
@@ -92,6 +94,9 @@ def create_knada_nb_pod_operator(
                 dag._dag_id, slack_channel, name, namespace)
             slack_notification.execute(context)
 
+    if not image:
+        image = os.getenv("KNADA_PYTHON_POD_OP_IMAGE", "europe-west1-docker.pkg.dev/knada-gcp/knada/airflow:2023-03-08-d3684b7")
+
     return KubernetesPodOperator(
         init_containers=[create_git_clone_init_container(
             repo, branch, POD_WORKSPACE_DIR)],
@@ -105,8 +110,7 @@ def create_knada_nb_pod_operator(
         task_id=name,
         startup_timeout_seconds=startup_timeout_seconds,
         is_delete_operator_pod=delete_on_finish,
-        image=os.getenv("KNADA_NOTEBOOK_OP_IMAGE",
-                        "europe-west1-docker.pkg.dev/knada-gcp/knada/airflow-notebooks:2023-03-08-d3684b7"),
+        image=image,
         executor_config={
             "pod_override": client.V1Pod(
                 metadata=client.V1ObjectMeta(annotations={"allowlist": allowlist_str})
@@ -168,6 +172,7 @@ def create_knada_python_pod_operator(
     retries: int = 3,
     extra_envs: dict = None,
     delete_on_finish: bool = True,
+    image: str = None,
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=5),
     nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8",
@@ -188,6 +193,7 @@ def create_knada_python_pod_operator(
     :param retries: int: Number of retries for task before DAG fails, default 3
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param delete_on_finish: bool: Whether to delete pod on completion
+    :param image: str: Dockerimage the pod should use
     :param startup_timeout_seconds: int: pod startup timeout
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param nls_lang: str: Configure locale and character sets with NLS_LANG environment variable in k8s pod, defaults to Norwegian
@@ -223,6 +229,9 @@ def create_knada_python_pod_operator(
         if slack_channel:
             slack_notification = create_slack_notification(dag._dag_id, slack_channel, name, namespace)
             slack_notification.execute(context)
+            
+    if not image:
+        image = os.getenv("KNADA_PYTHON_POD_OP_IMAGE", "europe-west1-docker.pkg.dev/knada-gcp/knada/airflow:2023-03-08-d3684b7")
 
     return KubernetesPodOperator(
         init_containers=[create_git_clone_init_container(
@@ -237,8 +246,7 @@ def create_knada_python_pod_operator(
         namespace=namespace,
         task_id=name,
         is_delete_operator_pod=delete_on_finish,
-        image=os.getenv("KNADA_PYTHON_POD_OP_IMAGE",
-                        "europe-west1-docker.pkg.dev/knada-gcp/knada/airflow:2023-03-08-d3684b7"),
+        image=image,
         executor_config={
             "pod_override": client.V1Pod(
                 metadata=client.V1ObjectMeta(annotations={"allowlist": allowlist_str})
