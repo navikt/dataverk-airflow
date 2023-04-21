@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Callable
 
 from airflow import DAG
-from kubernetes.client.models import V1Volume, V1SecretVolumeSource, V1ConfigMapVolumeSource, V1VolumeMount
+from kubernetes.client.models import V1Volume, V1SecretVolumeSource, V1ConfigMapVolumeSource, V1VolumeMount, V1EnvVar
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from kubernetes import client
 

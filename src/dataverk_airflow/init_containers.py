@@ -21,6 +21,10 @@ def create_git_clone_init_container(
                 read_only=False,
             ),
         ],
+        security_context=k8s.V1SecurityContext(
+            run_as_group=0,
+            run_as_user="airflow"
+        ),
         command=["/bin/sh", "-c"],
-        args=[f"/git-clone.sh {repo} {branch} {mount_path}; chmod -R 777 {mount_path}"],
+        args=[f"/git-clone.sh {repo} {branch} {mount_path}"],
     )
