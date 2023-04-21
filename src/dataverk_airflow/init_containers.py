@@ -9,7 +9,7 @@ def create_git_clone_init_container(
 ):
     return k8s.V1Container(
         name="clone-repo",
-        image=os.getenv("CLONE_REPO_IMAGE", "europe-west1-docker.pkg.dev/knada-gcp/knada/git-sync:2023-03-08-80342e3"),
+        image=os.getenv("CLONE_REPO_IMAGE", "europe-west1-docker.pkg.dev/knada-gcp/knada/git-sync:2023-03-09-bfc0f3e"),
         volume_mounts=[
             k8s.V1VolumeMount(
                 name="dags-data", mount_path=mount_path, sub_path=None, read_only=False
