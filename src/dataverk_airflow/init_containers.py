@@ -22,7 +22,7 @@ def create_git_clone_init_container(
             ),
         ],
         security_context=k8s.V1SecurityContext(
-            run_as_group=0,
+            run_as_group="0",
             run_as_user="airflow"
         ),
         command=["/bin/sh", "-c"],
