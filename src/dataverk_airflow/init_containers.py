@@ -20,12 +20,5 @@ def create_git_clone_init_container(
             ),
         ],
         command=["/bin/sh", "-c"],
-        args=[f"/git-clone.sh {repo} {branch} {mount_path}"],
-        security_context=k8s.V1SecurityContext(
-            fs_group=0,
-            run_as_user=50000,
-            seccomp_profile=k8s.V1SeccompProfile(
-                type="RuntimeDefault"
-            )
-        ),
+        args=[f"/git-clone.sh {repo} {branch} {mount_path}"]
     )
