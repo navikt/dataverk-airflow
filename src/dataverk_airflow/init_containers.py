@@ -18,13 +18,9 @@ def create_git_clone_init_container(
                 name="airflow-git-secret",
                 mount_path="/keys",
                 sub_path=None,
-                read_only=False,
+                read_only=True,
             ),
         ],
-        security_context=k8s.V1SecurityContext(
-            run_as_group=0,
-            run_as_user=50000
-        ),
         command=["/bin/sh", "-c"],
         args=[f"/git-clone.sh {repo} {branch} {mount_path}"],
     )
