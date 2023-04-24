@@ -18,7 +18,7 @@ def create_git_clone_init_container(
                 name="airflow-git-secret",
                 mount_path="/keys",
                 sub_path=None,
-                read_only=True,
+                read_only=False,
             ),
         ],
         command=["/bin/sh", "-c"],
