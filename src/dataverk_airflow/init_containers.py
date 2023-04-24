@@ -16,9 +16,7 @@ def create_git_clone_init_container(
             ),
             k8s.V1VolumeMount(
                 name="airflow-git-secret",
-                mount_path="/keys",
-                sub_path=None,
-                read_only=False,
+                mount_path="/keys"
             ),
         ],
         command=["/bin/sh", "-c"],
