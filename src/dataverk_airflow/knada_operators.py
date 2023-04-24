@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Callable
 
 from airflow import DAG
-from kubernetes.client.models import V1Volume, V1SecretVolumeSource, V1ConfigMapVolumeSource, V1VolumeMount, V1EnvVar, V1SecurityContext, V1SeccompProfile
+from kubernetes.client.models import V1Volume, V1SecretVolumeSource, V1ConfigMapVolumeSource, V1VolumeMount
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from kubernetes import client
 
@@ -155,14 +155,7 @@ def create_knada_nb_pod_operator(
         container_resources=resources,
         retries=retries,
         on_success_callback=on_success_callback,
-        retry_delay=retry_delay,
-        security_context=V1SecurityContext(
-            run_as_group=0,
-            run_as_user=50000,
-            seccomp_profile=V1SeccompProfile(
-                type="RuntimeDefault"
-            )
-        ),
+        retry_delay=retry_delay
     )
 
 
@@ -297,12 +290,5 @@ def create_knada_python_pod_operator(
         container_resources=resources,
         retries=retries,
         retry_delay=retry_delay,
-        do_xcom_push=do_xcom_push,
-        security_context=V1SecurityContext(
-            run_as_group=0,
-            run_as_user=50000,
-            seccomp_profile=V1SeccompProfile(
-                type="RuntimeDefault"
-            )
-        ),
+        do_xcom_push=do_xcom_push
     )
