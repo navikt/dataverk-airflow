@@ -158,7 +158,6 @@ def create_knada_nb_pod_operator(
         retry_delay=retry_delay,
         security_context=V1PodSecurityContext(
             fs_group=0,
-            run_as_user=50000,
             seccomp_profile=V1SeccompProfile(
                 type="RuntimeDefault"
             )
@@ -300,7 +299,6 @@ def create_knada_python_pod_operator(
         do_xcom_push=do_xcom_push,
         security_context=V1PodSecurityContext(
             fs_group=0,
-            run_as_user=50000,
             seccomp_profile=V1SeccompProfile(
                 type="RuntimeDefault"
             )
