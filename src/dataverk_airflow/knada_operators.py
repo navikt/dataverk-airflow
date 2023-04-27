@@ -92,7 +92,7 @@ def create_knada_nb_pod_operator(
         if slack_channel:
             slack_notification = create_slack_notification(
                 dag._dag_id, slack_channel, name, namespace, dag)
-            slack_notification.execute(context)
+            slack_notification.execute()
 
     if not image:
         image = os.getenv("KNADA_PYTHON_POD_OP_IMAGE", "europe-west1-docker.pkg.dev/knada-gcp/knada/airflow:2023-03-08-d3684b7")
