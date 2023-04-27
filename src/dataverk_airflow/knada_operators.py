@@ -91,7 +91,7 @@ def create_knada_nb_pod_operator(
 
         if slack_channel:
             slack_notification = create_slack_notification(
-                dag._dag_id, slack_channel, name, namespace)
+                dag._dag_id, slack_channel, name, namespace, dag)
             slack_notification.execute(context)
 
     if not image:
@@ -233,7 +233,7 @@ def create_knada_python_pod_operator(
             send_email.execute(context)
 
         if slack_channel:
-            slack_notification = create_slack_notification(dag._dag_id, slack_channel, name, namespace)
+            slack_notification = create_slack_notification(dag._dag_id, slack_channel, name, namespace, dag)
             slack_notification.execute(context)
             
     if not image:
