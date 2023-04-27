@@ -25,6 +25,4 @@ def create_slack_notification(dag_id: str, slack_channel: str, name: str, namesp
             token=os.environ["SLACK_TOKEN"],
             text=f"@here Airflow task {name} i DAG {dag_id} feilet i namespace {namespace} kl. {datetime.now().isoformat()}.",
             channel=slack_channel,
-            link_names=True,
-            icon_emoji=":sadpanda:",
     )
