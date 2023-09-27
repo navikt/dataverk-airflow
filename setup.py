@@ -7,18 +7,18 @@ with open('requirements.txt') as f:
 
 setup(
     name='dataverk-airflow',
-    version='0.0.1',
+    version='1.0.0',
+    readme = "README.md"
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     install_requires=install_requires,
     # metadata to display on PyPI
     author="NAV IKT",
     url="https://github.com/navikt/dataverk-airflow",
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'DEVELOPMENT STATUS :: 5 - PRODUCTION/STABLE',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7'
+        'Programming Language :: Python :: 3'
     ],
 )
