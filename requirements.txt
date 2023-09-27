@@ -1,2 +1,2 @@
-kubernetes==26.1.0
+kubernetes==28.1.0
 pathlib==1.0.1
