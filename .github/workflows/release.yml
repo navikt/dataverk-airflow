@@ -10,15 +10,15 @@ jobs:
     container:
       image: python:3.8
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
-      - name: Update version
-        run: |
-          export VERSION=$(echo ${{ github.ref }} | sed "s/refs\/tags\///")
-          sed -i "s~version=.*~version='$VERSION',~g" setup.py
-      - name: Install twine
-        run: pip3 install twine --user
+      - uses: actions/checkout@v4
+
+      - name: Set version
+        run: sed -i "s~version=.*~version='$(echo ${{ github.ref }} | sed "s/refs\/tags\///"),~g" setup.py
+
+      - run: pip3 install twine --user
+
       - name: Build release
         run: python3 setup.py sdist bdist_wheel
-      - name: publish pypi
+
+      - name: Publish to PyPi
         run: python -m twine upload -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} dist/*
