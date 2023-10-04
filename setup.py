@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-from setuptools import setup, find_packages
-
+from setuptools import find_packages, setup
 
 with open('requirements.txt') as f:
     install_requires = f.read().strip().split('\n')
 
 setup(
     name='dataverk-airflow',
-    version='1.0.0',
-    readme = "README.md"
+    version='0.4.37',
+    readme = "README.md",
     packages=find_packages('src'),
     package_dir={'': 'src'},
     python_requires='>=3.8',
