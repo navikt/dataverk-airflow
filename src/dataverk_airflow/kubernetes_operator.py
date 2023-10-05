@@ -66,7 +66,7 @@ def kubernetes_operator(dag, repo, branch, name, email, slack_channel, log_outpu
         slack_notification.execute()
 
         if not image:
-                raise Exception("image is missing value")
+            image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")
 
     return KubernetesPodOperator(
         dag=dag,

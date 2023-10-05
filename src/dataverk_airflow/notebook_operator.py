@@ -61,9 +61,6 @@ def notebook_operator(
     if extra_envs:
         env_vars = dict(env_vars, **extra_envs)
 
-    if not image:
-        image = os.getenv("KNADA_AIRFLOW_NOTEBOOK_IMAGE")
-
     cmds = ["/bin/bash", "/execute_notebook.sh"]
 
     return kubernetes_operator(dag, repo, branch, name, email, slack_channel, log_output, resources, allowlist, startup_timeout_seconds, retries, retry_delay, on_success_callback, delete_on_finish, image, extra_envs, do_xcom_push, cmds)

@@ -52,8 +52,6 @@ def python_operator(
     :return: KubernetesPodOperator
     """
 
-    if not image:
-        image = os.getenv("KNADA_AIRFLOW_PYTHON_IMAGE")
 
     cmds = ["/bin/bash", "/execute_python.sh"]
   
