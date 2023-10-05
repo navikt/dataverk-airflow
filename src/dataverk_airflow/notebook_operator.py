@@ -29,7 +29,7 @@ def notebook_operator(
     do_xcom_push: bool = False,
     on_success_callback: Callable | None = None,
 ):
-    """ Factory function for creating KubernetesPodOperator for executing Jupyter notebooks
+    """Operator for executing Jupyter notebooks.
 
     :param dag: DAG: owner DAG
     :param name: str: Name of task
@@ -66,7 +66,4 @@ def notebook_operator(
 
     cmds = ["/bin/bash", "/execute_notebook.sh"]
 
-    return kubernetes_operator(repo, branch, dag, name, email, slack_channel,
-                               resources, allowlist, startup_timeout_seconds, retries,
-                               retry_delay, on_success_callback, delete_on_finish,
-                               image, env_vars, do_xcom_push, cmds)
+    return kubernetes_operator(dag, repo, branch, name, email, slack_channel, log_output, resources, allowlist, startup_timeout_seconds, retries, retry_delay, on_success_callback, delete_on_finish, image, extra_envs, do_xcom_push, cmds)

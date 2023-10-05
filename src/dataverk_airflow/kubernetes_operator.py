@@ -20,38 +20,37 @@ from dataverk_airflow.notifications import (
 CA_BUNDLE_PATH = "/etc/pki/tls/certs/ca-bundle.crt"
 POD_WORKSPACE_DIR = "/workspace"
 
-def kubernetes_operator(repo,
-                        branch,
-                        dag,
-                        name,
-                        email,
-                        slack_channel,
-                        resources,
-                        allowlist,
-                        log_output,
-                        on_failure,
-                        startup_timeout_seconds,
-                        retries,
-                        retry_delay,
-                        on_success_callback,
-                        delete_on_finish,
-                        image,
-                        env_vars,
-                        do_xcom_push,
-                        cmds):
 
-        """ Factory function for creating KubernetesPodOperator
-        """
+def kubernetes_operator(dag, repo, branch, name, email, slack_channel, log_output, resources, allowlist, startup_timeout_seconds, retries, retry_delay, on_success_callback, delete_on_finish, image, extra_envs, do_xcom_push, cmds):
+    """Simplified operator for creating KubernetesPodOperator.
 
-        env_vars = {
-                "LOG_ENABLED": "true" if log_output else "false",
-                "TZ": os.environ["TZ"], # burde dette vært Norway?
-                "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
-                "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH, 
-                "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"]
-        }
+    :param dag: DAG: owner DAG
+    :param name: str: Name of task
+    :param repo: str: Github repo
+    :param email: str: Email of owner
+    :param slack_channel: Name of Slack channel, default None (no Slack notification)
+    :param branch: str: Branch in repo, default "main"
+    :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
+    :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
+    :param log_output: bool: Write logs from notebook to stdout, default False
+    :param retries: int: Number of retries for task before DAG fails, default 3
+    :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
+    :param delete_on_finish: bool: Whether to delete pod on completion
+    :param image: str: Dockerimage the pod should use
+    :param startup_timeout_seconds: int: pod startup timeout
+    :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
+    :param do_xcom_push: bool: Enable xcom push of content in file '/airflow/xcom/return.json', default False
+    :param on_success_callback: Callable
 
-        namespace = os.getenv("NAMESPACE")
+    :return: KubernetesPodOperator
+    """
+    env_vars = {
+        "LOG_ENABLED": "true" if log_output else "false",
+        "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
+        "TZ": os.environ["TZ"],
+        "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH,
+        "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"]
+    }
 
     namespace = os.getenv("NAMESPACE", "unknown namespace")
 
