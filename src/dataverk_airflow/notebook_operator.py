@@ -27,7 +27,6 @@ def notebook_operator(
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=5),
     do_xcom_push: bool = False,
-    nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8",
     on_success_callback: Callable = None,
 ):
     """ Factory function for creating KubernetesPodOperator for executing Jupyter notebooks
@@ -49,7 +48,6 @@ def notebook_operator(
     :param startup_timeout_seconds: int: pod startup timeout
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param do_xcom_push: bool: Enable xcom push of content in file '/airflow/xcom/return.json', default False
-    :param nls_lang: str: Configure locale and character sets with NLS_LANG environment variable in k8s pod, defaults to Norwegian
     :param on_success_callback: Callable
 
     :return: KubernetesPodOperator

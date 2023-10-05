@@ -33,7 +33,6 @@ def kubernetes_operator(repo,
                         startup_timeout_seconds,
                         retries,
                         retry_delay,
-                        nls_lang,
                         on_success_callback,
                         delete_on_finish,
                         image,
@@ -46,8 +45,8 @@ def kubernetes_operator(repo,
 
         env_vars = {
                 "LOG_ENABLED": "true" if log_output else "false",
-                "NLS_LANG": nls_lang,
                 "TZ": os.environ["TZ"], # burde dette vært Norway?
+                "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
                 "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH, 
                 "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"]
         }
