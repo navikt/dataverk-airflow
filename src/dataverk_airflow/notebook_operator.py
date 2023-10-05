@@ -6,7 +6,7 @@ from typing import Callable
 from airflow import DAG
 from kubernetes import client
 
-from dataverk_airflow import kubernetes_operator
+from dataverk_airflow.kubernetes_operator import kubernetes_operator
 
 
 def notebook_operator(
