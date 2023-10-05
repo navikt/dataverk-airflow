@@ -3,12 +3,12 @@ import os
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from kubernetes import client
 from kubernetes.client.models import (
-        V1ConfigMapVolumeSource,
-        V1PodSecurityContext,
-        V1SeccompProfile,
-        V1SecretVolumeSource,
-        V1Volume,
-        V1VolumeMount,
+    V1ConfigMapVolumeSource,
+    V1PodSecurityContext,
+    V1SeccompProfile,
+    V1SecretVolumeSource,
+    V1Volume,
+    V1VolumeMount,
 )
 
 import dataverk_airflow.git_clone as git_clone
@@ -69,72 +69,74 @@ def kubernetes_operator(repo,
         if not image:
                 raise Exception("image is missing value")
 
-        return KubernetesPodOperator(
-                dag=dag,
-                on_failure_callback=on_failure,
-                name=name,
-                task_id=name,
-                startup_timeout_seconds=startup_timeout_seconds,
-                is_delete_operator_pod=delete_on_finish,
-                image=image,
-                env_vars=env_vars,
-                do_xcom_push=do_xcom_push,
-                container_resources=resources,
-                retries=retries,
-                on_success_callback=on_success_callback,
-                retry_delay=retry_delay,
-                executor_config={
-                        "pod_override": client.V1Pod(
-                                metadata=client.V1ObjectMeta(annotations={"allowlist": allowlist})
-                        )
-                },
-                init_containers=[
-                        git_clone.container(repo, branch, POD_WORKSPACE_DIR)
-                ],
-                image_pull_secrets=os.environ["K8S_IMAGE_PULL_SECRETS"],
-                labels={
-                        "component": "worker",
-                        "release": "airflow"
-                },
-                cmds=cmds,
-                volume_mounts=[
-                        V1VolumeMount(
-                                name="dags-data",
-                                mount_path=POD_WORKSPACE_DIR,
-                                sub_path=None,
-                                read_only=False
-                        ),
-                        V1VolumeMount(
-                                name="ca-bundle-pem",
-                                mount_path=CA_BUNDLE_PATH,
-                                read_only=True,
-                                sub_path="ca-bundle.pem"
-                        )
-                ],
-                service_account_name=os.getenv("TEAM", "airflow"),
-                volumes=[
-                        V1Volume(
-                                name="dags-data"
-                        ),
-                        V1Volume(
-                                name="airflow-git-secret",
-                                secret=V1SecretVolumeSource(
-                                        default_mode=448,
-                                        secret_name=os.getenv("K8S_GIT_CLONE_SECRET", "github-app-secret"),
-                                )
-                        ),
-                        V1Volume(
-                                name="ca-bundle-pem",
-                                config_map=V1ConfigMapVolumeSource(
-                                        default_mode=420,
-                                        name="ca-bundle-pem",
-                                )
-                        ),
-                ],
-                security_context=V1PodSecurityContext(
-                        fs_group=0,
-                        seccomp_profile=V1SeccompProfile(
-                                type="RuntimeDefault"
-                        )
-                ),
-        )
+    return KubernetesPodOperator(
+        dag=dag,
+        on_failure_callback=on_failure,
+        name=name,
+        task_id=name,
+        startup_timeout_seconds=startup_timeout_seconds,
+        is_delete_operator_pod=delete_on_finish,
+        image=image,
+        env_vars=env_vars,
+        do_xcom_push=do_xcom_push,
+        container_resources=resources,
+        retries=retries,
+        on_success_callback=on_success_callback,
+        retry_delay=retry_delay,
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(
+                    annotations={"allowlist": allowlist})
+            )
+        },
+        init_containers=[
+            git_clone.container(repo, branch, POD_WORKSPACE_DIR)
+        ],
+        image_pull_secrets=os.environ["K8S_IMAGE_PULL_SECRETS"],
+        labels={
+            "component": "worker",
+            "release": "airflow"
+        },
+        cmds=cmds,
+        volume_mounts=[
+            V1VolumeMount(
+                name="dags-data",
+                mount_path=POD_WORKSPACE_DIR,
+                sub_path=None,
+                read_only=False
+            ),
+            V1VolumeMount(
+                name="ca-bundle-pem",
+                mount_path=CA_BUNDLE_PATH,
+                read_only=True,
+                sub_path="ca-bundle.pem"
+            )
+        ],
+        service_account_name=os.getenv("TEAM", "airflow"),
+        volumes=[
+            V1Volume(
+                name="dags-data"
+            ),
+            V1Volume(
+                name="airflow-git-secret",
+                secret=V1SecretVolumeSource(
+                    default_mode=448,
+                    secret_name=os.getenv(
+                        "K8S_GIT_CLONE_SECRET", "github-app-secret"),
+                )
+            ),
+            V1Volume(
+                name="ca-bundle-pem",
+                config_map=V1ConfigMapVolumeSource(
+                    default_mode=420,
+                    name="ca-bundle-pem",
+                )
+            ),
+        ],
+        security_context=V1PodSecurityContext(
+            fs_group=0,
+            seccomp_profile=V1SeccompProfile(
+                type="RuntimeDefault"
+            )
+        ),
+    )
