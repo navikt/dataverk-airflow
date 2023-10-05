@@ -1,6 +1,4 @@
-import os
 from datetime import timedelta
-from pathlib import Path
 from typing import Callable
 
 from airflow import DAG
@@ -52,15 +50,6 @@ def notebook_operator(
 
     :return: KubernetesPodOperator
     """
-
-    env_vars = {
-        "NOTEBOOK_PATH": f"/workspace/{Path(nb_path).parent}",
-        "NOTEBOOK_NAME": Path(nb_path).name,
-    }
-
-    if extra_envs:
-        env_vars = dict(env_vars, **extra_envs)
-
-    cmds = ["/bin/bash", "/execute_notebook.sh"]
+    cmds = ["/bin/bash", "/execute_notebook.sh", nb_path]
 
     return kubernetes_operator(dag, repo, branch, name, email, slack_channel, log_output, resources, allowlist, startup_timeout_seconds, retries, retry_delay, on_success_callback, delete_on_finish, image, extra_envs, do_xcom_push, cmds)

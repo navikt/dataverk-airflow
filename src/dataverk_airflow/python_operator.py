@@ -52,7 +52,6 @@ def python_operator(
     :return: KubernetesPodOperator
     """
 
+    cmds = ["/bin/bash", "/execute_python.sh", script_path]
 
-    cmds = ["/bin/bash", "/execute_python.sh"]
-  
     return kubernetes_operator(dag, repo, branch, name, email, slack_channel, log_output, resources, allowlist, startup_timeout_seconds, retries, retry_delay, on_success_callback, delete_on_finish, image, extra_envs, do_xcom_push, cmds)
