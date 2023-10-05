@@ -1,5 +1,8 @@
 import os
+from datetime import timedelta
+from typing import Callable
 
+from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from kubernetes import client
 from kubernetes.client.models import (
@@ -21,29 +24,54 @@ CA_BUNDLE_PATH = "/etc/pki/tls/certs/ca-bundle.crt"
 POD_WORKSPACE_DIR = "/workspace"
 
 
-def kubernetes_operator(dag, repo, branch, name, email, slack_channel, log_output, resources, allowlist, startup_timeout_seconds, retries, retry_delay, on_success_callback, delete_on_finish, image, extra_envs, do_xcom_push, cmds):
+def kubernetes_operator(dag: DAG,
+                        name: str,
+                        repo: str,
+                        cmds: str,
+                        image: str,
+                        branch: str = "main",
+                        email: str | None = None,
+                        slack_channel: str | None = None,
+                        extra_envs: dict | None = None,
+                        allowlist: list = [],
+                        resources: client.V1ResourceRequirements | None = None,
+                        log_output: bool = False,
+                        startup_timeout_seconds: int = 360,
+                        retries: int = 3,
+                        delete_on_finish: bool = True,
+                        retry_delay: timedelta = timedelta(seconds=5),
+                        do_xcom_push: bool = False,
+                        on_success_callback: Callable | None = None,
+                        ):
     """Simplified operator for creating KubernetesPodOperator.
 
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
+    :param cmds: str: Command to run in pod
+    :param image: str: Dockerimage the pod should use
+    :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
     :param slack_channel: Name of Slack channel, default None (no Slack notification)
-    :param branch: str: Branch in repo, default "main"
-    :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
-    :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
-    :param log_output: bool: Write logs from notebook to stdout, default False
-    :param retries: int: Number of retries for task before DAG fails, default 3
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
-    :param delete_on_finish: bool: Whether to delete pod on completion
-    :param image: str: Dockerimage the pod should use
+    :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
+    :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
+    :param log_output: bool: Write logs from notebook to stdout, default False
     :param startup_timeout_seconds: int: pod startup timeout
+    :param retries: int: Number of retries for task before DAG fails, default 3
+    :param delete_on_finish: bool: Whether to delete pod on completion
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param do_xcom_push: bool: Enable xcom push of content in file '/airflow/xcom/return.json', default False
     :param on_success_callback: Callable
 
     :return: KubernetesPodOperator
     """
+    if cmds is None:
+        raise Exception("cmds cannot be None")
+
+    if image is None:
+        raise Exception("image cannot be None")
+
     env_vars = {
         "LOG_ENABLED": "true" if log_output else "false",
         "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
@@ -59,14 +87,11 @@ def kubernetes_operator(dag, repo, branch, name, email, slack_channel, log_outpu
             send_email = create_email_notification(dag, email, name, namespace)
             send_email.execute(context)
 
-    if slack_channel:
-        allowlist += "hooks.slack.com"
-        slack_notification = create_slack_notification(
-            dag, slack_channel, name, namespace)
-        slack_notification.execute()
-
-        if not image:
-            image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")
+        if slack_channel:
+            allowlist.append("hooks.slack.com")
+            slack_notification = create_slack_notification(
+                dag, slack_channel, name, namespace)
+            slack_notification.execute()
 
     return KubernetesPodOperator(
         dag=dag,
