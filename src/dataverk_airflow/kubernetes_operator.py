@@ -53,18 +53,18 @@ def kubernetes_operator(repo,
 
         namespace = os.getenv("NAMESPACE")
 
-        # TODO Burde e-post/Slack vært en egen operator som de må velge å kalle på?
-        # Ikke bygge det inn i denne operatoren?
-        def on_failure(context):
-                if email:
-                        send_email = create_email_notification(dag._dag_id, email, name, namespace, dag)
-                        send_email.execute(context)
+    namespace = os.getenv("NAMESPACE", "unknown namespace")
 
-        if slack_channel:
-            allowlist += "hooks.slack.com"
-            slack_notification = create_slack_notification(
-                dag._dag_id, slack_channel, name, namespace, dag)
-            slack_notification.execute()
+    def on_failure(context):
+        if email:
+            send_email = create_email_notification(dag, email, name, namespace)
+            send_email.execute(context)
+
+    if slack_channel:
+        allowlist += "hooks.slack.com"
+        slack_notification = create_slack_notification(
+            dag, slack_channel, name, namespace)
+        slack_notification.execute()
 
         if not image:
                 raise Exception("image is missing value")
