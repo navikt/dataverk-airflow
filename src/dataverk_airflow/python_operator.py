@@ -33,7 +33,7 @@ def python_operator(
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
-    :param script_path: str: Path to python script in repo
+    :param script_path: str: Path to script in repo
     :param email: str: Email of owner
     :param slack_channel: Name of Slack channel, default None (no Slack notification)
     :param branch: str: Branch in repo, default "main"
@@ -51,7 +51,13 @@ def python_operator(
 
     :return: KubernetesPodOperator
     """
+    if not image:
+        image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")
 
-    cmds = ["/bin/bash", "/execute_python.sh", script_path]
+    cmds = ["/bin/bash", "/execute_script.sh", script_path]
 
-    return kubernetes_operator(dag, repo, branch, name, email, slack_channel, log_output, resources, allowlist, startup_timeout_seconds, retries, retry_delay, on_success_callback, delete_on_finish, image, extra_envs, do_xcom_push, cmds)
+    return kubernetes_operator(cmds, image, dag, name, repo, branch, email,
+                               slack_channel, extra_envs, allowlist, resources,
+                               log_output, startup_timeout_seconds, retries,
+                               retry_delay, on_success_callback,
+                               delete_on_finish, do_xcom_push)
