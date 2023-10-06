@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "dataverk-airflow"
+version = "0.4.37"
+description = ""
+authors = ["NAV", "NADA"]
+readme = "README.md"
+packages = [{include = "dataverk_airflow"}]
+repository = "https://github.com/navikt/dataverk-airflow"
+classifiers = [
+  'DEVELOPMENT STATUS :: 5 - PRODUCTION/STABLE',
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+kubernetes = "^28.1.0"
+pathlib = "^1.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
