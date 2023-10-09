@@ -3,7 +3,7 @@ import os
 import kubernetes.client as k8s
 
 
-def container(
+def git_clone(
     repo: str,
     branch: str,
     mount_path: str

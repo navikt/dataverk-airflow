@@ -3,7 +3,9 @@ from datetime import timedelta
 from typing import Callable
 
 from airflow import DAG
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+
+import airflow.providers.cncf.kubernetes.operators.pod.KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from kubernetes import client
 from kubernetes.client.models import (
     V1ConfigMapVolumeSource,
@@ -14,7 +16,7 @@ from kubernetes.client.models import (
     V1VolumeMount,
 )
 
-import dataverk_airflow.git_clone as git_clone
+import dataverk_airflow as git_clone
 from dataverk_airflow.notifications import (
     create_email_notification,
     create_slack_notification,
@@ -114,7 +116,7 @@ def kubernetes_operator(dag: DAG,
             )
         },
         init_containers=[
-            git_clone.container(repo, branch, POD_WORKSPACE_DIR)
+            git_clone(repo, branch, POD_WORKSPACE_DIR)
         ],
         image_pull_secrets=os.environ["K8S_IMAGE_PULL_SECRETS"],
         labels={
