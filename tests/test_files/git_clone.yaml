@@ -1,0 +1,37 @@
+args:
+  - /git-clone.sh repo branch mount
+command:
+  - /bin/sh
+  - -c
+env: null
+env_from: null
+image: null
+image_pull_policy: null
+lifecycle: null
+liveness_probe: null
+name: clone-repo
+ports: null
+readiness_probe: null
+resources: null
+security_context: null
+startup_probe: null
+stdin: null
+stdin_once: null
+termination_message_path: null
+termination_message_policy: null
+tty: null
+volume_devices: null
+volume_mounts:
+  - mount_path: mount
+    mount_propagation: null
+    name: dags-data
+    read_only: false
+    sub_path: null
+    sub_path_expr: null
+  - mount_path: /keys
+    mount_propagation: null
+    name: airflow-git-secret
+    read_only: null
+    sub_path: null
+    sub_path_expr: null
+working_dir: null

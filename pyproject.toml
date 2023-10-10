@@ -11,9 +11,16 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-kubernetes = "^28.1.0"
+apache-airflow-providers-cncf-kubernetes = "^7.6.0"
+kubernetes = ">=21.7.0,<24"
 pathlib = "^1.0.1"
+python = "^3.11"
+apache-airflow-providers-slack = "^8.1.0"
+
+[tool.poetry.group.test.dependencies]
+pyaml = "^23.9.7"
+pytest = "^7.4.2"
+pytest-datafiles = "^3.0.0"
 
 [build-system]
 requires = ["poetry-core"]
