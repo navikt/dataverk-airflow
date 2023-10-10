@@ -83,13 +83,15 @@ def kubernetes_operator(dag: DAG,
 
     namespace = os.getenv("NAMESPACE", "unknown namespace")
 
+    if slack_channel:
+        allowlist.append("hooks.slack.com")
+
     def on_failure(context):
         if email:
             send_email = create_email_notification(dag, email, name, namespace)
             send_email.execute(context)
 
         if slack_channel:
-            allowlist.append("hooks.slack.com")
             slack_notification = create_slack_notification(
                 dag, slack_channel, name, namespace)
             slack_notification.execute()
