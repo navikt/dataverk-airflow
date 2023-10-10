@@ -4,7 +4,6 @@ from typing import Callable
 
 from airflow import DAG
 
-import airflow.providers.cncf.kubernetes.operators.pod.KubernetesPodOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from kubernetes import client
 from kubernetes.client.models import (
@@ -16,7 +15,7 @@ from kubernetes.client.models import (
     V1VolumeMount,
 )
 
-import dataverk_airflow as git_clone
+from dataverk_airflow import git_clone
 from dataverk_airflow.notifications import (
     create_email_notification,
     create_slack_notification,
