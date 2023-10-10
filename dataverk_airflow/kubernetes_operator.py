@@ -76,12 +76,12 @@ def kubernetes_operator(dag: DAG,
     env_vars = {
         "LOG_ENABLED": "true" if log_output else "false",
         "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
-        "TZ": os.environ["TZ"],
+        "TZ": os.getenv("TZ", "Europe/Oslo"),
         "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH,
         "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"]
     }
 
-    namespace = os.getenv("NAMESPACE", "unknown namespace")
+    namespace = os.environ["NAMESPACE"]
 
     if slack_channel:
         allowlist.append("hooks.slack.com")
