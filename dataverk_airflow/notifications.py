@@ -21,7 +21,7 @@ def create_slack_notification(dag, slack_channel: str, name: str, namespace: str
     return SlackAPIPostOperator(
             dag=dag,
             task_id="airflow_task_failed_slack",
-            token=os.environ["SLACK_TOKEN"],
+            slack_conn_id="slack_connection",
             text=f"@here Airflow task {name} i DAG {dag._dag_id} feilet i namespace {namespace} kl. {datetime.now().isoformat()}.",
             channel=slack_channel,
     )
