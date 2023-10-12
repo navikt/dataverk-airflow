@@ -21,7 +21,6 @@ def quarto_operator(
         extra_envs: dict = {},
         allowlist: list = [],
         resources: client.V1ResourceRequirements | None = None,
-        log_output: bool = False,
         startup_timeout_seconds: int | None = None,
         retries: int | None = None,
         delete_on_finish: bool = True,
@@ -42,7 +41,6 @@ def quarto_operator(
     :param extra_envs: dict: Dict with environment variables, example: {"key": "value", "key2": "value2"}
     :param allowlist: list: List of hosts and port the task needs to reach on the format host:port
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
-    :param log_output: bool: Write logs from notebook to stdout, default False
     :param startup_timeout_seconds: int: Pod startup timeout
     :param retries: int: Number of retries for task before DAG fails, default 3
     :param delete_on_finish: bool: Whether to delete pod on completion
@@ -70,7 +68,7 @@ def quarto_operator(
 
     kwargs = {"dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
               "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist, "resources": resources,
-              "log_output": log_output, "startup_timeout_seconds": startup_timeout_seconds, "retries": retries,
+              "startup_timeout_seconds": startup_timeout_seconds, "retries": retries,
               "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
               "on_success_callback": on_success_callback, "working_dir": working_dir}
 

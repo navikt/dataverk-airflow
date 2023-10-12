@@ -42,7 +42,6 @@ def kubernetes_operator(
         extra_envs: dict = {},
         allowlist: list = [],
         resources: client.V1ResourceRequirements | None = None,
-        log_output: bool = False,
         startup_timeout_seconds: int = 360,
         retries: int = 3,
         delete_on_finish: bool = True,
@@ -64,7 +63,6 @@ def kubernetes_operator(
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
-    :param log_output: bool: Write logs from notebook to stdout, default False
     :param startup_timeout_seconds: int: pod startup timeout
     :param retries: int: Number of retries for task before DAG fails, default 3
     :param delete_on_finish: bool: Whether to delete pod on completion
@@ -82,7 +80,6 @@ def kubernetes_operator(
         raise MissingValueException("image cannot be empty")
 
     env_vars = {
-        "LOG_ENABLED": "true" if log_output else "false",
         "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
         "TZ": os.getenv("TZ", "Europe/Oslo"),
         "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH,
