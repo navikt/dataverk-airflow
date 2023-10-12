@@ -1,5 +1,6 @@
 import os
 from datetime import timedelta
+from pathlib import Path
 from typing import Callable
 
 from airflow import DAG
@@ -60,7 +61,7 @@ def python_operator(
               "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist, "resources": resources,
               "log_output": log_output, "startup_timeout_seconds": startup_timeout_seconds, "retries": retries,
               "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
-              "on_success_callback": on_success_callback}
-
+              "on_success_callback": on_success_callback, "working_dir": Path(script_path).parent}
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
+
     return kubernetes_operator(**kwargs)

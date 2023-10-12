@@ -49,6 +49,7 @@ def kubernetes_operator(
         retry_delay: timedelta = timedelta(seconds=5),
         do_xcom_push: bool = False,
         on_success_callback: Callable | None = None,
+        working_dir: str | None = None,
 ):
     """Simplified operator for creating KubernetesPodOperator.
 
@@ -70,6 +71,7 @@ def kubernetes_operator(
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param do_xcom_push: bool: Enable xcom push of content in file '/airflow/xcom/return.json', default False
     :param on_success_callback: Callable
+    :param working_dir: str: Path to working directory
 
     :return: KubernetesPodOperator
     """
@@ -105,6 +107,11 @@ def kubernetes_operator(
 
     on_finish_action = OnFinishAction.DELETE_POD if delete_on_finish else OnFinishAction.KEEP_POD
 
+    if working_dir:
+        working_dir = POD_WORKSPACE_DIR + "/" + working_dir
+    else:
+        working_dir = POD_WORKSPACE_DIR
+
     return KubernetesPodOperator(
         dag=dag,
         on_failure_callback=on_failure,
@@ -128,7 +135,7 @@ def kubernetes_operator(
                     containers=[
                         client.V1Container(
                             name="base",
-                            working_dir=POD_WORKSPACE_DIR,
+                            working_dir=working_dir,
                             )
                     ]
                 )
