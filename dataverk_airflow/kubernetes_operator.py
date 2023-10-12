@@ -42,7 +42,6 @@ def kubernetes_operator(
         extra_envs: dict = {},
         allowlist: list = [],
         requirements_path: str | None = None,
-        pypi_packages: list = [],
         resources: client.V1ResourceRequirements | None = None,
         startup_timeout_seconds: int = 360,
         retries: int = 3,
@@ -65,7 +64,6 @@ def kubernetes_operator(
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
     :param requirements_path: bool: Path (including filename) to your requirements.txt
-    :param pypi_packages: list: list of Pypi packages to install
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param startup_timeout_seconds: int: pod startup timeout
     :param retries: int: Number of retries for task before DAG fails, default 3
@@ -115,9 +113,6 @@ def kubernetes_operator(
 
     if requirements_path:
         cmds = ["pip", "install", "-r", f"{POD_WORKSPACE_DIR}/{requirements_path}", "--user", "&&"].extend(cmds)
-
-    if pypi_packages:
-        cmds = ["pip", "install", *pypi_packages, "--user", "&&"].extend(cmds)
 
     return KubernetesPodOperator(
         dag=dag,
