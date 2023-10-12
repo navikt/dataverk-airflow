@@ -5,8 +5,19 @@ on:
     types: [published]
 
 jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+      - run: poetry install --with test
+      - run: poetry run pytest
+
   publish-pypi:
     runs-on: ubuntu-latest
+    needs: tests
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
