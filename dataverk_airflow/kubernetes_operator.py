@@ -122,7 +122,16 @@ def kubernetes_operator(
         executor_config={
             "pod_override": client.V1Pod(
                 metadata=client.V1ObjectMeta(
-                    annotations={"allowlist": allowlist})
+                    annotations={"allowlist": allowlist}
+                ),
+                spec=client.V1PodSpec(
+                    containers=[
+                        client.V1Container(
+                            name="base",
+                            working_dir=POD_WORKSPACE_DIR,
+                            )
+                    ]
+                )
             )
         },
         init_containers=[
