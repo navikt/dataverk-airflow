@@ -41,6 +41,8 @@ def kubernetes_operator(
         slack_channel: str | None = None,
         extra_envs: dict = {},
         allowlist: list = [],
+        requirements_txt: bool = False,
+        pypi_packages: list = [],
         resources: client.V1ResourceRequirements | None = None,
         startup_timeout_seconds: int = 360,
         retries: int = 3,
@@ -62,6 +64,8 @@ def kubernetes_operator(
     :param slack_channel: Name of Slack channel, default None (no Slack notification)
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
+    :param requirements_txt: bool: Set to true if you have a requirements.txt, default False
+    :param pypi_packages: list: list of Pypi packages to install
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param startup_timeout_seconds: int: pod startup timeout
     :param retries: int: Number of retries for task before DAG fails, default 3
@@ -108,6 +112,12 @@ def kubernetes_operator(
         working_dir = POD_WORKSPACE_DIR + "/" + working_dir
     else:
         working_dir = POD_WORKSPACE_DIR
+
+    if requirements_txt:
+        cmds = ["pip", "install", "-r", f"{POD_WORKSPACE_DIR}/requirements.txt", "--user", "&&"].extend(cmds)
+
+    if pypi_packages:
+        cmds = ["pip", "install", *pypi_packages, "--user", "&&"].extend(cmds)
 
     return KubernetesPodOperator(
         dag=dag,
