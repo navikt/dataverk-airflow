@@ -21,7 +21,7 @@ def python_operator(
         slack_channel: str | None = None,
         extra_envs: dict = {},
         allowlist: list = [],
-        requirements_txt: bool = False,
+        requirements_path: str | None = None,
         pypi_packages: list = [],
         resources: client.V1ResourceRequirements | None = None,
         startup_timeout_seconds: int | None = None,
@@ -44,7 +44,7 @@ def python_operator(
     :param slack_channel: Name of Slack channel, default None (no Slack notification)
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
-    :param requirements_txt: bool: Set to true if you have a requirements.txt, default False
+    :param requirements_path: bool: Path (including filename) to your requirements.txt
     :param pypi_packages: list: list of Pypi packages to install
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param startup_timeout_seconds: int: pod startup timeout
@@ -65,7 +65,7 @@ def python_operator(
 
     kwargs = {
         "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
-        "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist,  "requirements_txt": requirements_txt,
+        "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist,  "requirements_path": requirements_path,
         "pypi_packages": pypi_packages, "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, "retries": retries,
         "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
         "on_success_callback": on_success_callback, "working_dir": Path(nb_path).parent
