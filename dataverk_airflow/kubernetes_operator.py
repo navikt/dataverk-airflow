@@ -5,6 +5,7 @@ from typing import Callable
 from airflow import DAG
 
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.utils.pod_manager import OnFinishAction
 from kubernetes import client
 from kubernetes.client.models import (
     V1ConfigMapVolumeSource,
@@ -96,13 +97,15 @@ def kubernetes_operator(dag: DAG,
                 dag, slack_channel, name, namespace)
             slack_notification.execute()
 
+    on_finish_action = OnFinishAction.DELETE_POD if delete_on_finish else OnFinishAction.KEEP_POD
+
     return KubernetesPodOperator(
         dag=dag,
         on_failure_callback=on_failure,
         name=name,
         task_id=name,
         startup_timeout_seconds=startup_timeout_seconds,
-        is_delete_operator_pod=delete_on_finish,
+        on_finish_action=on_finish_action,
         image=image,
         env_vars=env_vars,
         do_xcom_push=do_xcom_push,
