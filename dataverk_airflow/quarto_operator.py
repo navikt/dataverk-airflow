@@ -66,7 +66,7 @@ def quarto_operator(
                 "index.html=@index.html", url, "-H",
                 f"Authorization:Bearer {quarto['token']}"]
     except KeyError as err:
-        raise KeyError(f"path, environment, id and token must be provided for quarto: {err}")
+        raise KeyError(f"path, environment, id and token must be provided in the Quarto configuration. Missing  {err}")
 
     kwargs = {
         "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
