@@ -84,7 +84,7 @@ def kubernetes_operator(dag: DAG,
     namespace = os.environ["NAMESPACE"]
 
     if slack_channel:
-        allowlist.append("hooks.slack.com")
+        allowlist.append("slack.com")
 
     def on_failure(context):
         if email:
