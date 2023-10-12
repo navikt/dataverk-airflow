@@ -56,8 +56,11 @@ def python_operator(
 
     cmds = ["/bin/bash", "/execute_script.sh", script_path]
 
-    return kubernetes_operator(dag, name, repo, image, cmds, branch, email,
-                               slack_channel, extra_envs, allowlist, resources,
-                               log_output, startup_timeout_seconds, retries,
-                               retry_delay, on_success_callback,
-                               delete_on_finish, do_xcom_push)
+    kwargs = {"dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
+              "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist, "resources": resources,
+              "log_output": log_output, "startup_timeout_seconds": startup_timeout_seconds, "retries": retries,
+              "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
+              "on_success_callback": on_success_callback}
+
+    kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    return kubernetes_operator(**kwargs)
