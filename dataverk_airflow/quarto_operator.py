@@ -34,7 +34,7 @@ def quarto_operator(
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
-    :param quarto: dict: Dict of Quarto configuration, needs the following values {"path": "path/to/index.qmd", "environment": "dev/prod", "id":"uui", "token": "quarto-token"}
+    :param quarto: dict: Dict of Quarto configuration, needs the following values {"path": "path/to/index.qmd", "env": "dev/prod", "id":"uuid", "token": "quarto-token"}
     :param image: str: Dockerimage the pod should use
     :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
@@ -58,8 +58,8 @@ def quarto_operator(
     working_dir = None
     try:
         working_dir = Path(quarto['path']).parent
-        host = "datamarkedsplassen.intern.no" if quarto['environment'] == "prod" else "datamarkedsplassen.intern.dev.nav.no"
         url = f"https://{host}/quarto/update/"
+        host = "datamarkedsplassen.intern.no" if quarto['env'] == "prod" else "datamarkedsplassen.intern.dev.nav.no"
         cmds = ["quarto", "render", Path(quarto['path']).name, "--to html",
                 "--execute", "--output", "index.html", "-M",
                 "self-contained:True", "&&", "curl", "-X", "PUT", "-F",
