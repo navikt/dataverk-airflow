@@ -58,12 +58,12 @@ def quarto_operator(
     working_dir = None
     try:
         working_dir = Path(quarto['path']).parent
-        url = f"https://{host}/quarto/update/"
         host = "datamarkedsplassen.intern.no" if quarto['env'] == "prod" else "datamarkedsplassen.intern.dev.nav.no"
+        url = f"https://{host}/quarto/update/{quarto['id']}"
         cmds = ["quarto", "render", Path(quarto['path']).name, "--to html",
                 "--execute", "--output", "index.html", "-M",
                 "self-contained:True", "&&", "curl", "-X", "PUT", "-F",
-                "index.html=@index.html", f"{url}/{quarto['id']}", "-H",
+                "index.html=@index.html", url, "-H",
                 f"Authorization:Bearer {quarto['token']}"]
     except KeyError as err:
         raise KeyError(f"path, environment, id and token must be provided for quarto: {err}")
