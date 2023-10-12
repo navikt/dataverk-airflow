@@ -26,32 +26,37 @@ CA_BUNDLE_PATH = "/etc/pki/tls/certs/ca-bundle.crt"
 POD_WORKSPACE_DIR = "/workspace"
 
 
-def kubernetes_operator(dag: DAG,
-                        name: str,
-                        repo: str,
-                        cmds: str,
-                        image: str,
-                        branch: str = "main",
-                        email: str | None = None,
-                        slack_channel: str | None = None,
-                        extra_envs: dict | None = None,
-                        allowlist: list = [],
-                        resources: client.V1ResourceRequirements | None = None,
-                        log_output: bool = False,
-                        startup_timeout_seconds: int = 360,
-                        retries: int = 3,
-                        delete_on_finish: bool = True,
-                        retry_delay: timedelta = timedelta(seconds=5),
-                        do_xcom_push: bool = False,
-                        on_success_callback: Callable | None = None,
-                        ):
+class MissingValueException(Exception):
+    """Raised when a required value is missing."""
+
+
+def kubernetes_operator(
+        dag: DAG,
+        name: str,
+        repo: str,
+        image: str,
+        cmds: list | None = None,
+        branch: str = "main",
+        email: str | None = None,
+        slack_channel: str | None = None,
+        extra_envs: dict = {},
+        allowlist: list = [],
+        resources: client.V1ResourceRequirements | None = None,
+        log_output: bool = False,
+        startup_timeout_seconds: int = 360,
+        retries: int = 3,
+        delete_on_finish: bool = True,
+        retry_delay: timedelta = timedelta(seconds=5),
+        do_xcom_push: bool = False,
+        on_success_callback: Callable | None = None,
+):
     """Simplified operator for creating KubernetesPodOperator.
 
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
-    :param cmds: str: Command to run in pod
     :param image: str: Dockerimage the pod should use
+    :param cmds: str: Command to run in pod
     :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
     :param slack_channel: Name of Slack channel, default None (no Slack notification)
@@ -68,11 +73,11 @@ def kubernetes_operator(dag: DAG,
 
     :return: KubernetesPodOperator
     """
-    if cmds is None:
-        raise Exception("cmds cannot be None")
+    if repo == "":
+        raise MissingValueException("repo cannot be empty")
 
-    if image is None:
-        raise Exception("image cannot be None")
+    if image == "":
+        raise MissingValueException("image cannot be empty")
 
     env_vars = {
         "LOG_ENABLED": "true" if log_output else "false",
