@@ -66,7 +66,7 @@ def python_operator(
         "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist,  "requirements_path": requirements_path,
         "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, "retries": retries,
         "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
-        "on_success_callback": on_success_callback, "working_dir": Path(nb_path).parent
+        "on_success_callback": on_success_callback, "working_dir": str(Path(nb_path).parent)
     }
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
