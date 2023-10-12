@@ -9,7 +9,7 @@ from kubernetes import client
 from dataverk_airflow.kubernetes_operator import kubernetes_operator
 
 
-def python_operator(
+def notebook_operator(
         dag: DAG,
         name: str,
         repo: str,
