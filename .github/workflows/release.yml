@@ -7,16 +7,16 @@ on:
 jobs:
   publish-pypi:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: 3.11
       - name: Set version
-        run: sed -i "s/version =.*/version = $(echo -n \"refs/tags/0.5.0\" | sed "s/refs\/tags\///")/" pyproject.toml
+        run: sed -i "s/version =.*/version = $(echo -n \"${{ github.ref }}\" | sed "s/refs\/tags\///")/" pyproject.toml
       - run: pip3 install --user poetry
       - run: poetry build
-      - run: poetry publish
-        env:
-          POETRY_HTTP_BASIC_PYPI_USERNAME: ${{ secrets.PYPI_USER }}
-          POETRY_HTTP_BASIC_PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
