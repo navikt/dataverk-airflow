@@ -3,6 +3,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from typing import Callable
+from warnings import deprecated
 
 from airflow import DAG
 from kubernetes.client.models import V1Volume, V1SecretVolumeSource, V1ConfigMapVolumeSource, V1VolumeMount, V1PodSecurityContext, V1SeccompProfile
@@ -17,6 +18,7 @@ POD_WORKSPACE_DIR = "/workspace"
 CA_BUNDLE_PATH = "/etc/pki/tls/certs/ca-bundle.crt"
 
 
+@deprecated("Will be removed in next release, use notebook_operator instead")
 def create_knada_nb_pod_operator(
     dag: DAG,
     name: str,
@@ -164,7 +166,7 @@ def create_knada_nb_pod_operator(
         ),
     )
 
-
+@deprecated("Will be removed in next release, use python_operator instead")
 def create_knada_python_pod_operator(
     dag: DAG,
     name: str,

@@ -5,20 +5,30 @@ on:
     types: [published]
 
 jobs:
-  publish-pypi:
+  tests:
     runs-on: ubuntu-latest
-    container:
-      image: python:3.8
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - run: pip3 install poetry
+      - run: poetry install --with test
+      - run: poetry run pytest
 
+  publish-pypi:
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
       - name: Set version
-        run: sed -i "s~version=.*~version='$(echo ${{ github.ref }} | sed "s/refs\/tags\///"),~g" setup.py
-
-      - run: pip3 install twine --user
-
-      - name: Build release
-        run: python3 setup.py sdist bdist_wheel
-
-      - name: Publish to PyPi
-        run: python -m twine upload -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} dist/*
+        run: sed -i "s~version =.*~version = '$(echo ${{ github.ref }} | sed "s/refs\/tags\///"),~g" pyproject.toml
+      - run: pip3 install --user poetry
+      - run: poetry build
+      - run: poetry publish
+        env:
+          POETRY_HTTP_BASIC_PYPI_USERNAME: ${{ secrets.PYPI_USER }}
+          POETRY_HTTP_BASIC_PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
