@@ -7,7 +7,9 @@ readme = "README.md"
 packages = [{include = "dataverk_airflow"}]
 repository = "https://github.com/navikt/dataverk-airflow"
 classifiers = [
-  'DEVELOPMENT STATUS :: 5 - PRODUCTION/STABLE',
+  'Development Status :: 5 - Production/Stable',
+  'Framework :: Apache Airflow',
+  'Framework :: Apache Airflow :: Provider',
 ]
 
 [tool.poetry.dependencies]
