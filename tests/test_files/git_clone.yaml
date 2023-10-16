@@ -6,10 +6,13 @@ command:
 env:
   - name: GIT_SYNC_REPO
     value: repo
+    value_from: null
   - name: GIT_SYNC_BRANCH
     value: branch
+    value_from: null
   - name: GIT_SYNC_ROOT
     value: mount
+    value_from: null
 env_from: null
 image: null
 image_pull_policy: null
