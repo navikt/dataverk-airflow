@@ -40,7 +40,7 @@ class TestKubernetesOperator:
         container = kubernetes_operator(dag, "name", "repo", "image",
                                         slack_channel="slack")
 
-        annotations = container.executor_config["pod_override"].metadata.annotations
+        annotations = container.annotations
         assert "allowlist" in annotations
         assert "slack.com" in annotations["allowlist"]
 
