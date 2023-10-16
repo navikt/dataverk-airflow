@@ -121,7 +121,7 @@ def kubernetes_operator(
         task_id=name,
         startup_timeout_seconds=startup_timeout_seconds,
         on_finish_action=on_finish_action,
-        annotations={"allowlist": allowlist},
+        annotations={"allowlist": ",".join(allowlist)},
         image=image,
         env_vars=env_vars,
         do_xcom_push=do_xcom_push,
