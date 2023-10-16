@@ -42,7 +42,7 @@ class TestKubernetesOperator:
 
         annotations = container.annotations
         assert "allowlist" in annotations
-        assert "slack.com" in annotations["allowlist"]
+        assert "slack.com" in annotations["allowlist"].split(",")
 
     def test_override_container_cmds(self, dag):
         container = kubernetes_operator(dag, "name", "repo", "image",
