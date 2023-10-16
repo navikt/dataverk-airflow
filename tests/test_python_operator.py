@@ -28,4 +28,4 @@ class TestPythonOperator:
 
     def test_that_cmds_are_correct(self, dag):
         container = python_operator(dag, "name", "repo", "script_path")
-        assert container.cmds == ["python", "script_path"]
+        assert container.arguments == ["python script_path"]

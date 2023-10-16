@@ -42,17 +42,17 @@ class TestKubernetesOperator:
 
         annotations = container.annotations
         assert "allowlist" in annotations
-        assert "slack.com" in annotations["allowlist"].split(",")
+        assert "slack.com" in annotations["allowlist"]
 
     def test_override_container_cmds(self, dag):
         container = kubernetes_operator(dag, "name", "repo", "image",
-                                        cmds=["python", "script.py"])
+                                        cmds=["python script.py"])
 
-        assert container.cmds == ["python", "script.py"]
+        assert container.arguments == ["python script.py"]
 
     def test_that_dependency_install_is_prepended_to_container_cmds(self, dag):
         container = kubernetes_operator(dag, "name", "repo", "image",
-                                        cmds=["python", "script.py"],
+                                        cmds=["python script.py"],
                                         requirements_path="requirements.txt")
 
-        assert container.cmds == ["pip", "install", "-r", f"/workspace/requirements.txt", "--user", "&&", "python", "script.py"]
+        assert container.arguments == ["pip install -r /workspace/requirements.txt --user && python script.py"]

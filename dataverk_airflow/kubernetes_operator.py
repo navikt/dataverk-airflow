@@ -148,7 +148,7 @@ def kubernetes_operator(
             "release": "airflow"
         },
         cmds=["/bin/sh", "-c"],
-        arguments="; ".join(cmds),
+        arguments=[" && ".join(cmds)] if cmds is not None else None,
         volume_mounts=[
             V1VolumeMount(
                 name="dags-data",
