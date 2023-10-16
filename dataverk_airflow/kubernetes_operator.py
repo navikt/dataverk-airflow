@@ -112,7 +112,7 @@ def kubernetes_operator(
         working_dir = POD_WORKSPACE_DIR
 
     if requirements_path:
-        cmds = ["pip", "install", "-r", f"{POD_WORKSPACE_DIR}/{requirements_path}", "--user", "&&"].extend(cmds)
+        cmds = ["pip", "install", "-r", f"{POD_WORKSPACE_DIR}/{requirements_path}", "--user", "&&"] + cmds
 
     return KubernetesPodOperator(
         dag=dag,
