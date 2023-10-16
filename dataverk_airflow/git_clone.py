@@ -27,6 +27,10 @@ def git_clone(
         args=[f"/git-clone.sh"],
         env=[
             k8s.V1EnvVar(
+                name="GIT_SYNC_ONE_TIME",
+                value="true",
+            ),
+            k8s.V1EnvVar(
                 name="GIT_SYNC_REPO",
                 value=repo,
             ),
