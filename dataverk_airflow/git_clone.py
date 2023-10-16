@@ -24,5 +24,19 @@ def git_clone(
             ),
         ],
         command=["/bin/sh", "-c"],
-        args=[f"/git-clone.sh {repo} {branch} {mount_path}"]
+        args=[f"/git-clone.sh"],
+        env=[
+            k8s.V1EnvVar(
+                name="GIT_SYNC_REPO",
+                value=repo,
+            ),
+            k8s.V1EnvVar(
+                name="GIT_SYNC_BRANCH",
+                value=branch,
+            ),
+            k8s.V1EnvVar(
+                name="GIT_SYNC_ROOT",
+                value=mount_path,
+            ),
+        ]
     )
