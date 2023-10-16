@@ -121,6 +121,7 @@ def kubernetes_operator(
         task_id=name,
         startup_timeout_seconds=startup_timeout_seconds,
         on_finish_action=on_finish_action,
+        annotations={"allowlist": allowlist},
         image=image,
         env_vars=env_vars,
         do_xcom_push=do_xcom_push,
@@ -128,21 +129,16 @@ def kubernetes_operator(
         retries=retries,
         on_success_callback=on_success_callback,
         retry_delay=retry_delay,
-        executor_config={
-            "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(
-                    annotations={"allowlist": allowlist}
-                ),
-                spec=client.V1PodSpec(
-                    containers=[
-                        client.V1Container(
-                            name="base",
-                            working_dir=working_dir,
-                            )
-                    ]
-                )
+        full_pod_spec=client.V1Pod(
+            spec=client.V1PodSpec(
+                containers=[
+                    client.V1Container(
+                        name="base",
+                        working_dir=working_dir,
+                    )
+                ]
             )
-        },
+        ),
         init_containers=[
             git_clone(repo, branch, POD_WORKSPACE_DIR)
         ],
