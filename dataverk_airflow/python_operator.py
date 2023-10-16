@@ -55,7 +55,7 @@ def python_operator(
     if not image:
         image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")
 
-    cmds = ["python", Path(script_path).name]
+    cmds = [f"python {Path(script_path).name}"]
 
     kwargs = {
         "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,

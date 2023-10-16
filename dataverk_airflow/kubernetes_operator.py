@@ -112,7 +112,7 @@ def kubernetes_operator(
         working_dir = POD_WORKSPACE_DIR
 
     if requirements_path:
-        cmds = ["pip", "install", "-r", f"{POD_WORKSPACE_DIR}/{requirements_path}", "--user", "&&"] + cmds
+        cmds = [f"pip install -r {POD_WORKSPACE_DIR}/{requirements_path} --user"] + cmds
 
     return KubernetesPodOperator(
         dag=dag,
@@ -147,7 +147,8 @@ def kubernetes_operator(
             "component": "worker",
             "release": "airflow"
         },
-        cmds=cmds,
+        cmds=["/bin/sh", "-c"],
+        arguments="; ".join(cmds),
         volume_mounts=[
             V1VolumeMount(
                 name="dags-data",
