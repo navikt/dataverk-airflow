@@ -1,9 +1,15 @@
 args:
-  - /git-clone.sh repo branch mount
+  - /git-clone.sh
 command:
   - /bin/sh
   - -c
-env: null
+env:
+  - name: GIT_SYNC_REPO
+    value: repo
+  - name: GIT_SYNC_BRANCH
+    value: branch
+  - name: GIT_SYNC_ROOT
+    value: mount
 env_from: null
 image: null
 image_pull_policy: null

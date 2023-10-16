@@ -43,3 +43,16 @@ class TestKubernetesOperator:
         annotations = container.executor_config["pod_override"].metadata.annotations
         assert "allowlist" in annotations
         assert "slack.com" in annotations["allowlist"]
+
+    def test_override_container_cmds(self, dag):
+        container = kubernetes_operator(dag, "name", "repo", "image",
+                                        cmds=["python", "script.py"])
+
+        assert container.cmds == ["python", "script.py"]
+
+    def test_that_dependency_install_is_prepended_to_container_cmds(self, dag):
+        container = kubernetes_operator(dag, "name", "repo", "image",
+                                        cmds=["python", "script.py"],
+                                        requirements_path="requirements.txt")
+
+        assert container.cmds == ["pip", "install", "-r", f"/workspace/requirements.txt", "--user", "&&", "python", "script.py"]
