@@ -37,12 +37,9 @@ class TestQuartoOperator:
 
     def test_that_cmds_are_correct(self, dag, quarto):
         container = quarto_operator(dag, "name", "repo", quarto)
-        correct_cmds = ["quarto", "render", "quarto.qmd", "--to html",
-                "--execute", "--output", "index.html", "-M",
-                "self-contained:True", "&&", "curl", "-X", "PUT", "-F",
-                "index.html=@index.html", f"https://datamarkedsplassen.intern.dev.nav.no/quarto/update/{quarto['id']}", "-H",
-                f"Authorization:Bearer {quarto['token']}"]
-        assert container.cmds == correct_cmds
+        correct_cmds = ["quarto render quarto.qmd --to html --execute --output index.html -M self-contained:True && " \
+                        f"curl -X PUT -F index.html=@index.html https://datamarkedsplassen.intern.dev.nav.no/quarto/update/{quarto['id']} -H Authorization:Bearer {quarto['token']}"]
+        assert container.arguments == correct_cmds
 
     def test_that_log_output_is_added_to_cmds(self, dag, quarto):
         with pytest.raises(KeyError) as err:

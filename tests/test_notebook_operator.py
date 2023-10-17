@@ -28,8 +28,8 @@ class TestNotebookOperator:
 
     def test_that_cmds_are_correct(self, dag):
         container = notebook_operator(dag, "name", "repo", "notebook_path")
-        assert container.cmds == ["papermill", "notebook_path", "output.ipynb"]
+        assert container.arguments == ["papermill notebook_path output.ipynb"]
 
     def test_that_log_output_is_added_to_cmds(self, dag):
         container = notebook_operator(dag, "name", "repo", "notebook_path", log_output=True)
-        assert container.cmds[-1] == "--log-output"
+        assert "--log-output" in container.arguments[-1]
