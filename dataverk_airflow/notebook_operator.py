@@ -57,9 +57,9 @@ def notebook_operator(
     if not image:
         image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")
 
-    cmds = ["papermill", Path(nb_path).name, "output.ipynb"]
+    cmds = [f"papermill {Path(nb_path).name} output.ipynb"]
     if log_output:
-        cmds.append("--log-output")
+        cmds[-1] += " --log-output"
 
     kwargs = {
         "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
