@@ -58,7 +58,7 @@ def quarto_operator(
     working_dir = None
     try:
         working_dir = Path(quarto['path']).parent
-        host = "datamarkedsplassen.intern.no" if quarto['env'] == "prod" else "datamarkedsplassen.intern.dev.nav.no"
+        host = "datamarkedsplassen.intern.nav.no" if quarto['env'] == "prod" else "datamarkedsplassen.intern.dev.nav.no"
         url = f"https://{host}/quarto/update/{quarto['id']}"
         cmds = ["quarto", "render", Path(quarto['path']).name, "--to html",
                 "--execute", "--output", "index.html", "-M",
