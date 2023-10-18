@@ -3,7 +3,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from typing import Callable
-from warnings import deprecated
+from deprecated import deprecated
 
 from airflow import DAG
 from kubernetes.client.models import V1Volume, V1SecretVolumeSource, V1ConfigMapVolumeSource, V1VolumeMount, V1PodSecurityContext, V1SeccompProfile
