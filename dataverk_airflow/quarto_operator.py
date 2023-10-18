@@ -62,7 +62,7 @@ def quarto_operator(
         url = f"https://{host}/quarto/update/{quarto['id']}"
         cmds = [
             f"quarto render {Path(quarto['path']).name} --to html --execute --output index.html -M self-contained:True", 
-            f"curl -X PUT -F index.html=@index.html {url} -H Authorization:Bearer {quarto['token']}"
+            f"""curl -X PUT -F index.html=@index.html {url} -H "Authorization:Bearer {quarto['token']}" """
         ]
     except KeyError as err:
         raise KeyError(f"path, environment, id and token must be provided in the Quarto configuration. Missing  {err}")
