@@ -55,5 +55,4 @@ jobs:
           MARKEDSPLASSEN_HOST: data.ekstern.dev.nav.no
           INTEGRATION_TEST: "true"
         run: |
-          airflow dags list
           airflow dags test DataverkAirflow
