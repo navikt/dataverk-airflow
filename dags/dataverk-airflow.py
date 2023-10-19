@@ -11,7 +11,6 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         name = "python-op",
         repo = "navikt/dataverk-airflow",
         branch="integration-tests",
-        image="python:3.11",
         script_path = "dags/notebooks/script.py",
         requirements_path="dags/notebooks/requirements.txt",
         delete_on_finish=False,

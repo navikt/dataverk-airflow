@@ -84,10 +84,12 @@ def kubernetes_operator(
     env_vars = {
         "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
         "TZ": os.getenv("TZ", "Europe/Oslo"),
-        #"REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH,
         "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"],
         **extra_envs
     }
+
+    if not os.getenv("INTEGRATION_TEST"):
+        env_vars["REQUESTS_CA_BUNDLE"] = CA_BUNDLE_PATH
 
     namespace = os.environ["NAMESPACE"]
 
@@ -156,12 +158,12 @@ def kubernetes_operator(
                 sub_path=None,
                 read_only=False
             ),
-            # V1VolumeMount(
-            #     name="ca-bundle-pem",
-            #     mount_path=CA_BUNDLE_PATH,
-            #     read_only=True,
-            #     sub_path="ca-bundle.pem"
-            # )
+            V1VolumeMount(
+                name="ca-bundle-pem",
+                mount_path=CA_BUNDLE_PATH,
+                read_only=True,
+                sub_path="ca-bundle.pem"
+            )
         ],
         service_account_name=os.getenv("TEAM", "airflow"),
         volumes=[
@@ -176,13 +178,13 @@ def kubernetes_operator(
                         "K8S_GIT_CLONE_SECRET", "github-app-secret"),
                 )
             ),
-            # V1Volume(
-            #     name="ca-bundle-pem",
-            #     config_map=V1ConfigMapVolumeSource(
-            #         default_mode=420,
-            #         name="ca-bundle-pem",
-            #     )
-            # ),
+            V1Volume(
+                name="ca-bundle-pem",
+                config_map=V1ConfigMapVolumeSource(
+                    default_mode=420,
+                    name="ca-bundle-pem",
+                )
+            ),
         ],
         security_context=V1PodSecurityContext(
             fs_group=0,
