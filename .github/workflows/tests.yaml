@@ -38,6 +38,8 @@ jobs:
       - name: Setup cluster for tests
         run: |
           kubectl create sa airflow
+          kubectl create secret generic github-app-secret --from-literal=test=test
+          kubectl create configmap ca-bundle-pem --from-literal=test=test
       - name: Setup Airflow
         run: |
           airflow db reset -y
