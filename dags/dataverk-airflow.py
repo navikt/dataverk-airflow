@@ -6,41 +6,42 @@ from dataverk_airflow import notebook_operator, python_operator, quarto_operator
 
 
 with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as dag:
-    nb_op = notebook_operator(
-        dag = dag,
-        name = "nb-op",
-        repo = "navikt/dataverk-airflow",
-        branch="integration-tests",
-        nb_path = "dags/notebooks/mynb.ipynb",
-        requirements_path="dags/notebooks/requirements.txt",
-        delete_on_finish=False,
-    )
-
     py_op = python_operator(
         dag = dag,
         name = "python-op",
         repo = "navikt/dataverk-airflow",
         branch="integration-tests",
+        image="python:3.11",
         script_path = "dags/notebooks/script.py",
         requirements_path="dags/notebooks/requirements.txt",
         delete_on_finish=False,
     )
 
-    quarto_op = quarto_operator(
-        dag=dag,
-        name="quarto-op",
-        repo="navikt/dataverk-airflow",
-        branch="integration-tests",
-        quarto={
-            "path": "dags/notebooks/quarto.ipynb",
-            "env": "dev",
-            "id": "bf48d8a4-05ca-47a5-a360-bc24171baf62",
-            "token": Variable.get("quarto_token"),
-        },
-        requirements_path="dags/notebooks/requirements.txt",
-        delete_on_finish=False,
-    )
+    # nb_op = notebook_operator(
+    #     dag = dag,
+    #     name = "nb-op",
+    #     repo = "navikt/dataverk-airflow",
+    #     branch="integration-tests",
+    #     nb_path = "dags/notebooks/mynb.ipynb",
+    #     requirements_path="dags/notebooks/requirements.txt",
+    #     delete_on_finish=False,
+    # )
 
-    nb_op
+    # quarto_op = quarto_operator(
+    #     dag=dag,
+    #     name="quarto-op",
+    #     repo="navikt/dataverk-airflow",
+    #     branch="integration-tests",
+    #     quarto={
+    #         "path": "dags/notebooks/quarto.ipynb",
+    #         "env": "dev",
+    #         "id": "bf48d8a4-05ca-47a5-a360-bc24171baf62",
+    #         "token": Variable.get("quarto_token"),
+    #     },
+    #     requirements_path="dags/notebooks/requirements.txt",
+    #     delete_on_finish=False,
+    # )
+
     py_op
-    quarto_op
+    # nb_op
+    # quarto_op
