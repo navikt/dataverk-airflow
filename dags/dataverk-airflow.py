@@ -17,15 +17,15 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         retries=0,
     )
 
-    # nb_op = notebook_operator(
-    #     dag = dag,
-    #     name = "nb-op",
-    #     repo = "navikt/dataverk-airflow",
-    #     branch="integration-tests",
-    #     nb_path = "dags/notebooks/mynb.ipynb",
-    #     requirements_path="dags/notebooks/requirements.txt",
-    #     delete_on_finish=False,
-    # )
+    nb_op = notebook_operator(
+        dag = dag,
+        name = "nb-op",
+        repo = "navikt/dataverk-airflow",
+        branch="integration-tests",
+        nb_path = "dags/notebooks/mynb.ipynb",
+        requirements_path="dags/notebooks/requirements.txt",
+        delete_on_finish=False,
+    )
 
     # quarto_op = quarto_operator(
     #     dag=dag,
@@ -43,5 +43,5 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
     # )
 
     py_op
-    # nb_op
+    nb_op
     # quarto_op
