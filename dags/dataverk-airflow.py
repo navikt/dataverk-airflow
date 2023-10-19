@@ -15,6 +15,7 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         script_path = "dags/notebooks/script.py",
         requirements_path="dags/notebooks/requirements.txt",
         delete_on_finish=False,
+        retries=0,
     )
 
     # nb_op = notebook_operator(
