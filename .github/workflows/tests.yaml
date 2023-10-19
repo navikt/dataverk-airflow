@@ -1,15 +1,51 @@
 name: Tests
 
-on: push
+on: 
+  push:
+    branches:
+      - integration-tests
 
 jobs:
-  tests:
+  # unit-tests:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: 3.11
+  #     - run: pip3 install poetry
+  #     - run: poetry install --with test
+  #     - run: poetry run pytest
+
+  integration-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: 3.11
-      - run: pip3 install poetry
-      - run: poetry install --with test
-      - run: poetry run pytest
+      - run: |
+        pip3 install apache-airflow
+        poetry install
+      - name: Start kind cluster
+        uses: helm/kind-action@v1.4.0
+      - run: |
+          kubectl cluster-info
+          kubectl get nodes
+      - name: Setup cluster for tests
+        run: |
+          kubectl create sa airflow
+      - name: Setup Airflow
+        run: |
+          airflow variables set quarto_token ${{ secrets.QUARTO_TOKEN }}
+          echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)" >> $GITHUB_ENV
+      - name: Run tests
+        env:
+          AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
+          KNADA_AIRFLOW_OPERATOR_IMAGE: ghcr.io/navikt/knada-images/dataverk-airflow:2023-10-18-d78589a
+          KNADA_TEAM_SECRET: secret
+          NAMESPACE: default
+          K8S_IMAGE_PULL_SECRETS: ghcr-creds
+          CLONE_REPO_IMAGE: ghcr.io/navikt/knada-git-sync/git-sync:2023-10-19-60068e6
+        run: |
+          airflow dags list
