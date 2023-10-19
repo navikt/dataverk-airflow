@@ -26,6 +26,7 @@ jobs:
           python-version: 3.11
       - run: |
           pip3 install apache-airflow
+          pip3 install poetry
           poetry install
       - name: Start kind cluster
         uses: helm/kind-action@v1.4.0
