@@ -27,7 +27,6 @@ jobs:
       - name: Install python dependencies
         run: |
           pip3 install apache-airflow
-          pip3 install poetry
           pip3 install .
           pip3 show dataverk-airflow
       - name: Start kind cluster
@@ -43,7 +42,7 @@ jobs:
         run: |
           airflow db reset -y
           airflow variables set quarto_token ${{ secrets.QUARTO_TOKEN }}
-          echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)" >> $GITHUB_ENV
+          echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/dags" >> $GITHUB_ENV
       - name: Run tests
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
