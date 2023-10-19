@@ -28,7 +28,6 @@ jobs:
         run: |
           pip3 install apache-airflow
           pip3 install .
-          pip3 show dataverk-airflow
       - name: Start kind cluster
         uses: helm/kind-action@v1.4.0
       - name: Verify cluster up
@@ -39,7 +38,6 @@ jobs:
         run: |
           kubectl create sa airflow
           kubectl create secret generic github-app-secret --from-literal=test=test
-          kubectl create configmap ca-bundle-pem --from-literal=test=test
       - name: Setup Airflow
         run: |
           airflow db reset -y
