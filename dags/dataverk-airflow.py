@@ -12,6 +12,7 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         repo = "navikt/dataverk-airflow",
         nb_path = "dags/notebooks/mynb.ipynb",
         requirements_path="dags/notebooks/requirements.txt",
+        delete_on_finish=False,
     )
 
     py_op = python_operator(
@@ -20,6 +21,7 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         repo = "navikt/dataverk-airflow",
         script_path = "dags/notebooks/script.py",
         requirements_path="dags/notebooks/requirements.txt",
+        delete_on_finish=False,
     )
 
     quarto_op = quarto_operator(
@@ -33,6 +35,7 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
             "token": Variable.get("quarto_token"),
         },
         requirements_path="dags/notebooks/requirements.txt",
+        delete_on_finish=False,
     )
 
     nb_op
