@@ -38,6 +38,7 @@ jobs:
           kubectl create sa airflow
       - name: Setup Airflow
         run: |
+          airflow db reset -y
           airflow variables set quarto_token ${{ secrets.QUARTO_TOKEN }}
           echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)" >> $GITHUB_ENV
       - name: Run tests
