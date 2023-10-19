@@ -54,3 +54,4 @@ jobs:
           MARKEDSPLASSEN_HOST: data.ekstern.dev.nav.no
         run: |
           airflow dags list
+          airflow dags test DataverkAirflow
