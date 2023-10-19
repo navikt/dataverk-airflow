@@ -84,7 +84,7 @@ def kubernetes_operator(
     env_vars = {
         "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
         "TZ": os.getenv("TZ", "Europe/Oslo"),
-        "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH,
+        #"REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH,
         "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"],
         **extra_envs
     }
