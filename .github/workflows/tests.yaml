@@ -41,7 +41,6 @@ jobs:
           kubectl create cm ca-bundle-pem --from-literal=test=test
       - name: Setup Airflow
         run: |
-          airflow db reset -y
           airflow variables set quarto_token ${{ secrets.QUARTO_TOKEN }}
           echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/dags" >> $GITHUB_ENV
       - name: Run tests
@@ -55,4 +54,25 @@ jobs:
           MARKEDSPLASSEN_HOST: data.ekstern.dev.nav.no
           INTEGRATION_TEST: "true"
         run: |
+          airflow db reset -y
+          airflow dags reserialize
           airflow dags test DataverkAirflow
+      - name: Verify successful dag test
+        run: |
+          errorCount=0
+          for res in $(airflow dags list-runs -d DataverkAirflow -ojson | jq -rc '.[]')
+          do
+            status=$(echo $res | jq -r '.state')
+            if [ "$status" != "success" ]
+            then
+              errorCount=$((errorCount+1))
+              dag_id=$(echo $res | jq -r '.dag_id')
+              echo "DAG test error: DAG $dag_id got status $status"
+            fi
+          done
+
+          if [ $errorCount -gt 0 ]
+          then
+            airflow dags list-runs -d DataverkAirflow
+            exit 1
+          fi
