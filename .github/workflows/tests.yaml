@@ -40,7 +40,10 @@ jobs:
           kubectl create secret generic github-app-secret --from-literal=test=test
           kubectl create cm ca-bundle-pem --from-literal=test=test
       - name: Setup Airflow
+        env:
+          AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
         run: |
+          airflow db reset -y
           airflow variables set quarto_token ${{ secrets.QUARTO_TOKEN }}
           echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/dags" >> $GITHUB_ENV
       - name: Run tests
@@ -54,11 +57,12 @@ jobs:
           MARKEDSPLASSEN_HOST: data.ekstern.dev.nav.no
           INTEGRATION_TEST: "true"
         run: |
-          airflow db reset -y
           airflow dags reserialize
           airflow dags test DataverkAirflow
       - name: Verify successful dag test
         run: |
+          airflow dags list-runs -d DataverkAirflow
+          
           errorCount=0
           for res in $(airflow dags list-runs -d DataverkAirflow -ojson | jq -rc '.[]')
           do
@@ -73,6 +77,5 @@ jobs:
 
           if [ $errorCount -gt 0 ]
           then
-            airflow dags list-runs -d DataverkAirflow
             exit 1
           fi
