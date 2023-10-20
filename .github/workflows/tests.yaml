@@ -46,7 +46,6 @@ jobs:
           airflow db reset -y
           airflow variables set quarto_token ${{ secrets.QUARTO_TOKEN }}
           echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/dags" >> $GITHUB_ENV
-          airflow dags reserialize
       - name: Run tests
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
@@ -57,11 +56,13 @@ jobs:
           CLONE_REPO_IMAGE: ghcr.io/navikt/knada-git-sync/git-sync:2023-10-19-301ca18
           MARKEDSPLASSEN_HOST: data.ekstern.dev.nav.no
           INTEGRATION_TEST: "true"
-        run: airflow dags test DataverkAirflow
+        run: |
+          airflow dags reserialize
+          airflow dags test DataverkAirflow
       - name: Verify successful dag tests
         run: |
           airflow dags list-runs -d DataverkAirflow
-          
+
           errorCount=0
           for res in $(airflow dags list-runs -d DataverkAirflow -ojson | jq -rc '.[]')
           do
