@@ -2,7 +2,7 @@ from airflow import DAG
 from datetime import datetime
 from kubernetes.client import models as k8s
 from airflow.models import Variable
-from dataverk_airflow import notebook_operator, python_operator, quarto_operator
+from dataverk_airflow import python_operator, notebook_operator, quarto_operator
 
 
 with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as dag:
@@ -11,9 +11,11 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         name = "python-op",
         repo = "navikt/dataverk-airflow",
         branch="integration-tests",
+        image="ghcr.io/navikt/knada-images/dataverk-airflow:2023-10-18-d78589b",
         script_path = "dags/notebooks/script.py",
         requirements_path="dags/notebooks/requirements.txt",
         retries=0,
+        startup_timeout_seconds=60,
     )
 
     nb_op = notebook_operator(
@@ -24,6 +26,7 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         nb_path = "dags/notebooks/mynb.ipynb",
         requirements_path="dags/notebooks/requirements.txt",
         retries=0,
+        startup_timeout_seconds=60,
     )
 
     quarto_op = quarto_operator(
@@ -39,6 +42,7 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         },
         requirements_path="dags/notebooks/requirements.txt",
         retries=0,
+        startup_timeout_seconds=60,
     )
 
     py_op
