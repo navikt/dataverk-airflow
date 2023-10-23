@@ -68,7 +68,6 @@ jobs:
           KNADA_TEAM_SECRET: secret
           NAMESPACE: default
           K8S_IMAGE_PULL_SECRETS: ghcr-creds
-          CLONE_REPO_IMAGE: {{ .env.GIT_SYNC_IMAGE }}:{{ .env.GIT_SYNC_TAG }}
           MARKEDSPLASSEN_HOST: data.ekstern.dev.nav.no
           INTEGRATION_TEST: "true"
         run: |
