@@ -10,8 +10,8 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         dag = dag,
         name = "python-op",
         repo = "navikt/dataverk-airflow",
-        script_path = "dags/notebooks/script.py",
-        requirements_path="dags/notebooks/requirements.txt",
+        script_path = "tests-integration/notebooks/script.py",
+        requirements_path="tests-integration/notebooks/requirements.txt",
         retries=0,
         startup_timeout_seconds=60,
     )
@@ -20,8 +20,8 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         dag = dag,
         name = "nb-op",
         repo = "navikt/dataverk-airflow",
-        nb_path = "dags/notebooks/mynb.ipynb",
-        requirements_path="dags/notebooks/requirements.txt",
+        nb_path = "tests-integration/notebooks/mynb.ipynb",
+        requirements_path="tests-integration/notebooks/requirements.txt",
         retries=0,
         startup_timeout_seconds=60,
     )
@@ -31,12 +31,12 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         name="quarto-op",
         repo="navikt/dataverk-airflow",
         quarto={
-            "path": "dags/notebooks/quarto.ipynb",
+            "path": "tests-integration/notebooks/quarto.ipynb",
             "env": "dev",
             "id": "bf48d8a4-05ca-47a5-a360-bc24171baf62",
             "token": Variable.get("quarto_token"),
         },
-        requirements_path="dags/notebooks/requirements.txt",
+        requirements_path="tests-integration/notebooks/requirements.txt",
         retries=0,
         startup_timeout_seconds=60,
     )
