@@ -55,7 +55,7 @@ jobs:
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
         run: |
-          airflow db reset --skip-init --yes
+          airflow db reset -y
           airflow variables set quarto_token ${{ secrets.QUARTO_TOKEN }}
 
           # envs
