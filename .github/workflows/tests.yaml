@@ -2,6 +2,10 @@ name: Tests
 
 on: push
 
+env:
+  GIT_SYNC_IMAGE: ghcr.io/navikt/knada-git-sync/git-sync
+  DATAVERK_AIRFLOW_IMAGE: ghcr.io/navikt/knada-images/dataverk-airflow
+
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
@@ -21,6 +25,13 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: 3.11
+      - id: auth
+        name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          token_format: access_token
+          workload_identity_provider: projects/193123067890/locations/global/workloadIdentityPools/ci-knada-images/providers/ci-knada-images
+          service_account: ci-knada-images@knada-gcp.iam.gserviceaccount.com
       - name: Install python dependencies
         run: |
           pip3 install apache-airflow
@@ -40,17 +51,24 @@ jobs:
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
         run: |
-          airflow db reset -y
+          airflow db reset --skip-init --yes
           airflow variables set quarto_token ${{ secrets.QUARTO_TOKEN }}
+
+          # envs
           echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/dags" >> $GITHUB_ENV
+
+          gitsync_tag=$("gcloud artifacts docker images list $GIT_SYNC_IMAGE --include-tags --sort-by=~Update_Time --limit=1 --format=json")
+          echo "CLONE_REPO_IMAGE=$GIT_SYNC_IMAGE:$gitsync_tag" >> $GITHUB_ENV
+
+          dataverk_airflow_tag=$("gcloud artifacts docker images list $DATAVERK_AIRFLOW_IMAGE --include-tags --sort-by=~Update_Time --limit=1 --format=json")
+          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=$DATAVERK_AIRFLOW_IMAGE:$dataverk_airflow_tag" >> $GITHUB_ENV
       - name: Run tests
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
-          KNADA_AIRFLOW_OPERATOR_IMAGE: ghcr.io/navikt/knada-images/dataverk-airflow:2023-10-18-d78589a
           KNADA_TEAM_SECRET: secret
           NAMESPACE: default
           K8S_IMAGE_PULL_SECRETS: ghcr-creds
-          CLONE_REPO_IMAGE: ghcr.io/navikt/knada-git-sync/git-sync:2023-10-19-301ca18
+          CLONE_REPO_IMAGE: {{ .env.GIT_SYNC_IMAGE }}:{{ .env.GIT_SYNC_TAG }}
           MARKEDSPLASSEN_HOST: data.ekstern.dev.nav.no
           INTEGRATION_TEST: "true"
         run: |
