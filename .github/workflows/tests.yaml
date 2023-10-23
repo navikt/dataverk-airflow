@@ -59,7 +59,7 @@ jobs:
           airflow variables set quarto_token ${{ secrets.QUARTO_TOKEN }}
 
           # envs
-          echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/dags" >> $GITHUB_ENV
+          echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/tests-integration" >> $GITHUB_ENV
 
           gitsync_tag=$(gcloud artifacts docker images list "$GIT_SYNC_IMAGE" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags')
           echo "CLONE_REPO_IMAGE=ghcr.io/navikt/knada-git-sync/git-sync:$gitsync_tag" >> $GITHUB_ENV

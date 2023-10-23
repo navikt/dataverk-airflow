@@ -10,7 +10,6 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         dag = dag,
         name = "python-op",
         repo = "navikt/dataverk-airflow",
-        branch="integration-tests",
         script_path = "dags/notebooks/script.py",
         requirements_path="dags/notebooks/requirements.txt",
         retries=0,
@@ -21,7 +20,6 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         dag = dag,
         name = "nb-op",
         repo = "navikt/dataverk-airflow",
-        branch="integration-tests",
         nb_path = "dags/notebooks/mynb.ipynb",
         requirements_path="dags/notebooks/requirements.txt",
         retries=0,
@@ -32,7 +30,6 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
         dag=dag,
         name="quarto-op",
         repo="navikt/dataverk-airflow",
-        branch="integration-tests",
         quarto={
             "path": "dags/notebooks/quarto.ipynb",
             "env": "dev",
