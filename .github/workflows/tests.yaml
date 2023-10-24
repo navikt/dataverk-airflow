@@ -2,8 +2,16 @@ name: Tests
 
 on: push
 
+env:
+  GIT_SYNC_IMAGE: europe-north1-docker.pkg.dev/knada-gcp/knada-north/git-sync
+  DATAVERK_AIRFLOW_IMAGE: europe-north1-docker.pkg.dev/knada-gcp/knada-north/dataverk-airflow
+
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
-  tests:
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -13,3 +21,79 @@ jobs:
       - run: pip3 install poetry
       - run: poetry install --with test
       - run: poetry run pytest
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - id: auth
+        name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          token_format: access_token
+          workload_identity_provider: projects/193123067890/locations/global/workloadIdentityPools/ci-knada-images/providers/ci-knada-images
+          service_account: ci-knada-images@knada-gcp.iam.gserviceaccount.com
+      - name: Install python dependencies
+        run: |
+          pip3 install apache-airflow
+          pip3 install .
+      - name: Start kind cluster
+        uses: helm/kind-action@v1.4.0
+      - name: Verify cluster up
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
+      - name: Setup cluster for tests
+        run: |
+          kubectl create sa airflow
+          kubectl create secret generic github-app-secret --from-literal=test=test
+          kubectl create cm ca-bundle-pem --from-literal=test=test
+      - name: Setup Airflow
+        env:
+          AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
+        run: |
+          airflow db reset -y
+          airflow variables set quarto_token ${{ secrets.QUARTO_TOKEN }}
+
+          # envs
+          echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/tests-integration" >> $GITHUB_ENV
+
+          gitsync_tag=$(gcloud artifacts docker images list "$GIT_SYNC_IMAGE" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags')
+          echo "CLONE_REPO_IMAGE=ghcr.io/navikt/knada-git-sync/git-sync:$gitsync_tag" >> $GITHUB_ENV
+
+          dataverk_airflow_tag=$(gcloud artifacts docker images list "$DATAVERK_AIRFLOW_IMAGE" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags')
+          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow:$dataverk_airflow_tag" >> $GITHUB_ENV
+      - name: Run tests
+        env:
+          AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
+          KNADA_TEAM_SECRET: secret
+          NAMESPACE: default
+          K8S_IMAGE_PULL_SECRETS: ghcr-creds
+          MARKEDSPLASSEN_HOST: data.ekstern.dev.nav.no
+          INTEGRATION_TEST: "true"
+        run: |
+          airflow dags reserialize
+          airflow dags test DataverkAirflow
+      - name: Verify successful dag tests
+        run: |
+          airflow dags list-runs -d DataverkAirflow
+
+          errorCount=0
+          for res in $(airflow dags list-runs -d DataverkAirflow -ojson | jq -rc '.[]')
+          do
+            status=$(echo $res | jq -r '.state')
+            if [ "$status" != "success" ]
+            then
+              errorCount=$((errorCount+1))
+              dag_id=$(echo $res | jq -r '.dag_id')
+              echo "DAG test error: DAG $dag_id got status $status"
+            fi
+          done
+
+          if [ $errorCount -gt 0 ]
+          then
+            exit 1
+          fi
