@@ -67,7 +67,7 @@ with DAG('navn-dag', start_date=days_ago(1), schedule_interval="*/10 * * * *") a
                          slack_channel="<#slack-alarm-kanal>")
 ```
 
-## Kubernetes operator
+### Kubernetes operator
 
 Vi tilbyr også vår egen Kubernetes operator som kloner et valg repo inn i containeren.
 
@@ -84,4 +84,34 @@ with DAG('navn-dag', start_date=days_ago(1), schedule_interval="*/10 * * * *") a
                              cmds=["/path/to/bin/", "script-name.sh", "argument1", "argument2"],
                              image="europe-north1-docker.pkg.dev/nais-management-233d/ditt-team/ditt-image:din-tag",
                              slack_channel="<#slack-alarm-kanal>")
+```
+
+## Sette resource requirements
+
+Vi har støtte for å sette `requests` og `limits` for hver operator.
+Merk at man ikke trenger å sette `limits` på CPU da dette blir automatisk løst av plattformen.
+
+Ved å bruke `ephemeral-storage` kan man be om ekstra diskplass for lagring i en task.
+
+```python
+from airflow import DAG
+from airflow.utils.dates import days_ago
+from dataverk_airflow import python_operator
+
+
+with DAG('navn-dag', start_date=days_ago(1), schedule_interval="*/10 * * * *") as dag:
+    t1 = python_operator(dag=dag,
+                         name="<navn-på-task>",
+                         repo="navikt/<repo>",
+                         script_path="/path/to/script.py",
+                         resources={
+                             "requests": {
+                                 "memory": "50Mi",
+                                 "cpu": "100m",
+                                 "ephemeral-storage": "1Gi"
+                             },
+                             "limits": {
+                                 "memory": "100Mi"
+                             }
+                         })
 ```
