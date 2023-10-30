@@ -1,6 +1,9 @@
 name: Upload src files for composer bucket test
 
-on: push
+on: 
+  push:
+    paths:
+      - tests-integration/**
 
 permissions:
   contents: read
