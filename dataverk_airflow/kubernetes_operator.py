@@ -9,6 +9,7 @@ from airflow.providers.cncf.kubernetes.utils.pod_manager import OnFinishAction
 from kubernetes import client
 from kubernetes.client.models import (
     V1ConfigMapVolumeSource,
+    V1Container,
     V1PodSecurityContext,
     V1SeccompProfile,
     V1SecretVolumeSource,
@@ -16,7 +17,7 @@ from kubernetes.client.models import (
     V1VolumeMount,
 )
 
-from dataverk_airflow import git_clone
+from dataverk_airflow import git_clone, bucket_read
 from dataverk_airflow.notifications import (
     create_email_notification,
     create_slack_notification,
@@ -33,8 +34,9 @@ class MissingValueException(Exception):
 def kubernetes_operator(
         dag: DAG,
         name: str,
-        repo: str,
         image: str,
+        repo: str = None,
+        is_composer: bool = False,
         cmds: list | None = None,
         branch: str = "main",
         email: str | None = None,
@@ -56,6 +58,7 @@ def kubernetes_operator(
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
+    :param is_composer: bool: Boolean flag indicating whether the environment is Cloud Composer.
     :param image: str: Dockerimage the pod should use
     :param cmds: str: Command to run in pod
     :param branch: str: Branch in repo, default "main"
@@ -75,23 +78,13 @@ def kubernetes_operator(
 
     :return: KubernetesPodOperator
     """
-    if repo == "":
-        raise MissingValueException("repo cannot be empty")
+    if not is_composer and repo in [None, ""]:
+        raise MissingValueException("repo must be specified when is_composer is false")
 
     if image == "":
         raise MissingValueException("image cannot be empty")
 
-    env_vars = {
-        "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
-        "TZ": os.getenv("TZ", "Europe/Oslo"),
-        "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"],
-        **extra_envs
-    }
-
-    if not os.getenv("INTEGRATION_TEST"):
-        env_vars["REQUESTS_CA_BUNDLE"] = CA_BUNDLE_PATH
-
-    namespace = os.environ["NAMESPACE"]
+    namespace = os.getenv("NAMESPACE")
 
     if slack_channel:
         allowlist.append("slack.com")
@@ -125,7 +118,7 @@ def kubernetes_operator(
         on_finish_action=on_finish_action,
         annotations={"allowlist": ",".join(allowlist)},
         image=image,
-        env_vars=env_vars,
+        env_vars=env_vars(is_composer, extra_envs),
         do_xcom_push=do_xcom_push,
         container_resources=resources,
         retries=retries,
@@ -141,51 +134,17 @@ def kubernetes_operator(
                 ]
             )
         ),
-        init_containers=[
-            git_clone(repo, branch, POD_WORKSPACE_DIR)
-        ],
-        image_pull_secrets=os.environ["K8S_IMAGE_PULL_SECRETS"],
+        init_containers=init_containers(is_composer, repo, branch),
+        image_pull_secrets=os.getenv("K8S_IMAGE_PULL_SECRETS"),
         labels={
             "component": "worker",
             "release": "airflow"
         },
         cmds=["/bin/sh", "-c"],
         arguments=[" && ".join(cmds)] if cmds is not None else None,
-        volume_mounts=[
-            V1VolumeMount(
-                name="dags-data",
-                mount_path=POD_WORKSPACE_DIR,
-                sub_path=None,
-                read_only=False
-            ),
-            V1VolumeMount(
-                name="ca-bundle-pem",
-                mount_path=CA_BUNDLE_PATH,
-                read_only=True,
-                sub_path="ca-bundle.pem"
-            )
-        ],
+        volume_mounts=volume_mounts(is_composer),
         service_account_name=os.getenv("TEAM", "airflow"),
-        volumes=[
-            V1Volume(
-                name="dags-data"
-            ),
-            V1Volume(
-                name="airflow-git-secret",
-                secret=V1SecretVolumeSource(
-                    default_mode=448,
-                    secret_name=os.getenv(
-                        "K8S_GIT_CLONE_SECRET", "github-app-secret"),
-                )
-            ),
-            V1Volume(
-                name="ca-bundle-pem",
-                config_map=V1ConfigMapVolumeSource(
-                    default_mode=420,
-                    name="ca-bundle-pem",
-                )
-            ),
-        ],
+        volumes=volumes(is_composer),
         security_context=V1PodSecurityContext(
             fs_group=0,
             seccomp_profile=V1SeccompProfile(
@@ -193,3 +152,81 @@ def kubernetes_operator(
             )
         ),
     )
+
+
+def env_vars(is_composer: bool, extra_envs: dict) -> dict:
+    if is_composer:
+        return {
+            "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
+            "TZ": os.getenv("TZ", "Europe/Oslo"),
+            **extra_envs
+        }
+    else:
+        return {
+            "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
+            "TZ": os.getenv("TZ", "Europe/Oslo"),
+            "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"],
+            "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH,
+            **extra_envs
+        }
+    
+
+def init_containers(is_composer: bool, repo: str, branch: str) -> list(V1Container):
+    if is_composer:
+        return [
+            bucket_read(POD_WORKSPACE_DIR)
+        ]
+    else:
+        return [
+            git_clone(repo, branch, POD_WORKSPACE_DIR)
+        ]
+
+
+def volume_mounts(is_composer: bool) -> list(V1VolumeMount):
+    volume_mounts = [
+        V1VolumeMount(
+            name="dags-data",
+            mount_path=POD_WORKSPACE_DIR,
+            sub_path=None,
+            read_only=False
+        )
+    ]
+
+    if not is_composer:
+        volume_mounts.append(
+            V1VolumeMount(
+                name="ca-bundle-pem",
+                mount_path=CA_BUNDLE_PATH,
+                read_only=True,
+                sub_path="ca-bundle.pem"
+            )
+        )
+
+
+def volumes(is_composer: bool) -> list(V1Volume):
+    volumes = [
+        V1Volume(
+            name="dags-data"
+        )
+    ]
+
+    if not is_composer:
+        volumes.append(
+            V1Volume(
+                name="airflow-git-secret",
+                secret=V1SecretVolumeSource(
+                    default_mode=448,
+                    secret_name=os.getenv(
+                        "K8S_GIT_CLONE_SECRET", "github-app-secret"),
+                )
+            )
+        )
+        volumes.append(
+            V1Volume(
+                name="ca-bundle-pem",
+                config_map=V1ConfigMapVolumeSource(
+                    default_mode=420,
+                    name="ca-bundle-pem",
+                )
+            )
+        )

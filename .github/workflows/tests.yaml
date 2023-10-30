@@ -76,10 +76,12 @@ jobs:
           INTEGRATION_TEST: "true"
         run: |
           airflow dags reserialize
-          airflow dags test DataverkAirflow
+          airflow dags test DataverkAirflowKnada
+          airflow dags test DataverkAirflowComposer
       - name: Verify successful dag tests
         run: |
-          airflow dags list-runs -d DataverkAirflow
+          airflow dags list-runs -d DataverkAirflowKnada
+          airflow dags list-runs -d DataverkAirflowComposer
 
           errorCount=0
           for res in $(airflow dags list-runs -d DataverkAirflow -ojson | jq -rc '.[]')

@@ -14,6 +14,7 @@ def notebook_operator(
         name: str,
         repo: str,
         nb_path: str,
+        is_composer: bool = False,
         log_output: bool = False,
         image: str | None = None,
         branch: str = "main",
@@ -36,6 +37,7 @@ def notebook_operator(
     :param name: str: Name of task
     :param repo: str: Github repo
     :param nb_path: str: Path to notebook in repo
+    :param is_composer: bool: Boolean flag indicating whether the environment is Cloud Composer.
     :param log_output: bool: Write logs from notebook to stdout, default False
     :param image: str: Dockerimage the pod should use
     :param branch: str: Branch in repo, default "main"
@@ -66,7 +68,7 @@ def notebook_operator(
         "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist,  "requirements_path": requirements_path,
         "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, "retries": retries,
         "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
-        "on_success_callback": on_success_callback, "working_dir": str(Path(nb_path).parent)
+        "on_success_callback": on_success_callback, "working_dir": str(Path(nb_path).parent), "is_composer": is_composer
     }
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
 

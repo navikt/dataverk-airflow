@@ -14,6 +14,7 @@ def quarto_operator(
         name: str,
         repo: str,
         quarto: dict,
+        is_composer: bool = False,
         image: str | None = None,
         branch: str = "main",
         email: str | None = None,
@@ -35,6 +36,7 @@ def quarto_operator(
     :param name: str: Name of task
     :param repo: str: Github repo
     :param quarto: dict: Dict of Quarto configuration, needs the following values {"path": "path/to/index.qmd", "env": "dev/prod", "id":"uuid", "token": "quarto-token"}
+    :param is_composer: bool: Boolean flag indicating whether the environment is Cloud Composer.
     :param image: str: Dockerimage the pod should use
     :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
@@ -72,7 +74,7 @@ def quarto_operator(
         "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist,  "requirements_path": requirements_path,
         "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, "retries": retries,
         "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
-        "on_success_callback": on_success_callback, "working_dir": str(working_dir)
+        "on_success_callback": on_success_callback, "working_dir": str(working_dir), "is_composer": is_composer
     }
 
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
