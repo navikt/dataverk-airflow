@@ -3,6 +3,7 @@ from datetime import datetime
 from kubernetes.client import models as k8s
 from airflow.models import Variable
 from dataverk_airflow import python_operator, notebook_operator, quarto_operator
+from dataverk_airflow.knada_operators import create_knada_nb_pod_operator, create_knada_py_pod_operator
 
 
 with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as dag:
@@ -44,3 +45,21 @@ with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as 
     py_op
     nb_op
     quarto_op
+
+with DAG('LegacyOperators', start_date=datetime(2023, 2, 15), schedule=None) as dag:
+    py_op = create_knada_py_pod_operator(
+        dag=dag,
+        name="python-op",
+        repo="navikt/dataverk-airflow",
+        script_path="tests-integration/notebooks/script.py",
+    )
+
+    nb_op = create_knada_nb_pod_operator(
+        dag=dag,
+        name="nb-op",
+        repo="navikt/dataverk-airflow",
+        nb_path="tests-integration/notebooks/mynb.ipynb",
+    )
+
+    py_op
+    nb_op
