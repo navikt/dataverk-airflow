@@ -25,7 +25,6 @@ def bucket_read(
             limits={"memory": "128Mi"}
         ),
         security_context=V1SecurityContext(
-            fs_group=0,
             run_as_user=50000,
             seccomp_profile=V1SeccompProfile(
                 type="RuntimeDefault"
