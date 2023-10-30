@@ -12,8 +12,8 @@ from dataverk_airflow.kubernetes_operator import kubernetes_operator
 def notebook_operator(
         dag: DAG,
         name: str,
-        repo: str,
         nb_path: str,
+        repo: str = None,
         is_composer: bool = False,
         log_output: bool = False,
         image: str | None = None,

@@ -12,8 +12,8 @@ from dataverk_airflow.kubernetes_operator import kubernetes_operator
 def python_operator(
         dag: DAG,
         name: str,
-        repo: str,
         script_path: str,
+        repo: str = None,
         is_composer: bool = False,
         image: str | None = None,
         branch: str = "main",
