@@ -1,4 +1,5 @@
 import os
+from kubernetes.client.models import V1SecurityContext, V1SeccompProfile
 import kubernetes.client as k8s
 
 def bucket_read(
@@ -22,5 +23,12 @@ def bucket_read(
         resources=k8s.V1ResourceRequirements(
             requests={"memory": "128Mi"},
             limits={"memory": "128Mi"}
+        ),
+        security_context=V1SecurityContext(
+            fs_group=0,
+            run_as_user=50000,
+            seccomp_profile=V1SeccompProfile(
+                type="RuntimeDefault"
+            )
         )
     )
