@@ -201,6 +201,8 @@ def volume_mounts(is_composer: bool) -> List[V1VolumeMount]:
                 sub_path="ca-bundle.pem"
             )
         )
+    
+    return volume_mounts
 
 
 def volumes(is_composer: bool) -> List[V1Volume]:
@@ -230,3 +232,5 @@ def volumes(is_composer: bool) -> List[V1Volume]:
                 )
             )
         )
+
+        return volumes
