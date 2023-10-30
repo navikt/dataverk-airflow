@@ -1,5 +1,5 @@
 import os
-import kubernetes as k8s
+import kubernetes.client as k8s
 
 def bucket_read(
     mount_path: str,
