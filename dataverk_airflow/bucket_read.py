@@ -18,16 +18,10 @@ def bucket_read(
         ],
         command=["/bin/sh", "-c"],
         args=[
-            f"gsutil cp -r gs://{os.environ['GCS_BUCKET']}/* {mount_path}/"
+            f"gsutil cp -r gs://{os.environ['GCS_BUCKET']}/* {mount_path}/ && chmod -R 754 {mount_path}"
         ],
         resources=k8s.V1ResourceRequirements(
             requests={"memory": "128Mi"},
             limits={"memory": "128Mi"}
         ),
-        security_context=V1SecurityContext(
-            run_as_user=50000,
-            seccomp_profile=V1SeccompProfile(
-                type="RuntimeDefault"
-            )
-        )
     )
