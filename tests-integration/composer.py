@@ -13,9 +13,8 @@ with DAG('DataverkAirflowComposer', start_date=datetime(2023, 2, 15), schedule=N
     py_op = python_operator(
         dag = dag,
         name = "python-op",
-        repo = "navikt/dataverk-airflow",
-        script_path = "tests-integration/notebooks/script.py",
-        requirements_path="tests-integration/notebooks/requirements.txt",
+        script_path = "notebooks/script.py",
+        requirements_path="notebooks/requirements.txt",
         retries=0,
         is_composer=True,
         startup_timeout_seconds=60,
@@ -24,9 +23,8 @@ with DAG('DataverkAirflowComposer', start_date=datetime(2023, 2, 15), schedule=N
     nb_op = notebook_operator(
         dag = dag,
         name = "nb-op",
-        repo = "navikt/dataverk-airflow",
-        nb_path = "tests-integration/notebooks/mynb.ipynb",
-        requirements_path="tests-integration/notebooks/requirements.txt",
+        nb_path = "notebooks/mynb.ipynb",
+        requirements_path="notebooks/requirements.txt",
         retries=0,
         is_composer=True,
         startup_timeout_seconds=60,
