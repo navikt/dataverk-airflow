@@ -28,4 +28,4 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
       - name: Upload files
         working-directory: tests-integration
-        run: gsutil cp -r * gs://dataverk-airflow-tests/
+        run: gsutil cp -r * gs://dataverk-airflow-tests/tests-integration
