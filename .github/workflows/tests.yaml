@@ -83,8 +83,11 @@ jobs:
           airflow dags list-runs -d DataverkAirflowKnada
           airflow dags list-runs -d DataverkAirflowComposer
 
+          dvk=$(airflow dags list-runs -d DataverkAirflowKnada -ojson)
+          dvc=$(airflow dags list-runs -d DataverkAirflowComposer -ojson)
+
           errorCount=0
-          for res in $(airflow dags list-runs -d DataverkAirflow -ojson | jq -rc '.[]')
+          for res in $(jq -n --argjson var1 "$dvk" --argjson var2 "$dvc" '[$var1, $var2] | add' | jq -rc '.[]')
           do
             status=$(echo $res | jq -r '.state')
             if [ "$status" != "success" ]
