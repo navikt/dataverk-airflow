@@ -162,11 +162,12 @@ def env_vars(is_composer: bool, extra_envs: dict) -> dict:
             **extra_envs
         }
     else:
+        if not os.getenv("INTEGRATION_TEST"):
+            extra_envs["REQUESTS_CA_BUNDLE"] = CA_BUNDLE_PATH
         return {
             "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
             "TZ": os.getenv("TZ", "Europe/Oslo"),
             "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"],
-            "REQUESTS_CA_BUNDLE": CA_BUNDLE_PATH,
             **extra_envs
         }
     
