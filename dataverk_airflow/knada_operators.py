@@ -73,7 +73,7 @@ def create_knada_nb_pod_operator(
     return notebook_operator(**kwargs)
 
 
-@ deprecated("Will be removed in next release, use python_operator instead")
+@deprecated("Will be removed in next release, use python_operator instead")
 def create_knada_python_pod_operator(
     dag: DAG,
     name: str,
