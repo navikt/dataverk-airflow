@@ -1,0 +1,28 @@
+name: Upload src files for composer bucket test
+
+on: push
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - id: auth
+        name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          token_format: access_token
+          workload_identity_provider: projects/193123067890/locations/global/workloadIdentityPools/ci-knada-images/providers/ci-knada-images
+          service_account: ci-knada-images@knada-gcp.iam.gserviceaccount.com
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Upload files
+        working-directory: tests-integration
+        run: gsutil cp -r * gs://dataverk-airflow-tests/
