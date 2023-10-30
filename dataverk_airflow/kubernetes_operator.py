@@ -233,4 +233,4 @@ def volumes(is_composer: bool) -> List[V1Volume]:
             )
         )
 
-        return volumes
+    return volumes
