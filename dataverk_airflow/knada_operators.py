@@ -1,13 +1,12 @@
 import os
 
 from datetime import timedelta
-from pathlib import Path
 from typing import Callable
 from deprecated import deprecated
 
 from airflow import DAG
 from kubernetes import client
-from dataverk_airflow.notebook_operator import notebook_operator, python_operator
+from dataverk_airflow import notebook_operator, python_operator
 
 
 @deprecated("Will be removed in next release, use notebook_operator instead")
