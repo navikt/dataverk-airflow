@@ -19,13 +19,13 @@ class TestKubernetesOperator:
 
     def test_that_exception_is_raised_for_empty_image(self, dag):
         with pytest.raises(MissingValueException) as info:
-            kubernetes_operator(dag, "name", "repo", "")
+            kubernetes_operator(dag, "name", "", "repo")
         assert "image cannot be empty" in str(info.value)
 
     def test_that_exception_is_raised_for_empty_repo(self, dag):
         with pytest.raises(MissingValueException) as info:
-            kubernetes_operator(dag, "name", "", "image")
-        assert "repo cannot be empty" in str(info.value)
+            kubernetes_operator(dag, "name", "image", "")
+        assert "repo cannot be empty when is_composer is false" in str(info.value)
 
     def test_that_extra_envs_are_merged_in(self, dag):
         container = kubernetes_operator(dag, "name", "repo", "image",

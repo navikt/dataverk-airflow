@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta
-from typing import Callable
+from typing import Callable, List
 
 from airflow import DAG
 
@@ -79,7 +79,7 @@ def kubernetes_operator(
     :return: KubernetesPodOperator
     """
     if not is_composer and repo in [None, ""]:
-        raise MissingValueException("repo must be specified when is_composer is false")
+        raise MissingValueException("repo cannot be empty when is_composer is false")
 
     if image == "":
         raise MissingValueException("image cannot be empty")
@@ -171,7 +171,7 @@ def env_vars(is_composer: bool, extra_envs: dict) -> dict:
         }
     
 
-def init_containers(is_composer: bool, repo: str, branch: str) -> list(V1Container):
+def init_containers(is_composer: bool, repo: str, branch: str) -> List[V1Container]:
     if is_composer:
         return [
             bucket_read(POD_WORKSPACE_DIR)
@@ -182,7 +182,7 @@ def init_containers(is_composer: bool, repo: str, branch: str) -> list(V1Contain
         ]
 
 
-def volume_mounts(is_composer: bool) -> list(V1VolumeMount):
+def volume_mounts(is_composer: bool) -> List[V1VolumeMount]:
     volume_mounts = [
         V1VolumeMount(
             name="dags-data",
@@ -203,7 +203,7 @@ def volume_mounts(is_composer: bool) -> list(V1VolumeMount):
         )
 
 
-def volumes(is_composer: bool) -> list(V1Volume):
+def volumes(is_composer: bool) -> List[V1Volume]:
     volumes = [
         V1Volume(
             name="dags-data"
