@@ -155,22 +155,20 @@ def kubernetes_operator(
 
 
 def env_vars(is_composer: bool, extra_envs: dict) -> dict:
-    if is_composer:
-        return {
-            "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
-            "TZ": os.getenv("TZ", "Europe/Oslo"),
-            **extra_envs
-        }
-    else:
+    env_vars = {
+        "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
+        "TZ": os.getenv("TZ", "Europe/Oslo"),
+        **extra_envs
+    }
+
+    if not is_composer:
         if not os.getenv("INTEGRATION_TEST"):
-            extra_envs["REQUESTS_CA_BUNDLE"] = CA_BUNDLE_PATH
-        return {
-            "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
-            "TZ": os.getenv("TZ", "Europe/Oslo"),
-            "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"],
-            **extra_envs
-        }
+            env_vars["REQUESTS_CA_BUNDLE"] = CA_BUNDLE_PATH
+
+        env_vars["KNADA_TEAM_SECRET"] = os.environ["KNADA_TEAM_SECRET"]
     
+    return env_vars
+
 
 def init_containers(is_composer: bool, repo: str, branch: str) -> List[V1Container]:
     if is_composer:
