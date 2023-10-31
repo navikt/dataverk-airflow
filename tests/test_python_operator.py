@@ -19,13 +19,13 @@ class TestPythonOperator:
         return DAG("dag_id", start_date=datetime.datetime(2023, 10, 10))
 
     def test_that_knada_operator_image_is_used(self, dag):
-        container = python_operator(dag, "name", "repo", "script_path")
+        container = python_operator(dag, "name", "script_path", "repo")
         assert container.image == "operator-image"
 
     def test_that_personal_operator_image_is_used(self, dag):
-        container = python_operator(dag, "name", "repo", "script_path", image="personal-image")
+        container = python_operator(dag, "name", "script_path", "repo", image="personal-image")
         assert container.image == "personal-image"
 
     def test_that_cmds_are_correct(self, dag):
-        container = python_operator(dag, "name", "repo", "script_path")
+        container = python_operator(dag, "name", "script_path", "repo")
         assert container.arguments == ["python script_path"]

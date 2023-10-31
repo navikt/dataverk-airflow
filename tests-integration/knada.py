@@ -5,7 +5,7 @@ from dataverk_airflow import python_operator, notebook_operator, quarto_operator
 from dataverk_airflow.knada_operators import create_knada_nb_pod_operator, create_knada_python_pod_operator
 
 
-with DAG('DataverkAirflow', start_date=datetime(2023, 2, 15), schedule=None) as dag:
+with DAG('DataverkAirflowKnada', start_date=datetime(2023, 2, 15), schedule=None) as dag:
     py_op = python_operator(
         dag=dag,
         name="python-op",

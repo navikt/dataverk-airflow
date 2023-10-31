@@ -1,0 +1,32 @@
+name: Upload src files for composer bucket test
+
+on: 
+  push:
+    paths:
+      - tests-integration/**
+      - '.github/workflows/upload-composer-bucket.yaml'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  upload-src-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - id: auth
+        name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          token_format: access_token
+          workload_identity_provider: projects/1007056531311/locations/global/workloadIdentityPools/ci-nada-prod/providers/ci-nada-prod
+          service_account: ci-nada-prod-sa@nada-prod-6977.iam.gserviceaccount.com
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Upload DAGs for Cloud Composer
+        working-directory: tests-integration
+        run: gsutil cp -r * gs://dataverk-airflow-tests/tests-integration

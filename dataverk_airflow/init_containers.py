@@ -1,5 +1,6 @@
 import os
 
+from typing import List
 import kubernetes.client as k8s
 
 
@@ -7,7 +8,7 @@ def create_git_clone_init_container(
     repo: str,
     branch: str,
     mount_path: str
-):
+) -> List(k8s.V1Container):
     return k8s.V1Container(
         name="clone-repo",
         image=os.getenv("CLONE_REPO_IMAGE", "europe-west1-docker.pkg.dev/knada-gcp/knada/git-sync:2023-03-09-bfc0f3e"),

@@ -12,23 +12,29 @@ permissions:
 
 jobs:
   unit-tests:
+    strategy:
+      matrix:
+        version: ["3.8", "3.9", "3.10", "3.11"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: ${{ matrix.version }}
       - run: pip3 install poetry
       - run: poetry install --with test
       - run: poetry run pytest
 
   integration-tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: ${{ matrix.version }}
       - id: auth
         name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v1
@@ -66,7 +72,7 @@ jobs:
 
           dataverk_airflow_tag=$(gcloud artifacts docker images list "$DATAVERK_AIRFLOW_IMAGE" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags')
           echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow:$dataverk_airflow_tag" >> $GITHUB_ENV
-      - name: Run tests
+      - name: Run tests Knada
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
           KNADA_TEAM_SECRET: secret
@@ -76,13 +82,29 @@ jobs:
           INTEGRATION_TEST: "true"
         run: |
           airflow dags reserialize
-          airflow dags test DataverkAirflow
+          airflow dags test DataverkAirflowKnada
+      - name: Run tests Composer
+        env:
+          AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
+          KNADA_TEAM_SECRET: secret
+          NAMESPACE: default
+          K8S_IMAGE_PULL_SECRETS: ghcr-creds
+          MARKEDSPLASSEN_HOST: data.ekstern.dev.nav.no
+          INTEGRATION_TEST: "true"
+          GCS_BUCKET: "dataverk-airflow-tests"
+        run: |
+          airflow dags reserialize
+          airflow dags test DataverkAirflowComposer
       - name: Verify successful dag tests
         run: |
-          airflow dags list-runs -d DataverkAirflow
+          airflow dags list-runs -d DataverkAirflowKnada
+          airflow dags list-runs -d DataverkAirflowComposer
+
+          dvk=$(airflow dags list-runs -d DataverkAirflowKnada -ojson)
+          dvc=$(airflow dags list-runs -d DataverkAirflowComposer -ojson)
 
           errorCount=0
-          for res in $(airflow dags list-runs -d DataverkAirflow -ojson | jq -rc '.[]')
+          for res in $(jq -n --argjson var1 "$dvk" --argjson var2 "$dvc" '[$var1, $var2] | add' | jq -rc '.[]')
           do
             status=$(echo $res | jq -r '.state')
             if [ "$status" != "success" ]
