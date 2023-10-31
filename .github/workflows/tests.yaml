@@ -40,8 +40,8 @@ jobs:
         uses: google-github-actions/auth@v1
         with:
           token_format: access_token
-          workload_identity_provider: projects/193123067890/locations/global/workloadIdentityPools/ci-knada-images/providers/ci-knada-images
-          service_account: ci-knada-images@knada-gcp.iam.gserviceaccount.com
+          workload_identity_provider: projects/1007056531311/locations/global/workloadIdentityPools/ci-nada-prod/providers/ci-nada-prod
+          service_account: ci-nada-prod-sa@nada-prod-6977.iam.gserviceaccount.com
       - name: Install python dependencies
         run: |
           pip3 install apache-airflow
