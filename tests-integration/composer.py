@@ -12,7 +12,6 @@ os.environ["GCS_BUCKET"] = "dataverk-airflow-tests"
 with DAG('DataverkAirflowComposer', start_date=datetime(2023, 2, 15), schedule=None) as dag:
     py_op = python_operator(
         dag = dag,
-        is_composer=True,
         name = "python-op",
         script_path = "tests-integration/notebooks/script.py",
         requirements_path="tests-integration/notebooks/requirements.txt",
@@ -22,7 +21,6 @@ with DAG('DataverkAirflowComposer', start_date=datetime(2023, 2, 15), schedule=N
 
     nb_op = notebook_operator(
         dag = dag,
-        is_composer=True,
         name = "nb-op",
         nb_path = "tests-integration/notebooks/mynb.ipynb",
         requirements_path="tests-integration/notebooks/requirements.txt",
@@ -32,7 +30,6 @@ with DAG('DataverkAirflowComposer', start_date=datetime(2023, 2, 15), schedule=N
 
     quarto_op = quarto_operator(
         dag=dag,
-        is_composer=True,
         name="quarto-op",
         quarto={
             "path": "tests-integration/notebooks/quarto.ipynb",
