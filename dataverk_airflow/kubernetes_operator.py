@@ -36,7 +36,6 @@ def kubernetes_operator(
         name: str,
         image: str,
         repo: str = None,
-        is_composer: bool = False,
         cmds: list = None,
         branch: str = "main",
         email: str = None,
@@ -58,7 +57,6 @@ def kubernetes_operator(
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
-    :param is_composer: bool: Boolean flag indicating whether the environment is Cloud Composer.
     :param image: str: Dockerimage the pod should use
     :param cmds: str: Command to run in pod
     :param branch: str: Branch in repo, default "main"
@@ -78,6 +76,8 @@ def kubernetes_operator(
 
     :return: KubernetesPodOperator
     """
+    is_composer = True if os.getenv("GCS_BUCKET") else False
+
     if not is_composer and repo in [None, ""]:
         raise MissingValueException("repo cannot be empty when is_composer is false")
 

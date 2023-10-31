@@ -14,7 +14,6 @@ def python_operator(
         name: str,
         script_path: str,
         repo: str = None,
-        is_composer: bool = False,
         image: str = None,
         branch: str = "main",
         email: str = None,
@@ -36,7 +35,6 @@ def python_operator(
     :param name: str: Name of task
     :param repo: str: Github repo
     :param script_path: str: Path to script in repo
-    :param is_composer: bool: Boolean flag indicating whether the environment is Cloud Composer.
     :param image: str: Dockerimage the pod should use
     :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
@@ -64,7 +62,7 @@ def python_operator(
         "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist, "requirements_path": requirements_path,
         "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, "retries": retries,
         "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
-        "on_success_callback": on_success_callback, "working_dir": str(Path(script_path).parent), "is_composer": is_composer
+        "on_success_callback": on_success_callback, "working_dir": str(Path(script_path).parent)
     }
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
