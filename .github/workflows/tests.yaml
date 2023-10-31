@@ -12,12 +12,15 @@ permissions:
 
 jobs:
   unit-tests:
+    strategy:
+      matrix:
+        version: ["3.8", "3.9", "3.10", "3.11"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: ${{ matrix.version }}
       - run: pip3 install poetry
       - run: poetry install --with test
       - run: poetry run pytest
