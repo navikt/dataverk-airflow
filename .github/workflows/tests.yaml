@@ -93,6 +93,7 @@ jobs:
           INTEGRATION_TEST: "true"
           GCS_BUCKET: "dataverk-airflow-tests"
         run: |
+          airflow dags reserialize
           airflow dags test DataverkAirflowComposer
       - name: Verify successful dag tests
         run: |
