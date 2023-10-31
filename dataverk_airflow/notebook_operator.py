@@ -44,7 +44,7 @@ def notebook_operator(
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
     :param requirements_path: bool: Path (including filename) to your requirements.txt
-    :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
+    :param resources: dict: Specify cpu and memory resource usage (dict: request/limit: {"memory": "", "cpu": "", "ephemeral-storage": ""}), default None
     :param startup_timeout_seconds: int: pod startup timeout
     :param retries: int: Number of retries for task before DAG fails, default 3
     :param delete_on_finish: bool: Whether to delete pod on completion
@@ -63,7 +63,7 @@ def notebook_operator(
 
     kwargs = {
         "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
-        "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist,  "requirements_path": requirements_path,
+        "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist, "requirements_path": requirements_path,
         "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, "retries": retries,
         "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
         "on_success_callback": on_success_callback, "working_dir": str(Path(nb_path).parent)
