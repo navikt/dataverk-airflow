@@ -72,7 +72,7 @@ jobs:
 
           dataverk_airflow_tag=$(gcloud artifacts docker images list "$DATAVERK_AIRFLOW_IMAGE" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags')
           echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow:$dataverk_airflow_tag" >> $GITHUB_ENV
-      - name: Run tests
+      - name: Run tests Knada
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
           KNADA_TEAM_SECRET: secret
@@ -83,6 +83,16 @@ jobs:
         run: |
           airflow dags reserialize
           airflow dags test DataverkAirflowKnada
+      - name: Run tests Composer
+        env:
+          AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
+          KNADA_TEAM_SECRET: secret
+          NAMESPACE: default
+          K8S_IMAGE_PULL_SECRETS: ghcr-creds
+          MARKEDSPLASSEN_HOST: data.ekstern.dev.nav.no
+          INTEGRATION_TEST: "true"
+          GCS_BUCKET: "dataverk-airflow-tests"
+        run: |
           airflow dags test DataverkAirflowComposer
       - name: Verify successful dag tests
         run: |

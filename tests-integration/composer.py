@@ -5,9 +5,6 @@ from kubernetes.client import models as k8s
 from airflow.models import Variable
 from dataverk_airflow import python_operator, notebook_operator, quarto_operator
 
-# Env variable for GCP bucket is automatically set for composer instances
-# For the test we must set it manually
-os.environ["GCS_BUCKET"] = "dataverk-airflow-tests"
 
 with DAG('DataverkAirflowComposer', start_date=datetime(2023, 2, 15), schedule=None) as dag:
     py_op = python_operator(
