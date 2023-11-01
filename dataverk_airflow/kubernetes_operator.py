@@ -79,7 +79,7 @@ def kubernetes_operator(
     is_composer = True if os.getenv("GCS_BUCKET") else False
 
     if not is_composer and repo in [None, ""]:
-        raise MissingValueException("repo cannot be empty when is_composer is false")
+        raise MissingValueException("repo cannot be empty")
 
     if image == "":
         raise MissingValueException("image cannot be empty")
@@ -167,7 +167,7 @@ def env_vars(is_composer: bool, extra_envs: dict) -> dict:
             env_vars["REQUESTS_CA_BUNDLE"] = CA_BUNDLE_PATH
 
         env_vars["KNADA_TEAM_SECRET"] = os.environ["KNADA_TEAM_SECRET"]
-    
+
     return env_vars
 
 
@@ -201,7 +201,7 @@ def volume_mounts(is_composer: bool) -> List[V1VolumeMount]:
                 sub_path="ca-bundle.pem"
             )
         )
-    
+
     return volume_mounts
 
 
