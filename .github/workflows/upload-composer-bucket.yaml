@@ -1,4 +1,4 @@
-name: Upload src files for composer bucket test
+name: Upload src files for Composer bucket test
 
 on: 
   push:

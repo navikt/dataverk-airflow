@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dataverk-airflow"
-version = "0.4.37"
+version = "1.0.0"
 description = ""
 authors = ["NAV", "NADA"]
 readme = "README.md"

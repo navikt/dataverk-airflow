@@ -9,7 +9,11 @@ Vi har også støtte for å installere Python pakker ved oppstart av Airflow tas
 
 ### Quarto operator
 
-Denne kjører Quarto render for deg. Quarto-token for teamet er i dette eksempelet hentet fra [datamarkedsplassen](https://data.intern.nav.no/user/tokens). Dette lagres i en airflow variable som så brukes i DAG tasken under. Se [her](https://airflow.apache.org/docs/apache-airflow/stable/howto/variable.html) for informasjon om hvordan å legge til airflow variables.
+Denne kjører Quarto render for deg.
+Man finner Quarto-token for ditt teamet i [Datamarkedsplassen](https://data.intern.nav.no/user/tokens). 
+
+I eksempelt under lagrere vi tokenet i en Airflow variable som så brukes i DAG tasken under.
+Se offisiell [Airflow dokumentasjon](https://airflow.apache.org/docs/apache-airflow/stable/howto/variable.html) for hvordan man bruker `Variable.get()´ i en task.
 
 ```python
 from airflow import DAG
