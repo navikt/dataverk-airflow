@@ -9,11 +9,12 @@ Vi har også støtte for å installere Python pakker ved oppstart av Airflow tas
 
 ### Quarto operator
 
-Denne kjører Quarto render for deg.
+Denne kjører Quarto render for deg. Quarto-token for teamet er i dette eksempelet hentet fra [datamarkedsplassen](https://data.intern.nav.no/user/tokens). Dette lagres i en airflow variable som så brukes i DAG tasken under. Se [her](https://airflow.apache.org/docs/apache-airflow/stable/howto/variable.html) for informasjon om hvordan å legge til airflow variables.
 
 ```python
 from airflow import DAG
 from airflow.utils.dates import days_ago
+from airflow.models import Variable
 from dataverk_airflow import quarto_operator
 
 
@@ -25,8 +26,7 @@ with DAG('navn-dag', start_date=days_ago(1), schedule_interval="*/10 * * * *") a
                              "path": "/path/to/index.qmd",
                              "env": "dev/prod",
                              "id":"uuid",
-                             "token":
-                             "quarto-token"
+                             "token": Variable.get("quarto_token"),
                          },
                          slack_channel="<#slack-alarm-kanal>")
 ```
