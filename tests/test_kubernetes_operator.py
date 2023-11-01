@@ -25,7 +25,7 @@ class TestKubernetesOperator:
     def test_that_exception_is_raised_for_empty_repo(self, dag):
         with pytest.raises(MissingValueException) as info:
             kubernetes_operator(dag, "name", "image", "")
-        assert "repo cannot be empty when is_composer is false" in str(info.value)
+        assert "repo cannot be empty" in str(info.value)
 
     def test_that_extra_envs_are_merged_in(self, dag):
         container = kubernetes_operator(dag, "name", "repo", "image",
@@ -55,4 +55,5 @@ class TestKubernetesOperator:
                                         cmds=["python script.py"],
                                         requirements_path="requirements.txt")
 
-        assert container.arguments == ["pip install -r /workspace/requirements.txt --user && python script.py"]
+        assert container.arguments == [
+            "pip install -r /workspace/requirements.txt --user --no-cache-dir && python script.py"]
