@@ -107,7 +107,8 @@ def kubernetes_operator(
         working_dir = POD_WORKSPACE_DIR
 
     if requirements_path:
-        cmds = [f"pip install -r {POD_WORKSPACE_DIR}/{requirements_path} --user"] + cmds
+        cmds = [
+            f"pip install -r {POD_WORKSPACE_DIR}/{requirements_path} --user --no-cache-dir"] + cmds
 
     return KubernetesPodOperator(
         dag=dag,
