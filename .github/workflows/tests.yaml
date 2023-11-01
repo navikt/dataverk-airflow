@@ -82,7 +82,7 @@ jobs:
           INTEGRATION_TEST: "true"
         run: |
           airflow dags reserialize
-          airflow dags test DataverkAirflowKnada
+          airflow dags test KnadaOperators
       - name: Run tests Composer
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
@@ -94,14 +94,14 @@ jobs:
           GCS_BUCKET: "dataverk-airflow-tests"
         run: |
           airflow dags reserialize
-          airflow dags test DataverkAirflowComposer
+          airflow dags test CloudComposerOperators
       - name: Verify successful dag tests
         run: |
-          airflow dags list-runs -d DataverkAirflowKnada
-          airflow dags list-runs -d DataverkAirflowComposer
+          airflow dags list-runs -d KnadaOperators
+          airflow dags list-runs -d CloudComposerOperators
 
-          dvk=$(airflow dags list-runs -d DataverkAirflowKnada -ojson)
-          dvc=$(airflow dags list-runs -d DataverkAirflowComposer -ojson)
+          dvk=$(airflow dags list-runs -d KnadaOperators -ojson)
+          dvc=$(airflow dags list-runs -d CloudComposerOperators -ojson)
 
           errorCount=0
           for res in $(jq -n --argjson var1 "$dvk" --argjson var2 "$dvc" '[$var1, $var2] | add' | jq -rc '.[]')

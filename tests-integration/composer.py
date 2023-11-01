@@ -4,7 +4,7 @@ from airflow.models import Variable
 from dataverk_airflow import python_operator, notebook_operator, quarto_operator
 
 
-with DAG('CloudComposerOperator', start_date=datetime(2023, 2, 15), schedule=None) as dag:
+with DAG('CloudComposerOperators', start_date=datetime(2023, 2, 15), schedule=None) as dag:
     py_op = python_operator(
         dag=dag,
         name="python-op",
