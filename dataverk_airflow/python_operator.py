@@ -38,7 +38,7 @@ def python_operator(
     :param image: str: Dockerimage the pod should use
     :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
-    :param slack_channel: Name of Slack channel, default None (no Slack notification)
+    :param slack_channel: str: Name of Slack channel, default None (no Slack notification)
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
     :param requirements_path: bool: Path (including filename) to your requirements.txt

@@ -15,6 +15,8 @@ Man finner Quarto-token for ditt teamet i [Datamarkedsplassen](https://data.inte
 I eksempelt under lagrere vi tokenet i en Airflow variable som så brukes i DAG tasken under.
 Se offisiell [Airflow dokumentasjon](https://airflow.apache.org/docs/apache-airflow/stable/howto/variable.html) for hvordan man bruker `Variable.get()´ i en task.
 
+
+
 ```python
 from airflow import DAG
 from airflow.utils.dates import days_ago
@@ -88,6 +90,37 @@ with DAG('navn-dag', start_date=days_ago(1), schedule_interval="*/10 * * * *") a
                              cmds=["/path/to/bin/", "script-name.sh", "argument1", "argument2"],
                              image="europe-north1-docker.pkg.dev/nais-management-233d/ditt-team/ditt-image:din-tag",
                              slack_channel="<#slack-alarm-kanal>")
+```
+
+Denne operatoren har støtte for to ekstra flagg som ikke er tilgjengelig fra de andre.
+
+```
+cmds: str: Command to run in pod
+working_dir: str: Path to working directory
+```
+
+### Felles argumenter
+
+Alle operatorene våre har støtte for disse argumentene i funksjonskallet.
+
+```
+dag: DAG: owner DAG
+name: str: Name of task
+repo: str: Github repo
+image: str: Dockerimage the pod should use
+branch: str: Branch in repo, default "main"
+email: str: Email of owner
+slack_channel: str: Name of Slack channel, default None (no Slack notification)
+extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
+allowlist: list: list of hosts and port the task needs to reach on the format host:port
+requirements_path: bool: Path (including filename) to your requirements.txt
+resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
+startup_timeout_seconds: int: pod startup timeout
+retries: int: Number of retries for task before DAG fails, default 3
+delete_on_finish: bool: Whether to delete pod on completion
+retry_delay: timedelta: Time inbetween retries, default 5 seconds
+do_xcom_push: bool: Enable xcom push of content in file "/airflow/xcom/return.json", default False
+on_success_callback:: func: a function to be called when a task instance of this task succeeds
 ```
 
 ## Sette resource requirements

@@ -61,7 +61,7 @@ def kubernetes_operator(
     :param cmds: str: Command to run in pod
     :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
-    :param slack_channel: Name of Slack channel, default None (no Slack notification)
+    :param slack_channel: str: Name of Slack channel, default None (no Slack notification)
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
     :param requirements_path: bool: Path (including filename) to your requirements.txt
@@ -71,7 +71,11 @@ def kubernetes_operator(
     :param delete_on_finish: bool: Whether to delete pod on completion
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param do_xcom_push: bool: Enable xcom push of content in file '/airflow/xcom/return.json', default False
-    :param on_success_callback: Callable
+    :param on_success_callback: a function or list of functions to be called when a task instance
+        of this task fails. a context dictionary is passed as a single
+        parameter to this function. Context contains references to related
+        objects to the task instance and is documented under the macros
+        section of the API.
     :param working_dir: str: Path to working directory
 
     :return: KubernetesPodOperator

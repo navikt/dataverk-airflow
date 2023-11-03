@@ -38,7 +38,7 @@ def quarto_operator(
     :param image: str: Dockerimage the pod should use
     :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
-    :param slack_channel: Name of Slack channel, default None (no Slack notification)
+    :param slack_channel: str: Name of Slack channel, default None (no Slack notification)
     :param extra_envs: dict: Dict with environment variables, example: {"key": "value", "key2": "value2"}
     :param allowlist: list: List of hosts and port the task needs to reach on the format host:port
     :param requirements_path: bool: Path (including filename) to your requirements.txt
@@ -58,14 +58,16 @@ def quarto_operator(
     working_dir = None
     try:
         working_dir = Path(quarto['path']).parent
-        host = "datamarkedsplassen.intern.nav.no" if quarto['env'] == "prod" else os.getenv("MARKEDSPLASSEN_HOST", "datamarkedsplassen.intern.dev.nav.no")
+        host = "datamarkedsplassen.intern.nav.no" if quarto['env'] == "prod" else os.getenv(
+            "MARKEDSPLASSEN_HOST", "datamarkedsplassen.intern.dev.nav.no")
         url = f"https://{host}/quarto/update/{quarto['id']}"
         cmds = [
-            f"quarto render {Path(quarto['path']).name} --to html --execute --output index.html -M self-contained:True", 
+            f"quarto render {Path(quarto['path']).name} --to html --execute --output index.html -M self-contained:True",
             f"""curl -X PUT -F index.html=@index.html {url} -H "Authorization:Bearer {quarto['token']}" """
         ]
     except KeyError as err:
-        raise KeyError(f"path, environment, id and token must be provided in the Quarto configuration. Missing  {err}")
+        raise KeyError(
+            f"path, environment, id and token must be provided in the Quarto configuration. Missing  {err}")
 
     kwargs = {
         "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
