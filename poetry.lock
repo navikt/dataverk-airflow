@@ -12,6 +12,17 @@ files = [
 ]
 
 [[package]]
+name = "aiofiles"
+version = "23.2.1"
+description = "File support for asyncio."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "aiofiles-23.2.1-py3-none-any.whl", hash = "sha256:19297512c647d4b27a2cf7c34caa7e405c0d60b5560618a29a9fe027b18b0107"},
+    {file = "aiofiles-23.2.1.tar.gz", hash = "sha256:84ec2218d8419404abcb9f0c02df3f34c6e0a68ed41072acfb1cef5cbc29051a"},
+]
+
+[[package]]
 name = "aiohttp"
 version = "3.8.6"
 description = "Async http client/server framework (asyncio)"
@@ -399,16 +410,17 @@ zendesk = ["apache-airflow-providers-zendesk"]
 
 [[package]]
 name = "apache-airflow-providers-cncf-kubernetes"
-version = "7.7.0"
+version = "7.8.0"
 description = "Provider for Apache Airflow. Implements apache-airflow-providers-cncf-kubernetes package"
 optional = false
 python-versions = "~=3.8"
 files = [
-    {file = "apache-airflow-providers-cncf-kubernetes-7.7.0.tar.gz", hash = "sha256:f2853ac03c64964e137dd96505d86a8d1d1a5ad5c9e8e3fb8d87a188e0252241"},
-    {file = "apache_airflow_providers_cncf_kubernetes-7.7.0-py3-none-any.whl", hash = "sha256:bab95152f36a913c920b9a204726d3ab5ac46bfea444b66ccfa777199d9ef181"},
+    {file = "apache-airflow-providers-cncf-kubernetes-7.8.0.tar.gz", hash = "sha256:38eb920215c4b4b1d55a3636a279953ff3d75ceeb123caad11671493b556a3d2"},
+    {file = "apache_airflow_providers_cncf_kubernetes-7.8.0-py3-none-any.whl", hash = "sha256:27174bc7c2eb1fb3446a7d00a7c07338e364804ecbd726308b7a686c65e4b8d0"},
 ]
 
 [package.dependencies]
+aiofiles = ">=23.2.0"
 apache-airflow = ">=2.5.0"
 asgiref = ">=3.5.2"
 cryptography = ">=2.0.0"
@@ -486,13 +498,13 @@ apache-airflow = ">=2.5.0"
 
 [[package]]
 name = "apache-airflow-providers-slack"
-version = "8.2.0"
+version = "8.3.0"
 description = "Provider for Apache Airflow. Implements apache-airflow-providers-slack package"
 optional = false
 python-versions = "~=3.8"
 files = [
-    {file = "apache-airflow-providers-slack-8.2.0.tar.gz", hash = "sha256:059045b73bf148c1bc5b7450a2d728c9d104882c85fbdaacedb074733651618c"},
-    {file = "apache_airflow_providers_slack-8.2.0-py3-none-any.whl", hash = "sha256:62cb92f6c3eec735f9a1d9cdabe38213b7b8872536b6d6c51636c002e93b36e0"},
+    {file = "apache-airflow-providers-slack-8.3.0.tar.gz", hash = "sha256:9c67eabc716edf0f59d98ec1acc1f744eaf981af315037ce0a37467cddaab935"},
+    {file = "apache_airflow_providers_slack-8.3.0-py3-none-any.whl", hash = "sha256:97e08ea565f97f8d42d125cbb7e2233bc9e6418505d21b03261603376724e3b6"},
 ]
 
 [package.dependencies]
