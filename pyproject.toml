@@ -13,7 +13,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-apache-airflow-providers-cncf-kubernetes = "^7.6.0"
+apache-airflow-providers-cncf-kubernetes = "^7.3.0"
 kubernetes = ">=21.7.0,<24"
 pathlib = "^1.0.1"
 python = "^3.8"
