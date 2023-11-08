@@ -88,10 +88,10 @@ def kubernetes_operator(
     if image == "":
         raise MissingValueException("image cannot be empty")
 
-    namespace = os.getenv("NAMESPACE")
-
     if slack_channel:
         allowlist.append("slack.com")
+
+    namespace = get_namespace(is_composer)
 
     def on_failure(context):
         if email:
@@ -124,6 +124,7 @@ def kubernetes_operator(
         annotations={"allowlist": ",".join(allowlist)},
         image=image,
         env_vars=env_vars(is_composer, extra_envs),
+        config_file=config_file(is_composer),
         do_xcom_push=do_xcom_push,
         container_resources=resources,
         retries=retries,
@@ -159,6 +160,13 @@ def kubernetes_operator(
     )
 
 
+def get_namespace(is_composer: bool) -> str:
+    if is_composer:
+        return "composer-user-workloads"
+    else:
+        return os.getenv("NAMESPACE")
+
+
 def env_vars(is_composer: bool, extra_envs: dict) -> dict:
     env_vars = {
         "NLS_LANG": "NORWEGIAN_NORWAY.AL32UTF8",
@@ -173,6 +181,10 @@ def env_vars(is_composer: bool, extra_envs: dict) -> dict:
         env_vars["KNADA_TEAM_SECRET"] = os.environ["KNADA_TEAM_SECRET"]
 
     return env_vars
+
+
+def config_file(is_composer: bool) -> str:
+    return "/home/airflow/composer_kube_config" if is_composer else None 
 
 
 def init_containers(is_composer: bool, repo: str, branch: str) -> List[V1Container]:
