@@ -149,7 +149,7 @@ def kubernetes_operator(
         cmds=["/bin/sh", "-c"],
         arguments=[" && ".join(cmds)] if cmds is not None else None,
         volume_mounts=volume_mounts(is_composer),
-        service_account_name=os.getenv("TEAM", "airflow"),
+        service_account_name=os.getenv("TEAM", "default"),
         volumes=volumes(is_composer),
         security_context=V1PodSecurityContext(
             fs_group=0,
