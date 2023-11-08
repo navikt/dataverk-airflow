@@ -184,7 +184,8 @@ def env_vars(is_composer: bool, extra_envs: dict) -> dict:
 
 
 def config_file(is_composer: bool) -> str:
-    return "/home/airflow/composer_kube_config" if is_composer else None 
+    if not os.getenv("INTEGRATION_TEST"):
+        return "/home/airflow/composer_kube_config" if is_composer else None 
 
 
 def init_containers(is_composer: bool, repo: str, branch: str) -> List[V1Container]:
