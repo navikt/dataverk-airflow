@@ -57,9 +57,11 @@ def quarto_operator(
 
     working_dir = None
     try:
+        if os.getenv("MARKEDSPLASSEN_HOST"):
+            host = os.getenv("MARKEDSPLASSEN_HOST")
+        else:
+            host = "datamarkedsplassen.intern.nav.no" if quarto['env'] == "prod" else "datamarkedsplassen.intern.dev.nav.no"
         working_dir = Path(quarto['path']).parent
-        host = "datamarkedsplassen.intern.nav.no" if quarto['env'] == "prod" else os.getenv(
-            "MARKEDSPLASSEN_HOST", "datamarkedsplassen.intern.dev.nav.no")
         url = f"https://{host}/quarto/update/{quarto['id']}"
         cmds = [
             f"quarto render {Path(quarto['path']).name} --to html --execute --output index.html -M self-contained:True",
