@@ -4,8 +4,10 @@ Enkelt wrapperbibliotek rundt [KubernetesPodOperator](https://airflow.apache.org
 
 ## Våre operators
 
-Alle våre operators lar deg klone et repo på forhånd, bare legg det til med `repo="navikt/<repo>`.
+Alle våre operators lar deg klone et annet repo enn der DAGene er definert, bare legg det til med `repo="navikt/<repo>`.
+
 Vi har også støtte for å installere Python pakker ved oppstart av Airflow task, spesifiser `requirements.txt`-filen din med `requirements_path="/path/to/requirements.txt"`.
+Merk at hvis du kombinerer `repo` og `requirements_path`, må `requirements.txt` ligge i repoet nevnt i `repo`.
 
 ### Quarto operator
 
