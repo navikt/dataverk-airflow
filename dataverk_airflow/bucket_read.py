@@ -18,7 +18,7 @@ def bucket_read(
         ],
         command=["/bin/sh", "-c"],
         args=[
-            f"gsutil rsync -r -x '^logs/*|.*-build/*' gs://{os.environ['GCS_BUCKET']} {mount_path} && chmod -R 777 {mount_path}"
+            f"gsutil rsync -r -x '^logs/*|^.*-build/*' gs://{os.environ['GCS_BUCKET']} {mount_path} && chmod -R 777 {mount_path}"
         ],
         resources=k8s.V1ResourceRequirements(
             requests={"memory": "128Mi"},
