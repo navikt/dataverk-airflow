@@ -44,6 +44,15 @@ class TestKubernetesOperator:
         assert "allowlist" in annotations
         assert "slack.com" in annotations["allowlist"]
 
+    def test_that_pypi_is_added_to_allowlist(self, dag):
+        container = kubernetes_operator(dag, "name", "repo", "image",
+                                        cmds=["python script.py"],
+                                        requirements_path="requirements.txt")
+
+        annotations = container.annotations
+        assert "allowlist" in annotations
+        assert "pypi.org" in annotations["allowlist"]
+
     def test_override_container_cmds(self, dag):
         container = kubernetes_operator(dag, "name", "repo", "image",
                                         cmds=["python script.py"])

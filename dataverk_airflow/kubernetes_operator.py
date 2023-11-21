@@ -114,6 +114,10 @@ def kubernetes_operator(
         cmds = [
             f"pip install -r {POD_WORKSPACE_DIR}/{requirements_path} --user --no-cache-dir"] + cmds
 
+        allowlist.append("pypi.org")
+        allowlist.append("files.pythonhosted.org")
+        allowlist.append("pypi.python.org")
+
     return KubernetesPodOperator(
         dag=dag,
         on_failure_callback=on_failure,
@@ -185,7 +189,7 @@ def env_vars(is_composer: bool, extra_envs: dict) -> dict:
 
 def config_file(is_composer: bool) -> str:
     if not os.getenv("INTEGRATION_TEST"):
-        return "/home/airflow/composer_kube_config" if is_composer else None 
+        return "/home/airflow/composer_kube_config" if is_composer else None
 
 
 def init_containers(is_composer: bool, repo: str, branch: str) -> List[V1Container]:
