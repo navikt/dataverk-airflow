@@ -59,8 +59,11 @@ def quarto_operator(
     try:
         if os.getenv("MARKEDSPLASSEN_HOST"):
             host = os.getenv("MARKEDSPLASSEN_HOST")
+        elif quarto['env'] == "prod":
+            host = "datamarkedsplassen.intern.nav.no"
         else:
-            host = "datamarkedsplassen.intern.nav.no" if quarto['env'] == "prod" else "datamarkedsplassen.intern.dev.nav.no"
+            host = "datamarkedsplassen.intern.dev.nav.no"
+
         working_dir = Path(quarto['path']).parent
         url = f"https://{host}/quarto/update/{quarto['id']}"
         cmds = [
