@@ -74,6 +74,9 @@ def quarto_operator(
         raise KeyError(
             f"path, environment, id and token must be provided in the Quarto configuration. Missing  {err}")
 
+    allowlist.append(host)
+    allowlist.append("cdnjs.cloudflare.com")
+
     kwargs = {
         "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
         "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist,  "requirements_path": requirements_path,
