@@ -44,8 +44,8 @@ jobs:
           service_account: ci-knada-images@knada-gcp.iam.gserviceaccount.com
       - name: Install python dependencies
         run: |
-          pip3 install apache-airflow
-          pip3 install .
+          pip3 install poetry
+          poetry install --with integration-test
       - name: Start kind cluster
         uses: helm/kind-action@v1.8.0
       - name: Verify cluster up
