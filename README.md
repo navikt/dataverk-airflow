@@ -101,6 +101,25 @@ cmds: str: Command to run in pod
 working_dir: str: Path to working directory
 ```
 
+### Allow list
+
+Alle operators støtter å sette allow list, men det er noen adresser som blir lagt til av Dataverk Airflow.
+
+Hvis du bruker `slack_channel` argumentet, vil vi legge til:
+- slack.com
+
+Hvis du bruker `email` argumentet, vil vi legge til:
+- Riktig SMTP-adresse
+
+Hvis du bruker `requirements_path` argumentet, vil vi legge til:
+- pypi.org
+- files.pythonhosted.org
+- pypi.python.org
+
+For `quarto_operator` vil vi legge til:
+- Adressen til riktig Datamarkedsplass
+- cdnjs.cloudflare.com
+
 ### Felles argumenter
 
 Alle operatorene våre har støtte for disse argumentene i funksjonskallet.
