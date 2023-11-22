@@ -44,8 +44,8 @@ jobs:
           service_account: ci-knada-images@knada-gcp.iam.gserviceaccount.com
       - name: Install python dependencies
         run: |
-          pip3 install apache-airflow
-          pip3 install .
+          pip3 install poetry
+          poetry install --with integration-test
       - name: Start kind cluster
         uses: helm/kind-action@v1.8.0
       - name: Verify cluster up
@@ -62,8 +62,8 @@ jobs:
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
         run: |
-          airflow db reset -y
-          airflow variables set quarto_token ${{ secrets.QUARTO_TOKEN }}
+          poetry run airflow db reset -y
+          poetry run airflow variables set quarto_token ${{ secrets.QUARTO_TOKEN }}
 
           # envs
           echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/tests-integration" >> $GITHUB_ENV
@@ -82,8 +82,8 @@ jobs:
           MARKEDSPLASSEN_HOST: data.ekstern.dev.nav.no
           INTEGRATION_TEST: "true"
         run: |
-          airflow dags reserialize
-          airflow dags test KnadaOperators
+          poetry run airflow dags reserialize
+          poetry run airflow dags test KnadaOperators
       - name: Run tests Composer
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
@@ -94,15 +94,15 @@ jobs:
           INTEGRATION_TEST: "true"
           GCS_BUCKET: "dataverk-airflow-tests"
         run: |
-          airflow dags reserialize
-          airflow dags test CloudComposerOperators
+          poetry run airflow dags reserialize
+          poetry run airflow dags test CloudComposerOperators
       - name: Verify successful dag tests
         run: |
-          airflow dags list-runs -d KnadaOperators
-          airflow dags list-runs -d CloudComposerOperators
+          poetry run airflow dags list-runs -d KnadaOperators
+          poetry run airflow dags list-runs -d CloudComposerOperators
 
-          dvk=$(airflow dags list-runs -d KnadaOperators -ojson)
-          dvc=$(airflow dags list-runs -d CloudComposerOperators -ojson)
+          dvk=$(poetry run airflow dags list-runs -d KnadaOperators -ojson)
+          dvc=$(poetry run airflow dags list-runs -d CloudComposerOperators -ojson)
 
           errorCount=0
           for res in $(jq -n --argjson var1 "$dvk" --argjson var2 "$dvc" '[$var1, $var2] | add' | jq -rc '.[]')
