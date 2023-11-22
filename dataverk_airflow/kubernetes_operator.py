@@ -91,6 +91,9 @@ def kubernetes_operator(
     if slack_channel:
         allowlist.append("slack.com")
 
+    if email:
+        allowlist.append(os.getenv("AIRFLOW__SMTP__SMTP_HOST")+":"+os.getenv("AIRFLOW__SMTP__SMTP_PORT"))
+
     namespace = get_namespace(is_composer)
 
     def on_failure(context):
