@@ -54,6 +54,17 @@ def kubernetes_operator(
 ):
     """Simplified operator for creating KubernetesPodOperator.
 
+    If you use the slack_channel argument, the following host will also be added:
+    - slack.com
+
+    If you use the email argument, the following host will also be added:
+    - smtp-address
+
+    If you use the requirements_path argument, the following hosts will also be added:
+    - pypi.org
+    - files.pythonhosted.org
+    - pypi.python.org
+
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo

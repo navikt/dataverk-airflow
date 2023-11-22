@@ -31,6 +31,8 @@ def quarto_operator(
 ):
     """Operator for rendering Quarto.
 
+    This operator will automatically add Datamarkedsplassen, and cdnjs.cloudflare.com to the allow list, as these are required to render and publish a Quarto story.
+
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
