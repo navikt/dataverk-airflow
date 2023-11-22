@@ -31,6 +31,8 @@ def quarto_operator(
 ):
     """Operator for rendering Quarto.
 
+    This operator will automatically add Datamarkedsplassen, and cdnjs.cloudflare.com to the allow list, as these are required to render and publish a Quarto story.
+
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
@@ -59,8 +61,11 @@ def quarto_operator(
     try:
         if os.getenv("MARKEDSPLASSEN_HOST"):
             host = os.getenv("MARKEDSPLASSEN_HOST")
+        elif quarto['env'] == "prod":
+            host = "datamarkedsplassen.intern.nav.no"
         else:
-            host = "datamarkedsplassen.intern.nav.no" if quarto['env'] == "prod" else "datamarkedsplassen.intern.dev.nav.no"
+            host = "datamarkedsplassen.intern.dev.nav.no"
+
         working_dir = Path(quarto['path']).parent
         url = f"https://{host}/quarto/update/{quarto['id']}"
         cmds = [
@@ -70,6 +75,9 @@ def quarto_operator(
     except KeyError as err:
         raise KeyError(
             f"path, environment, id and token must be provided in the Quarto configuration. Missing  {err}")
+
+    allowlist.append(host)
+    allowlist.append("cdnjs.cloudflare.com")
 
     kwargs = {
         "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,

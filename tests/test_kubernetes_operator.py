@@ -9,7 +9,9 @@ from dataverk_airflow import MissingValueException, kubernetes_operator
 
 @mock.patch.dict(os.environ, {"KNADA_TEAM_SECRET": "team-secret",
                               "NAMESPACE": "namespace",
-                              "K8S_IMAGE_PULL_SECRETS": "image-pull-secret"})
+                              "K8S_IMAGE_PULL_SECRETS": "image-pull-secret",
+                              "AIRFLOW__SMTP__SMTP_HOST": "smtp.host",
+                              "AIRFLOW__SMTP__SMTP_PORT": "26"})
 class TestKubernetesOperator:
     """Test kubernetes_operator.py"""
 
@@ -44,6 +46,14 @@ class TestKubernetesOperator:
         assert "allowlist" in annotations
         assert "slack.com" in annotations["allowlist"]
 
+    def test_that_email_is_added_to_allowlist(self, dag):
+        container = kubernetes_operator(dag, "name", "repo", "image",
+                                        email="test@nav.no")
+
+        annotations = container.annotations
+        assert "allowlist" in annotations
+        assert "smtp.host:26" in annotations["allowlist"]
+
     def test_that_pypi_is_added_to_allowlist(self, dag):
         container = kubernetes_operator(dag, "name", "repo", "image",
                                         cmds=["python script.py"],
@@ -52,6 +62,8 @@ class TestKubernetesOperator:
         annotations = container.annotations
         assert "allowlist" in annotations
         assert "pypi.org" in annotations["allowlist"]
+        assert "files.pythonhosted.org" in annotations["allowlist"]
+        assert "pypi.python.org" in annotations["allowlist"]
 
     def test_override_container_cmds(self, dag):
         container = kubernetes_operator(dag, "name", "repo", "image",
