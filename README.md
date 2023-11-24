@@ -106,7 +106,7 @@ working_dir: str: Path to working directory
 Alle operators støtter å sette allow list, men det er noen adresser som blir lagt til av Dataverk Airflow.
 
 Hvis du bruker `slack_channel` argumentet, vil vi legge til:
-- slack.com
+- hooks.slack.com
 
 Hvis du bruker `email` argumentet, vil vi legge til:
 - Riktig SMTP-adresse

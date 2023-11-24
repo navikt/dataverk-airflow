@@ -44,7 +44,7 @@ class TestKubernetesOperator:
 
         annotations = container.annotations
         assert "allowlist" in annotations
-        assert "slack.com" in annotations["allowlist"]
+        assert "hooks.slack.com" in annotations["allowlist"]
 
     def test_that_email_is_added_to_allowlist(self, dag):
         container = kubernetes_operator(dag, "name", "repo", "image",
