@@ -55,7 +55,7 @@ def kubernetes_operator(
     """Simplified operator for creating KubernetesPodOperator.
 
     If you use the slack_channel argument, the following host will also be added:
-    - slack.com
+    - hooks.slack.com
 
     If you use the email argument, the following host will also be added:
     - smtp-address
@@ -100,10 +100,11 @@ def kubernetes_operator(
         raise MissingValueException("image cannot be empty")
 
     if slack_channel:
-        allowlist.append("slack.com")
+        allowlist.append("hooks.slack.com")
 
     if email:
-        allowlist.append(os.getenv("AIRFLOW__SMTP__SMTP_HOST")+":"+os.getenv("AIRFLOW__SMTP__SMTP_PORT"))
+        allowlist.append(os.getenv("AIRFLOW__SMTP__SMTP_HOST") +
+                         ":"+os.getenv("AIRFLOW__SMTP__SMTP_PORT"))
 
     namespace = get_namespace(is_composer)
 
