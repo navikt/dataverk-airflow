@@ -389,13 +389,13 @@ zendesk = ["apache-airflow-providers-zendesk"]
 
 [[package]]
 name = "apache-airflow-providers-cncf-kubernetes"
-version = "7.9.0"
-description = "Provider for Apache Airflow. Implements apache-airflow-providers-cncf-kubernetes package"
+version = "7.10.0"
+description = "Provider package apache-airflow-providers-cncf-kubernetes for Apache Airflow"
 optional = false
 python-versions = "~=3.8"
 files = [
-    {file = "apache-airflow-providers-cncf-kubernetes-7.9.0.tar.gz", hash = "sha256:d477bf51aeb30517c6b9d620f4bdb5a88010982067fc43a9e211d6525ba7f36b"},
-    {file = "apache_airflow_providers_cncf_kubernetes-7.9.0-py3-none-any.whl", hash = "sha256:4ec8f50698901da22c1a2eb619a1b0cdbcaf8692ac1cd7b6a82a010afc5239ad"},
+    {file = "apache_airflow_providers_cncf_kubernetes-7.10.0-py3-none-any.whl", hash = "sha256:f75a605633d0ac93be68ee543c170ebab92a29a94d39ba51e6fe835ac26b0ed9"},
+    {file = "apache_airflow_providers_cncf_kubernetes-7.10.0.tar.gz", hash = "sha256:cc295c2e53f823e647352bb32eb8e55ac406a46fe2f0a07e477991d7d065578b"},
 ]
 
 [package.dependencies]
@@ -405,7 +405,7 @@ asgiref = ">=3.5.2"
 cryptography = ">=2.0.0"
 google-re2 = ">=1.0"
 kubernetes = ">=21.7.0,<24"
-kubernetes-asyncio = ">=18.20.1,<25"
+kubernetes_asyncio = ">=18.20.1,<25"
 
 [[package]]
 name = "apache-airflow-providers-common-sql"
