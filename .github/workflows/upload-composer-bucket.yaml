@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.11
       - id: auth
@@ -26,7 +26,7 @@ jobs:
           workload_identity_provider: projects/1007056531311/locations/global/workloadIdentityPools/ci-nada-prod/providers/ci-nada-prod
           service_account: ci-nada-prod-sa@nada-prod-6977.iam.gserviceaccount.com
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/setup-gcloud@v2
       - name: Upload DAGs for Cloud Composer
         working-directory: tests-integration
         run: gsutil cp -r * gs://dataverk-airflow-tests/tests-integration
