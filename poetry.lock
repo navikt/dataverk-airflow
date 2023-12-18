@@ -389,18 +389,18 @@ zendesk = ["apache-airflow-providers-zendesk"]
 
 [[package]]
 name = "apache-airflow-providers-cncf-kubernetes"
-version = "7.10.0"
+version = "7.11.0"
 description = "Provider package apache-airflow-providers-cncf-kubernetes for Apache Airflow"
 optional = false
 python-versions = "~=3.8"
 files = [
-    {file = "apache_airflow_providers_cncf_kubernetes-7.10.0-py3-none-any.whl", hash = "sha256:f75a605633d0ac93be68ee543c170ebab92a29a94d39ba51e6fe835ac26b0ed9"},
-    {file = "apache_airflow_providers_cncf_kubernetes-7.10.0.tar.gz", hash = "sha256:cc295c2e53f823e647352bb32eb8e55ac406a46fe2f0a07e477991d7d065578b"},
+    {file = "apache_airflow_providers_cncf_kubernetes-7.11.0-py3-none-any.whl", hash = "sha256:b2c3c2dc963763cff90edec5ecc520ba88bcb0c986bb068cc5419f1e5d7e2619"},
+    {file = "apache_airflow_providers_cncf_kubernetes-7.11.0.tar.gz", hash = "sha256:b7d4448aad30e2cf7548b98c18b5be6760e443bc859094412c4362eec6a8caba"},
 ]
 
 [package.dependencies]
 aiofiles = ">=23.2.0"
-apache-airflow = ">=2.5.0"
+apache-airflow = ">=2.6.0"
 asgiref = ">=3.5.2"
 cryptography = ">=2.0.0"
 google-re2 = ">=1.0"
@@ -477,19 +477,19 @@ apache-airflow = ">=2.5.0"
 
 [[package]]
 name = "apache-airflow-providers-slack"
-version = "8.4.0"
-description = "Provider for Apache Airflow. Implements apache-airflow-providers-slack package"
+version = "8.5.0"
+description = "Provider package apache-airflow-providers-slack for Apache Airflow"
 optional = false
 python-versions = "~=3.8"
 files = [
-    {file = "apache-airflow-providers-slack-8.4.0.tar.gz", hash = "sha256:d4412e3b3bae53480eb219a0d1e8f3953cc7c8c4e1b83759bce0af866f84d5c5"},
-    {file = "apache_airflow_providers_slack-8.4.0-py3-none-any.whl", hash = "sha256:478d7b4cc86920d092e6b8cb1d95fb2a3d89d0e8bc9b6b81de0bd14101273678"},
+    {file = "apache_airflow_providers_slack-8.5.0-py3-none-any.whl", hash = "sha256:f80be973514f56527d3038bbff2a719adac14a52bf00f5ff8d56cadecfc7c92e"},
+    {file = "apache_airflow_providers_slack-8.5.0.tar.gz", hash = "sha256:e3ade1bcee0d7fc84301d1f3de34abadf996d1c29465aa65b02016cd163eb86a"},
 ]
 
 [package.dependencies]
-apache-airflow = ">=2.5.0"
+apache-airflow = ">=2.6.0"
 apache-airflow-providers-common-sql = ">=1.3.1"
-slack-sdk = ">=3.0.0"
+slack_sdk = ">=3.0.0"
 
 [package.extras]
 common-sql = ["apache-airflow-providers-common-sql"]
