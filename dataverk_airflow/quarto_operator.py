@@ -36,7 +36,7 @@ def quarto_operator(
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
-    :param quarto: dict: Dict of Quarto configuration, needs the following values {"path": "path/to/index.qmd", "env": "dev/prod", "id":"uuid", "token": "quarto-token"}
+    :param quarto: dict: Dict of Quarto configuration, needs the following values {"path": "path/to/index.qmd", "env": "dev/prod", "id":"uuid", "token": "quarto-token", "format": "html"}
     :param image: str: Dockerimage the pod should use
     :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
@@ -68,8 +68,10 @@ def quarto_operator(
 
         working_dir = Path(quarto['path']).parent
         url = f"https://{host}/quarto/update/{quarto['id']}"
+        quarto_format = quarto.get('format', "html")
+
         cmds = [
-            f"quarto render {Path(quarto['path']).name} --to html --execute --output index.html -M self-contained:True",
+            f"quarto render {Path(quarto['path']).name} --to {quarto_format} --execute --output index.html -M self-contained:True",
             f"""curl --fail-with-body -X PUT -F index.html=@index.html {url} -H "Authorization:Bearer {quarto['token']}" """
         ]
     except KeyError as err:
