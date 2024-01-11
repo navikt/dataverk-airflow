@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 from airflow import DAG
-from dataverk_airflow.quarto_operator import quarto_operator
+from dataverk_airflow.quarto_operator import quarto_operator, is_file
 
 
 @mock.patch.dict(os.environ, {"KNADA_TEAM_SECRET": "team-secret",
@@ -61,3 +61,6 @@ class TestQuartoOperator:
         with pytest.raises(KeyError) as err:
             quarto_operator(dag, "name", {}, "repo")
         assert err
+
+    def test_is_file(self):
+        is_file("")
