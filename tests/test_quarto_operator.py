@@ -61,6 +61,3 @@ class TestQuartoOperator:
         with pytest.raises(KeyError) as err:
             quarto_operator(dag, "name", {}, "repo")
         assert err
-
-    def test_is_file(self):
-        is_file("")
