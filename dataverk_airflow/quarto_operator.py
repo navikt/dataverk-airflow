@@ -36,7 +36,7 @@ def quarto_operator(
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
-    :param quarto: dict: Dict of Quarto configuration, needs the following values {"path": "path/to/index.qmd", "env": "dev/prod", "id":"uuid", "token": "quarto-token", "format": "html"}
+    :param quarto: dict: Dict of Quarto configuration, needs the following values {"path": "path/to/index.qmd", "folder": "path/to/folder", "env": "dev/prod", "id":"uuid", "token": "quarto-token", "format": "html"}
     :param image: str: Dockerimage the pod should use
     :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
@@ -59,6 +59,11 @@ def quarto_operator(
 
     working_dir = None
     try:
+        if quarto.get("path"):
+            working_dir = Path(quarto['path']).parent
+        else:
+            working_dir = Path(quarto['folder'])
+
         if os.getenv("MARKEDSPLASSEN_HOST"):
             host = os.getenv("MARKEDSPLASSEN_HOST")
         elif quarto['env'] == "prod":
@@ -66,17 +71,10 @@ def quarto_operator(
         else:
             host = "datamarkedsplassen.intern.dev.nav.no"
 
-        working_dir = Path(quarto['path']).parent
-        url = f"https://{host}/quarto/update/{quarto['id']}"
-        quarto_format = quarto.get('format', "html")
-
-        cmds = [
-            f"quarto render {Path(quarto['path']).name} --to {quarto_format} --execute --output index.html -M self-contained:True",
-            f"""curl --fail-with-body -X PUT -F index.html=@index.html {url} -H "Authorization:Bearer {quarto['token']}" """
-        ]
+        cmds = create_quarto_cmds(quarto, host)
     except KeyError as err:
         raise KeyError(
-            f"path, environment, id and token must be provided in the Quarto configuration. Missing  {err}")
+            f"path or folder and environment, id and token must be provided in the Quarto configuration. Missing  {err}")
 
     allowlist.append(host)
     allowlist.append("cdnjs.cloudflare.com")
@@ -91,3 +89,19 @@ def quarto_operator(
 
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
     return kubernetes_operator(**kwargs)
+
+
+def create_quarto_cmds(quarto: dict, host: str) -> list:
+    url = f"https://{host}/quarto/update/{quarto['id']}"
+
+    if quarto.get("path"):
+        quarto_format = quarto.get('format', "html")
+        return [
+            f"quarto render {Path(quarto['path']).name} --to {quarto_format} --execute --output index.html -M self-contained:True",
+            f"""curl --fail-with-body -X PUT -F index.html=@index.html {url} -H "Authorization:Bearer {quarto['token']}" """
+        ]
+    else:
+        return [
+            f"quarto render --execute --output-dir output",
+            f"knatch {quarto['id']} {quarto['folder']}/output {quarto['token']} --host {host}"
+        ]
