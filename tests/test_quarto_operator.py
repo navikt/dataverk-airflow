@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 from airflow import DAG
-from dataverk_airflow.quarto_operator import quarto_operator, is_file
+from dataverk_airflow.quarto_operator import quarto_operator
 
 
 @mock.patch.dict(os.environ, {"KNADA_TEAM_SECRET": "team-secret",
