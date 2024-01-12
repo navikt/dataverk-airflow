@@ -9,18 +9,16 @@ Alle våre operators lar deg klone et annet repo enn der DAGene er definert, bar
 Vi har også støtte for å installere Python pakker ved oppstart av Airflow task, spesifiser `requirements.txt`-filen din med `requirements_path="/path/to/requirements.txt"`.
 Merk at hvis du kombinerer `repo` og `requirements_path`, må `requirements.txt` ligge i repoet nevnt i `repo`.
 
-### Quarto operator
+### Quarto operator (datafortelling)
 
-Denne kjører Quarto render for deg.
-Man finner Quarto-token for ditt teamet i [Datamarkedsplassen](https://data.intern.nav.no/user/tokens). 
+Denne kjører `quarto render` for deg, som lager en HTML-fil som kan lastes opp til Datamarkedsplassen.
 
-I eksempelt under lagrere vi tokenet i en Airflow variable som så brukes i DAG tasken under.
-Se offisiell [Airflow dokumentasjon](https://airflow.apache.org/docs/apache-airflow/stable/howto/variable.html) for hvordan man bruker `Variable.get()´ i en task.
+Vi har støtte for enkeltfiler, og kataloger, dette kan du spesifisere med `path` for enkeltfiler, og `folder` hvis du har et Quarto prosjekt i en katalog.
+Quarto prosjekter brukes hovedsakelig for [book](https://quarto.org/docs/books/), [website](https://quarto.org/docs/websites/), eller [dashboard](https://quarto.org/docs/dashboards/).
+Enkeltfiler bygges `self-contained`, som betyr at HTML-filen blir bygd med alle sine eksterne avhengighter (Javascript, CSS, og bilder).
 
-I quarto konfigurasjonen angir du enten:
-
-- `path`: gjelder hvis du har én fil (.ipnynb eller .qmd) du ønsker å eksekvere og konvertere output til én self-contained html fil.
-- `folder`: gjelder hvis du har en mappe med et quarto prosjekt ([book](https://quarto.org/docs/books/), [website](https://quarto.org/docs/websites/) eller [dashboard](https://quarto.org/docs/dashboards/))
+For å laste opp filer til Datamarkedsplassen må man ha et Quarto-token, som er unikt per team.
+Dette finner man under [Mine teams token](https://data.intern.nav.no/user/tokens) i menyen.
 
 ```python
 from airflow import DAG
@@ -34,14 +32,35 @@ with DAG('navn-dag', start_date=days_ago(1), schedule_interval="*/10 * * * *") a
                          name="<navn-på-task>",
                          repo="navikt/<repo>",
                          quarto={
-                             "path": "/path/to/index.qmd", # hvis du har en fil du skal eksekvere og som skal resultere i én self-contained html
-                             "folder": "/path/til/folder", # hvis du har en mappe med et quarto prosjekt
+                             "path": "/path/to/index.qmd",
                              "env": "dev/prod",
                              "id":"uuid",
                              "token": Variable.get("quarto_token"),
                          },
                          slack_channel="<#slack-alarm-kanal>")
 ```
+
+
+Har du behov for å rendre noe annet enn `html`, kan du bruke verdien `format`.
+Dette må du for eksempel gjøre hvis du ønsker å lage et dashboard.
+
+```
+with DAG('navn-dag', start_date=days_ago(1), schedule_interval="*/10 * * * *") as dag:
+    t1 = quarto_operator(dag=dag,
+                         name="<navn-på-task>",
+                         repo="navikt/<repo>",
+                         quarto={
+                             "folder": "/path/to/book",
+                             "format": "dashboard",
+                             "env": "dev/prod",
+                             "id":"uuid",
+                             "token": Variable.get("quarto_token"),
+                         },
+                         slack_channel="<#slack-alarm-kanal>")
+```
+
+I eksemplene over lagrer vi tokenet i en Airflow variable som så brukes i DAG tasken under.
+Se offisiell [Airflow dokumentasjon](https://airflow.apache.org/docs/apache-airflow/stable/howto/variable.html) for hvordan man bruker `Variable.get()´ i en task.
 
 ### Notebook operator
 
