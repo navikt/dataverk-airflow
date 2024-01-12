@@ -102,6 +102,6 @@ def create_quarto_cmds(quarto: dict, host: str) -> list:
         ]
     else:
         return [
-            f"quarto render --execute --output-dir output",
+            f"quarto render --execute --output-dir output || true",
             f"knatch {quarto['id']} output {quarto['token']} --host {host}"
         ]
