@@ -17,7 +17,10 @@ Man finner Quarto-token for ditt teamet i [Datamarkedsplassen](https://data.inte
 I eksempelt under lagrere vi tokenet i en Airflow variable som så brukes i DAG tasken under.
 Se offisiell [Airflow dokumentasjon](https://airflow.apache.org/docs/apache-airflow/stable/howto/variable.html) for hvordan man bruker `Variable.get()´ i en task.
 
+I quarto konfigurasjonen angir du enten:
 
+- `path`: gjelder hvis du har én fil (.ipnynb eller .qmd) du ønsker å eksekvere og konvertere output til én self-contained html fil.
+- `folder`: gjelder hvis du har en mappe med et quarto prosjekt ([book](https://quarto.org/docs/books/), [website](https://quarto.org/docs/websites/) eller [dashboard](https://quarto.org/docs/dashboards/))
 
 ```python
 from airflow import DAG
@@ -31,7 +34,8 @@ with DAG('navn-dag', start_date=days_ago(1), schedule_interval="*/10 * * * *") a
                          name="<navn-på-task>",
                          repo="navikt/<repo>",
                          quarto={
-                             "path": "/path/to/index.qmd",
+                             "path": "/path/to/index.qmd", # hvis du har en fil du skal eksekvere og som skal resultere i én self-contained html
+                             "folder": "/path/til/folder", # hvis du har en mappe med et quarto prosjekt
                              "env": "dev/prod",
                              "id":"uuid",
                              "token": Variable.get("quarto_token"),
