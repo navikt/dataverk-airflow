@@ -24,7 +24,7 @@ jobs:
         with:
           token_format: access_token
           workload_identity_provider: projects/1007056531311/locations/global/workloadIdentityPools/ci-nada-prod/providers/ci-nada-prod
-          service_account: ci-nada-prod-sa@nada-prod-6977.iam.gserviceaccount.com
+          service_account: ci-dataverk-airflow@nada-prod-6977.iam.gserviceaccount.com
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
       - name: Upload DAGs for Cloud Composer
