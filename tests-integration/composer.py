@@ -51,7 +51,7 @@ with DAG('CloudComposerOperators', start_date=datetime(2023, 2, 15), schedule=No
         startup_timeout_seconds=60,
     )
 
-    py_op
-    nb_op
-    quarto_op
+    #py_op
+    #nb_op
+    #quarto_op
     quarto_book_op
