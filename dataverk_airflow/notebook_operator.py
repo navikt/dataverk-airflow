@@ -57,12 +57,12 @@ def notebook_operator(
     :return: KubernetesPodOperator
     """
     if not image:
-        image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")
         if python_version not in VALID_PYTHON_VERSIONS:
             raise ValueError(
                 f"When using the default image the python_version argument must be set to "
                 f"{', '.join(VALID_PYTHON_VERSIONS[:-1])} or {VALID_PYTHON_VERSIONS[-1]}: value '{python_version}' is not supported" 
             )
+        image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")+f"-{python_version}"
 
     cmds = [f"papermill {Path(nb_path).name} output.ipynb"]
     if log_output:
