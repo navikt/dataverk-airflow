@@ -6,7 +6,7 @@ from typing import Callable
 from airflow import DAG
 from kubernetes import client
 
-from dataverk_airflow.kubernetes_operator import kubernetes_operator
+from dataverk_airflow.kubernetes_operator import kubernetes_operator, VALID_PYTHON_VERSIONS
 
 
 def python_operator(
@@ -21,6 +21,7 @@ def python_operator(
         extra_envs: dict = {},
         allowlist: list = [],
         requirements_path: str = None,
+        python_version: str = VALID_PYTHON_VERSIONS[-1],
         resources: client.V1ResourceRequirements = None,
         startup_timeout_seconds: int = None,
         retries: int = None,
@@ -42,6 +43,7 @@ def python_operator(
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
     :param requirements_path: bool: Path (including filename) to your requirements.txt
+    :param python_version: str: desired python version for the environment your code will be running in when using the default image (must be one of 3.8-3.12, defaults to 3.12 when unspecified)
     :param resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
     :param startup_timeout_seconds: int: pod startup timeout
     :param retries: int: Number of retries for task before DAG fails, default 3
@@ -54,14 +56,19 @@ def python_operator(
     """
     if not image:
         image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")
+        if python_version not in VALID_PYTHON_VERSIONS:
+            raise ValueError(
+                f"When using the default image the python_version argument must be set to " \
+                f"{', '.join(VALID_PYTHON_VERSIONS[:-1])} or {VALID_PYTHON_VERSIONS[-1]}: value '{python_version}' is not supported" 
+            )
 
     cmds = [f"python {Path(script_path).name}"]
 
     kwargs = {
         "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
         "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist, "requirements_path": requirements_path,
-        "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, "retries": retries,
-        "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
+        "python_version": python_version, "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, 
+        "retries": retries, "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
         "on_success_callback": on_success_callback, "working_dir": str(Path(script_path).parent)
     }
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
