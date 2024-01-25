@@ -10,11 +10,11 @@ from dataverk_airflow.python_operator import python_operator
 @mock.patch.dict(os.environ, {"KNADA_TEAM_SECRET": "team-secret",
                               "NAMESPACE": "namespace",
                               "KNADA_AIRFLOW_OPERATOR_IMAGE": "operator-image",
-                              "DATAVERK_AIRFLOW_PYTHON_38": "operator-image-python-3.8",
-                              "DATAVERK_AIRFLOW_PYTHON_39": "operator-image-python-3.9",
-                              "DATAVERK_AIRFLOW_PYTHON_310": "operator-image-python-3.10",
-                              "DATAVERK_AIRFLOW_PYTHON_311": "operator-image-python-3.11",
-                              "DATAVERK_AIRFLOW_PYTHON_312": "operator-image-python-3.12",
+                              "DATAVERK_IMAGE_PYTHON_38": "operator-image-python-3.8",
+                              "DATAVERK_IMAGE_PYTHON_39": "operator-image-python-3.9",
+                              "DATAVERK_IMAGE_PYTHON_310": "operator-image-python-3.10",
+                              "DATAVERK_IMAGE_PYTHON_311": "operator-image-python-3.11",
+                              "DATAVERK_IMAGE_PYTHON_312": "operator-image-python-3.12",
                               "K8S_IMAGE_PULL_SECRETS": "image-pull-secret"})
 class TestPythonOperator:
     """Test python_operator.py"""
