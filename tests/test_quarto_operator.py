@@ -40,8 +40,8 @@ class TestQuartoOperator:
         container = quarto_operator(dag, "name", quarto, "repo", python_version="3.11")
         assert container.image == "operator-image-python-3.11"
 
-    def test_select_invalid_python_version_for_knada_operator_image(self, dag, quarto):
-        with pytest.raises(KeyError) as err:
+    def test_select_invalid_python_version_for_knada_operator_image(self, dag):
+        with pytest.raises(ValueError) as err:
             quarto_operator(dag, "name", {}, "repo", python_version="3.7")
         assert err
 

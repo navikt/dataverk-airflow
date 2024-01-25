@@ -31,9 +31,9 @@ class TestPythonOperator:
         container = python_operator(dag, "name", "script_path", "repo", python_version="3.11")
         assert container.image == "operator-image-python-3.11"
 
-    def test_select_invalid_python_version_for_knada_operator_image(self, dag, quarto):
-        with pytest.raises(KeyError) as err:
-            python_operator(dag, "name", {}, "repo", python_version="3.7")
+    def test_select_invalid_python_version_for_knada_operator_image(self, dag):
+        with pytest.raises(ValueError) as err:
+            python_operator(dag, "name", "script_path", "repo", python_version="3.7")
         assert err
 
     def test_that_personal_operator_image_is_used(self, dag):
