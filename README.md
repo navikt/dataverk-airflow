@@ -158,6 +158,7 @@ slack_channel: str: Name of Slack channel, default None (no Slack notification)
 extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
 allowlist: list: list of hosts and port the task needs to reach on the format host:port
 requirements_path: bool: Path (including filename) to your requirements.txt
+python_version: str: Desired Python version for the environment your code will be running in when using the default image. We offer only supported versions of Python, and default to the latest version if this parameter is omitted. See https://devguide.python.org/versions/ for available versions.
 resources: dict: Specify required cpu and memory requirements (keys in dict: request_memory, request_cpu, limit_memory, limit_cpu), default None
 startup_timeout_seconds: int: pod startup timeout
 retries: int: Number of retries for task before DAG fails, default 3
