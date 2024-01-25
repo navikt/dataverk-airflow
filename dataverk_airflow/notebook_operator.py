@@ -45,7 +45,7 @@ def notebook_operator(
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
     :param requirements_path: bool: Path (including filename) to your requirements.txt
-    :param python_version: str: desired python version for the environment your code will be running in when using the default image. We offer only supported versions of python and default to the latest version if this parameter is omitted (see https://devguide.python.org/versions/ for available versions)
+    :param python_version: str: desired Python version for the environment your code will be running in when using the default image. We offer only supported versions of Python, and default to the latest version if this parameter is omitted. See https://devguide.python.org/versions/ for available versions.
     :param resources: dict: Specify cpu and memory resource usage (dict: request/limit: {"memory": "", "cpu": "", "ephemeral-storage": ""}), default None
     :param startup_timeout_seconds: int: pod startup timeout
     :param retries: int: Number of retries for task before DAG fails, default 3
