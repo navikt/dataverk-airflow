@@ -10,6 +10,11 @@ from dataverk_airflow.notebook_operator import notebook_operator
 @mock.patch.dict(os.environ, {"KNADA_TEAM_SECRET": "team-secret",
                               "NAMESPACE": "namespace",
                               "KNADA_AIRFLOW_OPERATOR_IMAGE": "operator-image",
+                              "DATAVERK_IMAGE_PYTHON_38": "operator-image-python-3.8",
+                              "DATAVERK_IMAGE_PYTHON_39": "operator-image-python-3.9",
+                              "DATAVERK_IMAGE_PYTHON_310": "operator-image-python-3.10",
+                              "DATAVERK_IMAGE_PYTHON_311": "operator-image-python-3.11",
+                              "DATAVERK_IMAGE_PYTHON_312": "operator-image-python-3.12",
                               "K8S_IMAGE_PULL_SECRETS": "image-pull-secret"})
 class TestNotebookOperator:
     """Test notebook_operator.py"""
@@ -20,7 +25,16 @@ class TestNotebookOperator:
 
     def test_that_knada_operator_image_is_used(self, dag):
         container = notebook_operator(dag, "name", "notebook_path", "repo")
-        assert container.image == "operator-image"
+        assert container.image == "operator-image-python-3.12"
+
+    def test_select_different_python_version_for_knada_operator_image(self, dag):
+        container = notebook_operator(dag, "name", "notebook_path", "repo", python_version="3.11")
+        assert container.image == "operator-image-python-3.11"
+
+    def test_select_invalid_python_version_for_knada_operator_image(self, dag):
+        with pytest.raises(ValueError) as err:
+            notebook_operator(dag, "name", "notebook_path", "repo", python_version="3.7")
+        assert err
 
     def test_that_personal_operator_image_is_used(self, dag):
         container = notebook_operator(dag, "name", "notebook_path", "repo", image="personal-image")
