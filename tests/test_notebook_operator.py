@@ -20,7 +20,11 @@ class TestNotebookOperator:
 
     def test_that_knada_operator_image_is_used(self, dag):
         container = notebook_operator(dag, "name", "notebook_path", "repo")
-        assert container.image == "operator-image"
+        assert container.image == "operator-image-3.12"
+
+    def test_select_different_python_version_for_knada_operator_image(self, dag):
+        container = notebook_operator(dag, "name", "notebook_path", "repo", python_version="3.11")
+        assert container.image == "operator-image-3.11"
 
     def test_that_personal_operator_image_is_used(self, dag):
         container = notebook_operator(dag, "name", "notebook_path", "repo", image="personal-image")

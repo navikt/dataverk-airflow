@@ -29,7 +29,11 @@ class TestQuartoOperator:
 
     def test_that_knada_operator_image_is_used(self, dag, quarto):
         container = quarto_operator(dag, "name", quarto, "repo")
-        assert container.image == "operator-image"
+        assert container.image == "operator-image-3.12"
+
+    def test_select_different_python_version_for_knada_operator_image(self, dag, quarto):
+        container = quarto_operator(dag, "name", quarto, "repo", python_version="3.11")
+        assert container.image == "operator-image-3.11"
 
     def test_that_personal_operator_image_is_used(self, dag, quarto):
         container = quarto_operator(
