@@ -62,7 +62,10 @@ def notebook_operator(
                 f"When using the default image the python_version argument must be set to "
                 f"{', '.join(VALID_PYTHON_VERSIONS[:-1])} or {VALID_PYTHON_VERSIONS[-1]}: value '{python_version}' is not supported" 
             )
-        image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")+f"-{python_version}"
+        try:
+            image = os.environ["DATAVERK_IMAGE_PYTHON_" + python_version.replace(".","")]
+        except KeyError:
+            image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")
 
     cmds = [f"papermill {Path(nb_path).name} output.ipynb"]
     if log_output:
