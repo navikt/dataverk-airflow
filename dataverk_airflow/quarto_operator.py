@@ -21,7 +21,7 @@ def quarto_operator(
         extra_envs: dict = {},
         allowlist: list = [],
         requirements_path: str = None,
-        python_version: str = VALID_PYTHON_VERSIONS[-1],
+        python_version: str = "3.11",
         resources: client.V1ResourceRequirements = None,
         startup_timeout_seconds: int = None,
         retries: int = None,
