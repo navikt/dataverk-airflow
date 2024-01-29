@@ -23,7 +23,7 @@ knatch = "^1.0.1"
 
 [tool.poetry.group.test.dependencies]
 pyaml = "^23.9.7"
-pytest = "^7.4.2"
+pytest = ">=7.4.2,<9.0.0"
 pytest-datafiles = "^3.0.0"
 
 [tool.poetry.group.integration-test.dependencies]
