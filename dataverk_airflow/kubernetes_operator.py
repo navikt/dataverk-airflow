@@ -118,7 +118,7 @@ def kubernetes_operator(
         if slack_channel:
             slack_notification = create_slack_notification(
                 dag, slack_channel, name, namespace)
-            slack_notification.execute()
+            slack_notification.execute(context)
 
     on_finish_action = OnFinishAction.DELETE_POD if delete_on_finish else OnFinishAction.KEEP_POD
 
