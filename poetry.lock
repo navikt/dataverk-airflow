@@ -2030,13 +2030,13 @@ referencing = ">=0.31.0"
 
 [[package]]
 name = "knatch"
-version = "1.0.1"
+version = "1.0.2"
 description = ""
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "knatch-1.0.1-py3-none-any.whl", hash = "sha256:397f5f82d9300ebee9b1bbc151afb84b26aeb685e5bd57885ce422b6fb468f80"},
-    {file = "knatch-1.0.1.tar.gz", hash = "sha256:6160084fa69490187fe2b16517e5041063dbd12c81f2a48abcc4e7f908871f91"},
+    {file = "knatch-1.0.2-py3-none-any.whl", hash = "sha256:ff10e10186852dd85a748e8fba29a141cc7bdb832612833848f1b8a21bbe8183"},
+    {file = "knatch-1.0.2.tar.gz", hash = "sha256:50ffcff3285307ed0e58096065f5f6b0250a59efda5cee1848d8c5f293894fbc"},
 ]
 
 [package.dependencies]
