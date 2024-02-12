@@ -47,7 +47,7 @@ jobs:
           pip3 install poetry
           poetry install --with integration-test
       - name: Start kind cluster
-        uses: helm/kind-action@v1.8.0
+        uses: helm/kind-action@v1.9.0
       - name: Verify cluster up
         run: |
           kubectl cluster-info
