@@ -137,7 +137,9 @@ def kubernetes_operator(
 
     if resources is None or resources.ephemeral_storage is None:
         resources = client.V1ResourceRequirements(
-            ephemeral_storage="100Mi"
+            requests={
+                "ephemeral-storage": "100Mi",
+            }
         )
 
     return KubernetesPodOperator(
