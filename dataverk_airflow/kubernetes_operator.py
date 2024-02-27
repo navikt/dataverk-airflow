@@ -26,7 +26,7 @@ from dataverk_airflow.notifications import (
 CA_BUNDLE_PATH = "/etc/pki/tls/certs/ca-bundle.crt"
 POD_WORKSPACE_DIR = "/workspace"
 
-VALID_PYTHON_VERSIONS=["3.8","3.9","3.10","3.11","3.12"]
+VALID_PYTHON_VERSIONS = ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
 
 class MissingValueException(Exception):
