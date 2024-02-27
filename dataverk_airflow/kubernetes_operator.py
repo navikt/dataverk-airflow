@@ -26,7 +26,7 @@ from dataverk_airflow.notifications import (
 CA_BUNDLE_PATH = "/etc/pki/tls/certs/ca-bundle.crt"
 POD_WORKSPACE_DIR = "/workspace"
 
-VALID_PYTHON_VERSIONS=["3.8","3.9","3.10","3.11","3.12"]
+VALID_PYTHON_VERSIONS = ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
 
 class MissingValueException(Exception):
@@ -78,7 +78,7 @@ def kubernetes_operator(
     :param extra_envs: dict: dict with environment variables example: {"key": "value", "key2": "value2"}
     :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
     :param requirements_path: bool: Path (including filename) to your requirements.txt
-    :param resources: dict: Specify cpu and memory resource usage (dict: request/limit: {"memory": "", "cpu": "", "ephemeral-storage": ""}), default None
+    :param resources: dict: Specify cpu and memory resource usage (dict: request/limit: {"memory": "", "cpu": "", "ephemeral-storage": ""}), default ephemeral-storage: 100Mi
     :param startup_timeout_seconds: int: pod startup timeout
     :param retries: int: Number of retries for task before DAG fails, default 3
     :param delete_on_finish: bool: Whether to delete pod on completion
@@ -134,6 +134,13 @@ def kubernetes_operator(
         allowlist.append("pypi.org")
         allowlist.append("files.pythonhosted.org")
         allowlist.append("pypi.python.org")
+
+    if resources is None or resources.ephemeral_storage is None:
+        resources = client.V1ResourceRequirements(
+            requests={
+                "ephemeral-storage": "100Mi",
+            }
+        )
 
     return KubernetesPodOperator(
         dag=dag,
