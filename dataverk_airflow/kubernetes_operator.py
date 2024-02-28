@@ -135,7 +135,7 @@ def kubernetes_operator(
         allowlist.append("files.pythonhosted.org")
         allowlist.append("pypi.python.org")
 
-    if resources is None or resources.ephemeral_storage is None:
+    if resources is None:
         resources = client.V1ResourceRequirements(
             requests={
                 "ephemeral-storage": "100Mi",
