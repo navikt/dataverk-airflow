@@ -164,6 +164,10 @@ def kubernetes_operator(
                     client.V1Container(
                         name="base",
                         working_dir=working_dir,
+                        security_context=client.V1SecurityContext(
+                            allow_privilege_escalation=False,
+                            run_as_non_root=True,
+                        )
                     )
                 ]
             )
@@ -181,6 +185,7 @@ def kubernetes_operator(
         volumes=volumes(is_composer),
         security_context=V1PodSecurityContext(
             fs_group=0,
+            run_as_non_root=True,
             seccomp_profile=V1SeccompProfile(
                 type="RuntimeDefault"
             )

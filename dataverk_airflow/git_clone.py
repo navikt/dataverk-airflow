@@ -42,5 +42,9 @@ def git_clone(
                 name="GIT_SYNC_ROOT",
                 value=mount_path,
             ),
-        ]
+        ],
+        security_context=k8s.V1SecurityContext(
+            allow_privilege_escalation=False,
+            run_as_non_root=True,
+        )
     )
