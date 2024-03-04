@@ -26,7 +26,7 @@ ports: null
 readiness_probe: null
 resources: null
 security_context:
-  allow_privilege_escalation': False
+  allow_privilege_escalation: False
   capabilities: null
   privileged: null
   proc_mount: null
