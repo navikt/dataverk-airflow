@@ -32,8 +32,8 @@ security_context:
   proc_mount: null
   read_only_root_filesystem: null
   run_as_group: null
-  run_as_non_root: True
-  run_as_user: null
+  run_as_non_root: null
+  run_as_user: 50000
   se_linux_options: null
   seccomp_profile: null
   windows_options: null
