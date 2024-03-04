@@ -25,6 +25,18 @@ name: clone-repo
 ports: null
 readiness_probe: null
 resources: null
+security_context':
+  allow_privilege_escalation': False
+  capabilities': null
+  privileged': null
+  proc_mount': null
+  read_only_root_filesystem': null
+  run_as_group': null
+  run_as_non_root': True
+  run_as_user': null
+  se_linux_options': null
+  seccomp_profile': null
+  windows_options': null
 security_context: null
 startup_probe: null
 stdin: null
