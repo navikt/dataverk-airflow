@@ -37,7 +37,6 @@ security_context:
   se_linux_options: null
   seccomp_profile: null
   windows_options: null
-security_context: null
 startup_probe: null
 stdin: null
 stdin_once: null
