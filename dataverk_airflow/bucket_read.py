@@ -25,7 +25,7 @@ def bucket_read(
             limits={"memory": "128Mi"}
         ),
         security_context=k8s.V1SecurityContext(
+            run_as_user=1000,
             allow_privilege_escalation=False,
-            run_as_non_root=True,
         )
     )

@@ -44,7 +44,7 @@ def git_clone(
             ),
         ],
         security_context=k8s.V1SecurityContext(
+            run_as_user=50000,
             allow_privilege_escalation=False,
-            run_as_non_root=True,
         )
     )

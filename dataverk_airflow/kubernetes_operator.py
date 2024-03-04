@@ -51,6 +51,7 @@ def kubernetes_operator(
         delete_on_finish: bool = True,
         retry_delay: timedelta = timedelta(seconds=5),
         do_xcom_push: bool = False,
+        container_uid: int = 50000,
         on_success_callback: Callable = None,
         working_dir: str = None,
 ):
@@ -84,6 +85,7 @@ def kubernetes_operator(
     :param delete_on_finish: bool: Whether to delete pod on completion
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param do_xcom_push: bool: Enable xcom push of content in file '/airflow/xcom/return.json', default False
+    :param container_uid: int: User ID for the container image. Root (id = 0) is not allowed, defaults to 50000.
     :param on_success_callback: a function or list of functions to be called when a task instance
         of this task fails. a context dictionary is passed as a single
         parameter to this function. Context contains references to related
@@ -166,7 +168,7 @@ def kubernetes_operator(
                         working_dir=working_dir,
                         security_context=client.V1SecurityContext(
                             allow_privilege_escalation=False,
-                            run_as_non_root=True,
+                            run_as_user=container_uid,
                         )
                     )
                 ]
