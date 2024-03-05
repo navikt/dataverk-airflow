@@ -191,7 +191,7 @@ def kubernetes_operator(
             seccomp_profile=V1SeccompProfile(
                 type="RuntimeDefault"
             )
-        ),
+        ) if not is_composer else None,
     )
 
 
