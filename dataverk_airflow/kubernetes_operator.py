@@ -85,7 +85,7 @@ def kubernetes_operator(
     :param delete_on_finish: bool: Whether to delete pod on completion
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param do_xcom_push: bool: Enable xcom push of content in file '/airflow/xcom/return.json', default False
-    :param container_uid: int: User ID for the container image. Root (id = 0) is not allowed, defaults to 50000.
+    :param container_uid: int: User ID for the container image. Root (id = 0) is not allowed, defaults to 50000 (standard uid for airflow).
     :param on_success_callback: a function or list of functions to be called when a task instance
         of this task fails. a context dictionary is passed as a single
         parameter to this function. Context contains references to related
@@ -169,7 +169,7 @@ def kubernetes_operator(
                         security_context=client.V1SecurityContext(
                             allow_privilege_escalation=False,
                             run_as_user=container_uid,
-                        )
+                        ) if not is_composer else None
                     )
                 ]
             )
@@ -223,14 +223,14 @@ def config_file(is_composer: bool) -> str:
         return "/home/airflow/composer_kube_config" if is_composer else None
 
 
-def init_containers(is_composer: bool, repo: str, branch: str) -> List[V1Container]:
+def init_containers(is_composer: bool, repo: str, branch: str, run_as_user: str) -> List[V1Container]:
     if is_composer:
         return [
             bucket_read(POD_WORKSPACE_DIR)
         ]
     else:
         return [
-            git_clone(repo, branch, POD_WORKSPACE_DIR)
+            git_clone(repo, branch, POD_WORKSPACE_DIR, run_as_user)
         ]
 
 

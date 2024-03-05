@@ -53,7 +53,7 @@ def notebook_operator(
     :param delete_on_finish: bool: Whether to delete pod on completion
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param do_xcom_push: bool: Enable xcom push of content in file '/airflow/xcom/return.json', default False
-    :param container_uid: int: User ID for the container image. Root (id = 0) is not allowed, defaults to 50000.
+    :param container_uid: int: User ID for the container image. Root (id = 0) is not allowed, defaults to 50000 (standard uid for airflow).
     :param on_success_callback: Callable
 
     :return: KubernetesPodOperator

@@ -6,7 +6,8 @@ import kubernetes.client as k8s
 def git_clone(
     repo: str,
     branch: str,
-    mount_path: str
+    mount_path: str,
+    run_as_user: str,
 ):
     return k8s.V1Container(
         name="clone-repo",
@@ -44,7 +45,7 @@ def git_clone(
             ),
         ],
         security_context=k8s.V1SecurityContext(
-            run_as_user=50000,
+            run_as_user=run_as_user,
             allow_privilege_escalation=False,
         )
     )
