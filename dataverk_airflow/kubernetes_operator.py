@@ -174,7 +174,7 @@ def kubernetes_operator(
                 ]
             )
         ),
-        init_containers=init_containers(is_composer, repo, branch),
+        init_containers=init_containers(is_composer, repo, branch, container_uid),
         image_pull_secrets=os.getenv("K8S_IMAGE_PULL_SECRETS"),
         labels={
             "component": "worker",
