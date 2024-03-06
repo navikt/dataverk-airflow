@@ -97,8 +97,11 @@ def kubernetes_operator(
     """
     is_composer = True if os.getenv("GCS_BUCKET") else False
 
-    if not is_composer and repo in [None, ""]:
-        raise MissingValueException("repo cannot be empty")
+    if not is_composer:
+        if repo in [None, ""]:
+            raise MissingValueException("repo cannot be empty")
+        if container_uid == 0:
+            raise ValueError(f"container_uid is not allowed to be 0 (root user)")
 
     if image == "":
         raise MissingValueException("image cannot be empty")
