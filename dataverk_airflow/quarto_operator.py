@@ -28,6 +28,7 @@ def quarto_operator(
         delete_on_finish: bool = True,
         retry_delay: timedelta = None,
         do_xcom_push: bool = False,
+        container_uid: int = 50000,
         on_success_callback: Callable = None,
 ):
     """Operator for rendering Quarto.
@@ -52,6 +53,7 @@ def quarto_operator(
     :param delete_on_finish: bool: Whether to delete pod on completion
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param do_xcom_push: bool: Enable xcom push of content in file '/airflow/xcom/return.json', default False
+    :param container_uid: int: User ID for the container image. Root (id = 0) is not allowed, defaults to 50000 (standard uid for airflow).
     :param on_success_callback: Callable
 
     :return: KubernetesPodOperator
@@ -95,7 +97,7 @@ def quarto_operator(
         "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist, "requirements_path": requirements_path,
         "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, 
         "retries": retries, "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
-        "on_success_callback": on_success_callback, "working_dir": str(working_dir)
+        "on_success_callback": on_success_callback, "working_dir": str(working_dir), "container_uid": container_uid,
     }
 
     kwargs = {k: v for k, v in kwargs.items() if v is not None}

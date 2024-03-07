@@ -1,5 +1,4 @@
 import os
-from kubernetes.client.models import V1SecurityContext, V1SeccompProfile
 import kubernetes.client as k8s
 
 def bucket_read(

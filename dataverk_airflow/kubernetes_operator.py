@@ -51,6 +51,7 @@ def kubernetes_operator(
         delete_on_finish: bool = True,
         retry_delay: timedelta = timedelta(seconds=5),
         do_xcom_push: bool = False,
+        container_uid: int = 50000,
         on_success_callback: Callable = None,
         working_dir: str = None,
 ):
@@ -84,6 +85,7 @@ def kubernetes_operator(
     :param delete_on_finish: bool: Whether to delete pod on completion
     :param retry_delay: timedelta: Time inbetween retries, default 5 seconds
     :param do_xcom_push: bool: Enable xcom push of content in file '/airflow/xcom/return.json', default False
+    :param container_uid: int: User ID for the container image. Root (id = 0) is not allowed, defaults to 50000 (standard uid for airflow).
     :param on_success_callback: a function or list of functions to be called when a task instance
         of this task fails. a context dictionary is passed as a single
         parameter to this function. Context contains references to related
@@ -95,8 +97,11 @@ def kubernetes_operator(
     """
     is_composer = True if os.getenv("GCS_BUCKET") else False
 
-    if not is_composer and repo in [None, ""]:
-        raise MissingValueException("repo cannot be empty")
+    if not is_composer:
+        if repo in [None, ""]:
+            raise MissingValueException("repo cannot be empty")
+        if container_uid == 0:
+            raise ValueError(f"container_uid is not allowed to be 0 (root user)")
 
     if image == "":
         raise MissingValueException("image cannot be empty")
@@ -164,11 +169,15 @@ def kubernetes_operator(
                     client.V1Container(
                         name="base",
                         working_dir=working_dir,
+                        security_context=client.V1SecurityContext(
+                            allow_privilege_escalation=False,
+                            run_as_user=container_uid,
+                        ) if not is_composer else None
                     )
                 ]
             )
         ),
-        init_containers=init_containers(is_composer, repo, branch),
+        init_containers=init_containers(is_composer, repo, branch, container_uid),
         image_pull_secrets=os.getenv("K8S_IMAGE_PULL_SECRETS"),
         labels={
             "component": "worker",
@@ -181,10 +190,11 @@ def kubernetes_operator(
         volumes=volumes(is_composer),
         security_context=V1PodSecurityContext(
             fs_group=0,
+            run_as_non_root=True,
             seccomp_profile=V1SeccompProfile(
                 type="RuntimeDefault"
             )
-        ),
+        ) if not is_composer else None,
     )
 
 
@@ -216,14 +226,14 @@ def config_file(is_composer: bool) -> str:
         return "/home/airflow/composer_kube_config" if is_composer else None
 
 
-def init_containers(is_composer: bool, repo: str, branch: str) -> List[V1Container]:
+def init_containers(is_composer: bool, repo: str, branch: str, run_as_user: str) -> List[V1Container]:
     if is_composer:
         return [
             bucket_read(POD_WORKSPACE_DIR)
         ]
     else:
         return [
-            git_clone(repo, branch, POD_WORKSPACE_DIR)
+            git_clone(repo, branch, POD_WORKSPACE_DIR, run_as_user)
         ]
 
 
