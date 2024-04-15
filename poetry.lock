@@ -502,13 +502,13 @@ apache-airflow = ">=2.5.0"
 
 [[package]]
 name = "apache-airflow-providers-slack"
-version = "8.6.1"
+version = "8.6.2"
 description = "Provider package apache-airflow-providers-slack for Apache Airflow"
 optional = false
 python-versions = "~=3.8"
 files = [
-    {file = "apache_airflow_providers_slack-8.6.1-py3-none-any.whl", hash = "sha256:5d0a41c4dc17cdded98195bfba14e71def2e54f7e5532775b10cca4851475b35"},
-    {file = "apache_airflow_providers_slack-8.6.1.tar.gz", hash = "sha256:2cacab53ea962f0e5db8304aff66afcc83ee3951c690c72b0e42fd65bb80bc90"},
+    {file = "apache_airflow_providers_slack-8.6.2-py3-none-any.whl", hash = "sha256:a2aa5c25ced0c0bbb4816de200f20edc2e58340e53d0c69901a3ffc0ef40d00d"},
+    {file = "apache_airflow_providers_slack-8.6.2.tar.gz", hash = "sha256:70f30df095f33699f4b2b00eb3526a3fc1df62af61a78e499db32892ee3af7ca"},
 ]
 
 [package.dependencies]
