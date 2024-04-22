@@ -1128,13 +1128,13 @@ idna = ">=2.0.0"
 
 [[package]]
 name = "exceptiongroup"
-version = "1.2.0"
+version = "1.2.1"
 description = "Backport of PEP 654 (exception groups)"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "exceptiongroup-1.2.0-py3-none-any.whl", hash = "sha256:4bfd3996ac73b41e9b9628b04e079f193850720ea5945fc96a08633c66912f14"},
-    {file = "exceptiongroup-1.2.0.tar.gz", hash = "sha256:91f5c769735f051a4290d52edd0858999b57e5876e9f85937691bd4c9fa3ed68"},
+    {file = "exceptiongroup-1.2.1-py3-none-any.whl", hash = "sha256:5258b9ed329c5bbdd31a309f53cbfb0b155341807f6ff7606a1e801a891b29ad"},
+    {file = "exceptiongroup-1.2.1.tar.gz", hash = "sha256:a4785e48b045528f5bfe627b6ad554ff32def154f42372786903b7abcfe1aa16"},
 ]
 
 [package.extras]
@@ -2155,13 +2155,13 @@ referencing = ">=0.31.0"
 
 [[package]]
 name = "knatch"
-version = "1.0.2"
+version = "1.0.3"
 description = ""
 optional = false
-python-versions = ">=3.8,<4.0"
+python-versions = "<4.0,>=3.8"
 files = [
-    {file = "knatch-1.0.2-py3-none-any.whl", hash = "sha256:ff10e10186852dd85a748e8fba29a141cc7bdb832612833848f1b8a21bbe8183"},
-    {file = "knatch-1.0.2.tar.gz", hash = "sha256:50ffcff3285307ed0e58096065f5f6b0250a59efda5cee1848d8c5f293894fbc"},
+    {file = "knatch-1.0.3-py3-none-any.whl", hash = "sha256:dfb557c3528aa88031a18faa16a45e857c0a651cb9594b461c3ea1a9708b815b"},
+    {file = "knatch-1.0.3.tar.gz", hash = "sha256:d950cfd7e2f998dea6dc96e8a5342b5dd2c75c5458038e9ec778f1943454e4e1"},
 ]
 
 [package.dependencies]
@@ -2928,13 +2928,13 @@ test = ["enum34", "ipaddress", "mock", "pywin32", "wmi"]
 
 [[package]]
 name = "pyaml"
-version = "23.12.0"
+version = "24.4.0"
 description = "PyYAML-based module to produce a bit more pretty and readable YAML-serialized data"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pyaml-23.12.0-py3-none-any.whl", hash = "sha256:90407d74c95a55d9b41d3860fcc1759640444d2795df748a328d077bc4f58393"},
-    {file = "pyaml-23.12.0.tar.gz", hash = "sha256:ce6f648efdfb1b3a5579f8cedb04facf0fa1e8f64846b639309b585bb322b4e5"},
+    {file = "pyaml-24.4.0-py3-none-any.whl", hash = "sha256:acc2b39c55cb0cbe4f694a6d3886f89ad3d2a5b3efcece526202f8de9a6b27de"},
+    {file = "pyaml-24.4.0.tar.gz", hash = "sha256:0e483d9289010e747a325dc43171bcc39d6562dd1dd4719e8cc7e7c96c99fce6"},
 ]
 
 [package.dependencies]
@@ -4103,4 +4103,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8,<3.12"
-content-hash = "82a84c687f252b208faf4b8c73cdfd1695df7a5fbafbe5207a526d3c7e13898c"
+content-hash = "c5d463dceafa03ba18af7ae58c70ed27822c17ee2df9e5241b152901062d78cf"
