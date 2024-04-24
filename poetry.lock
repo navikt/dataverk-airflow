@@ -453,17 +453,17 @@ google-re2 = ">=1.0"
 
 [[package]]
 name = "apache-airflow-providers-ftp"
-version = "3.6.1"
-description = "Provider for Apache Airflow. Implements apache-airflow-providers-ftp package"
+version = "3.7.0"
+description = "Provider package apache-airflow-providers-ftp for Apache Airflow"
 optional = false
 python-versions = "~=3.8"
 files = [
-    {file = "apache-airflow-providers-ftp-3.6.1.tar.gz", hash = "sha256:a3c8659d1455f6e8a0a3f6a960b15cb6d69e7572f8826037a4002c397d26ac12"},
-    {file = "apache_airflow_providers_ftp-3.6.1-py3-none-any.whl", hash = "sha256:17442f0dfb0fec6995b7193c31cff3eb0cdc8f99004158980fd447bd39ddb331"},
+    {file = "apache_airflow_providers_ftp-3.7.0-py3-none-any.whl", hash = "sha256:817936fa2f9f5d7f00f50bfe0dfdf83a3ffbcd863cb92b862a2ab5a40da1b8c4"},
+    {file = "apache_airflow_providers_ftp-3.7.0.tar.gz", hash = "sha256:cc6e7602fb9b92255b83343673923339c8fe7d22c8c738ba372ce38a70cce1cc"},
 ]
 
 [package.dependencies]
-apache-airflow = ">=2.5.0"
+apache-airflow = ">=2.6.0"
 
 [package.extras]
 openlineage = ["apache-airflow-providers-openlineage"]
