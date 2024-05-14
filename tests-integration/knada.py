@@ -14,6 +14,16 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
         retries=0,
         startup_timeout_seconds=60,
     )
+    py_op_uv = python_operator(
+        dag=dag,
+        name="python-op-uv",
+        repo="navikt/dataverk-airflow",
+        script_path="tests-integration/notebooks/script.py",
+        requirements_path="tests-integration/notebooks/requirements.txt",
+        retries=0,
+        startup_timeout_seconds=60,
+        use_uv_pip_install=True,
+    )
 
     nb_op = notebook_operator(
         dag=dag,

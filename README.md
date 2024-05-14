@@ -9,6 +9,8 @@ Alle våre operators lar deg klone et annet repo enn der DAGene er definert, bar
 Vi har også støtte for å installere Python pakker ved oppstart av Airflow task, spesifiser `requirements.txt`-filen din med `requirements_path="/path/to/requirements.txt"`.
 Merk at hvis du kombinerer `repo` og `requirements_path`, må `requirements.txt` ligge i repoet nevnt i `repo`.
 
+Ønsker du å benytte [UV](https://github.com/astral-sh/uv) for `pip install`, så kan du sette `use_uv_pip_install=True`.
+
 ### Quarto operator (datafortelling)
 
 Denne kjører `quarto render` for deg, som lager en HTML-fil som kan lastes opp til Datamarkedsplassen.

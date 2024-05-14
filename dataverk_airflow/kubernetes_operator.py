@@ -54,6 +54,7 @@ def kubernetes_operator(
         container_uid: int = 50000,
         on_success_callback: Callable = None,
         working_dir: str = None,
+        use_uv_pip_install: bool = False,
 ):
     """Simplified operator for creating KubernetesPodOperator.
 
@@ -92,6 +93,7 @@ def kubernetes_operator(
         objects to the task instance and is documented under the macros
         section of the API.
     :param working_dir: str: Path to working directory
+    :param use_uv_pip_install: bool: Use uv pip install, default False
 
     :return: KubernetesPodOperator
     """
@@ -133,8 +135,12 @@ def kubernetes_operator(
         working_dir = POD_WORKSPACE_DIR
 
     if requirements_path:
-        cmds = [
-            f"pip install -r {POD_WORKSPACE_DIR}/{requirements_path} --user --no-cache-dir"] + cmds
+        if use_uv_for_pip_install:
+            cmds = [
+                f"uv pip install -r {POD_WORKSPACE_DIR}/{requirements_path} --user --no-cache-dir"] + cmds
+        else:
+            cmds = [
+                f"pip install -r {POD_WORKSPACE_DIR}/{requirements_path} --user --no-cache-dir"] + cmds
 
         allowlist.append("pypi.org")
         allowlist.append("files.pythonhosted.org")
