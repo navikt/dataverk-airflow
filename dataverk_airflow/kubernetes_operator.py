@@ -135,7 +135,7 @@ def kubernetes_operator(
         working_dir = POD_WORKSPACE_DIR
 
     if requirements_path:
-        if use_uv_for_pip_install:
+        if use_uv_pip_install:
             cmds = [
                 f"uv pip install -r {POD_WORKSPACE_DIR}/{requirements_path} --user --no-cache-dir"] + cmds
         else:
