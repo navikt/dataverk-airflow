@@ -13,6 +13,7 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
         requirements_path="tests-integration/notebooks/requirements.txt",
         retries=0,
         startup_timeout_seconds=60,
+        use_uv_pip_install=True,
     )
     py_op_uv = python_operator(
         dag=dag,
@@ -33,6 +34,7 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
         requirements_path="tests-integration/notebooks/requirements.txt",
         retries=0,
         startup_timeout_seconds=60,
+        use_uv_pip_install=True,
     )
 
     quarto_op = quarto_operator(
@@ -48,6 +50,7 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
         requirements_path="tests-integration/notebooks/requirements.txt",
         retries=0,
         startup_timeout_seconds=60,
+        use_uv_pip_install=True,
     )
 
     quarto_book_op = quarto_operator(
@@ -63,6 +66,7 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
         requirements_path="tests-integration/notebooks/requirements.txt",
         retries=0,
         startup_timeout_seconds=60,
+        use_uv_pip_install=True,
     )
 
     py_op
