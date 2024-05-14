@@ -66,6 +66,7 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
     )
 
     py_op
+    py_op_uv
     nb_op
     quarto_op
     quarto_book_op

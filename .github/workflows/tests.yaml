@@ -72,7 +72,8 @@ jobs:
           echo "CLONE_REPO_IMAGE=ghcr.io/navikt/knada-git-sync/git-sync:$gitsync_tag" >> $GITHUB_ENV
 
           dataverk_airflow_tag=$(gcloud artifacts docker images list "$DATAVERK_AIRFLOW_IMAGE" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags')
-          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow:$dataverk_airflow_tag" >> $GITHUB_ENV
+          #echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow:$dataverk_airflow_tag" >> $GITHUB_ENV
+          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow-python-3.8:2024-05-14-25f9861" >> $GITHUB_ENV
       - name: Run tests Knada
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
