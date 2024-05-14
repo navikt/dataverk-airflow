@@ -112,11 +112,13 @@ def create_quarto_cmds(quarto: dict, host: str) -> list:
     if quarto.get("path"):
         quarto_format = quarto.get('format', "html")
         return [
+            f"uv venv",
             f"quarto render {Path(quarto['path']).name} --to {quarto_format} --execute --output index.html -M self-contained:True",
             f"""curl --fail-with-body --retry 2 -X PUT -F index.html=@index.html {url} -H "Authorization:Bearer {quarto['token']}" """
         ]
     else:
         return [
+            f"uv venv",
             f"quarto render --execute --output-dir output || true",
             f"knatch {quarto['id']} output {quarto['token']} --host {host}"
         ]
