@@ -37,7 +37,7 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
 
     nb_op_uv = notebook_operator(
         dag=dag,
-        name="nb-op",
+        name="nb-op-uv",
         repo="navikt/dataverk-airflow",
         nb_path="tests-integration/notebooks/mynb.ipynb",
         requirements_path="tests-integration/notebooks/requirements.txt",
@@ -63,7 +63,7 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
 
     quarto_op_uv = quarto_operator(
         dag=dag,
-        name="quarto-op",
+        name="quarto-op-uv",
         repo="navikt/dataverk-airflow",
         quarto={
             "path": "tests-integration/notebooks/quarto.ipynb",
@@ -94,7 +94,7 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
 
     quarto_book_op_uv = quarto_operator(
         dag=dag,
-        name="quarto-book-op",
+        name="quarto-book-op-uv",
         repo="navikt/dataverk-airflow",
         quarto={
             "folder": "tests-integration/notebooks/quartobook",
