@@ -138,7 +138,7 @@ def kubernetes_operator(
         if use_uv_pip_install:
             cmds = [
                 f"uv venv .local",
-                f"source .local/bin/activate && uv pip install -r {POD_WORKSPACE_DIR}/{requirements_path} --no-cache-dir"] + cmds
+                f". .local/bin/activate && uv pip install -r {POD_WORKSPACE_DIR}/{requirements_path} --no-cache-dir"] + cmds
         else:
             cmds = [
                 f"pip install -r {POD_WORKSPACE_DIR}/{requirements_path} --user --no-cache-dir"] + cmds
