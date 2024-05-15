@@ -42,6 +42,19 @@ jobs:
           token_format: access_token
           workload_identity_provider: projects/193123067890/locations/global/workloadIdentityPools/ci-knada-images/providers/ci-knada-images
           service_account: ci-knada-images@knada-gcp.iam.gserviceaccount.com
+
+      - uses: docker/login-action@v3
+        name: Login to GitHub Container Registry
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y skopeo
+          sudo apt-get install -y jq
+
       - name: Install python dependencies
         run: |
           pip3 install poetry
@@ -73,7 +86,9 @@ jobs:
 
           dataverk_airflow_tag=$(gcloud artifacts docker images list "$DATAVERK_AIRFLOW_IMAGE" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags')
           #echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow:$dataverk_airflow_tag" >> $GITHUB_ENV
-          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow-python-3.8:2024-05-14-25f9861" >> $GITHUB_ENV
+          #echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow-python-3.8:2024-05-14-25f9861" >> $GITHUB_ENV
+          #$(skopeo list-tags docker://ghcr.io/navikt/knada-images/dataverk-airflow-python-{{ matrix.version }} | jq -r '.Tags[]' | sort -V | tail -n 1)
+          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=$(skopeo list-tags docker://ghcr.io/navikt/knada-images/dataverk-airflow-python-{{ matrix.version }} | jq -r '.Tags[]' | sort -V | tail -n 1)" >> $GITHUB_ENV
       - name: Run tests Knada
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
