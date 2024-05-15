@@ -50,11 +50,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y skopeo
-          sudo apt-get install -y jq
-
       - name: Install python dependencies
         run: |
           pip3 install poetry
@@ -89,6 +84,8 @@ jobs:
           #echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow-python-3.8:2024-05-14-25f9861" >> $GITHUB_ENV
           #$(skopeo list-tags docker://ghcr.io/navikt/knada-images/dataverk-airflow-python-{{ matrix.version }} | jq -r '.Tags[]' | sort -V | tail -n 1)
           echo "KNADA_AIRFLOW_OPERATOR_IMAGE=$(skopeo list-tags docker://ghcr.io/navikt/knada-images/dataverk-airflow-python-{{ matrix.version }} | jq -r '.Tags[]' | sort -V | tail -n 1)" >> $GITHUB_ENV
+          echo skopeo list-tags docker://ghcr.io/navikt/knada-images/dataverk-airflow-python-{{ matrix.version }} | jq -r '.Tags[]' | sort -V | tail -n 1
+          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=$(skopeo list-tags docker://ghcr.io/navikt/knada-images/dataverk-airflow-python-{{ matrix.version }} | jq -r '.Tags[]' | sort -V | tail -n 1)"
       - name: Run tests Knada
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
