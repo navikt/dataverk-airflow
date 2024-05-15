@@ -83,7 +83,7 @@ jobs:
           #echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow:$dataverk_airflow_tag" >> $GITHUB_ENV
           #echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow-python-3.8:2024-05-14-25f9861" >> $GITHUB_ENV
           #$(skopeo list-tags docker://ghcr.io/navikt/knada-images/dataverk-airflow-python-{{ matrix.version }} | jq -r '.Tags[]' | sort -V | tail -n 1)
-          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow-python-{{ matrix.version }}:$(skopeo list-tags docker://ghcr.io/navikt/knada-images/dataverk-airflow-python-{{ matrix.version }} | jq -r '.Tags[]' | sort -V | tail -n 1)" >> $GITHUB_ENV
+          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow-python-${{ matrix.version }}:$(skopeo list-tags docker://ghcr.io/navikt/knada-images/dataverk-airflow-python-${{ matrix.version }} | jq -r '.Tags[]' | sort -V | tail -n 1)" >> $GITHUB_ENV
       - name: Run tests Knada
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
