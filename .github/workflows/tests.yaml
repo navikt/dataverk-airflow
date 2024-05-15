@@ -4,7 +4,7 @@ on: push
 
 env:
   GIT_SYNC_IMAGE: europe-north1-docker.pkg.dev/knada-gcp/knada-north/git-sync
-  DATAVERK_AIRFLOW_IMAGE_BASE_URL: ghcr.io/navikt/knada-images/dataverk-airflow-python-
+  DATAVERK_AIRFLOW_IMAGE_BASE_URL: ghcr.io/navikt/knada-images/dataverk-airflow-python
 
 permissions:
   contents: read
