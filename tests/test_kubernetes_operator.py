@@ -86,4 +86,5 @@ class TestKubernetesOperator:
                                         use_uv_pip_install=True)
 
         assert container.arguments == [
-            "uv pip install -r /workspace/requirements.txt --no-cache-dir && python script.py"]
+            f"uv venv .local",
+            f". .local/bin/activate && uv pip install -r /workspace/requirements.txt --no-cache-dir && python script.py"]
