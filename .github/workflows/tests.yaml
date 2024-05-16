@@ -4,7 +4,7 @@ on: push
 
 env:
   GIT_SYNC_IMAGE: europe-north1-docker.pkg.dev/knada-gcp/knada-north/git-sync
-  DATAVERK_AIRFLOW_IMAGE_BASE_URL: ghcr.io/navikt/knada-images/dataverk-airflow-python
+  DATAVERK_AIRFLOW_IMAGE_BASE_URL: europe-north1-docker.pkg.dev/knada-gcp/knada-north/dataverk-airflow-python
 
 permissions:
   contents: read
@@ -42,14 +42,6 @@ jobs:
           token_format: access_token
           workload_identity_provider: projects/193123067890/locations/global/workloadIdentityPools/ci-knada-images/providers/ci-knada-images
           service_account: ci-knada-images@knada-gcp.iam.gserviceaccount.com
-
-      - uses: docker/login-action@v3
-        name: Login to GitHub Container Registry
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install python dependencies
         run: |
           pip3 install poetry
@@ -78,8 +70,9 @@ jobs:
 
           gitsync_tag=$(gcloud artifacts docker images list "$GIT_SYNC_IMAGE" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags')
           echo "CLONE_REPO_IMAGE=ghcr.io/navikt/knada-git-sync/git-sync:$gitsync_tag" >> $GITHUB_ENV
+          dataverk_airflow_tag=$(gcloud artifacts docker images list "$DATAVERK_AIRFLOW_IMAGE_BASE_URL-${{ matrix.version}}" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags')
+          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow-python-${{ matrix.version }}:$dataverk_airflow_tag" >> $GITHUB_ENV
 
-          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=$DATAVERK_AIRFLOW_IMAGE_BASE_URL-${{ matrix.version }}:$(skopeo list-tags docker://$DATAVERK_AIRFLOW_IMAGE_BASE_URL-${{ matrix.version }} | jq -r '.Tags[]' | sort -V | tail -n 1)" >> $GITHUB_ENV
       - name: Run tests Knada
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
