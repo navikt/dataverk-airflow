@@ -78,3 +78,12 @@ class TestKubernetesOperator:
 
         assert container.arguments == [
             "pip install -r /workspace/requirements.txt --user --no-cache-dir && python script.py"]
+
+    def test_that_uv_is_used_for_pip_install(self, dag):
+        container = kubernetes_operator(dag, "name", "repo", "image",
+                                        cmds=["python script.py"],
+                                        requirements_path="requirements.txt",
+                                        use_uv_pip_install=True)
+
+        assert container.arguments == [
+            f"uv venv .local && . .local/bin/activate && uv pip install -r /workspace/requirements.txt --no-cache-dir && python script.py"]
