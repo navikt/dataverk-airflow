@@ -32,6 +32,7 @@ def notebook_operator(
         on_success_callback: Callable = None,
         container_uid: int = 50000,
         use_uv_pip_install: bool = False,
+        override_notebook_kernelspec: bool = True,
 ):
     """Operator for executing Jupyter notebooks.
 
@@ -57,6 +58,7 @@ def notebook_operator(
     :param container_uid: int: User ID for the container image. Root (id = 0) is not allowed, defaults to 50000 (standard uid for airflow).
     :param on_success_callback: Callable
     :param use_uv_pip_install: bool: Use uv pip install, default False
+    :param override_notebook_kernelspec: bool: Whether to override the kernelspec in the notebook metadata, default True (will ensure that python3 kernel is used)
 
     :return: KubernetesPodOperator
     """
@@ -74,6 +76,8 @@ def notebook_operator(
     cmds = [f"papermill {Path(nb_path).name} output.ipynb"]
     if log_output:
         cmds[-1] += " --log-output"
+    if override_notebook_kernelspec:
+        cmds[-1] += " --kernel python3"
 
     kwargs = {
         "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
