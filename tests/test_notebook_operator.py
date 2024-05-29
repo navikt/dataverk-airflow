@@ -42,6 +42,10 @@ class TestNotebookOperator:
 
     def test_that_cmds_are_correct(self, dag):
         container = notebook_operator(dag, "name", "notebook_path", "repo")
+        assert container.arguments == ["papermill notebook_path output.ipynb --kernel python3"]
+
+    def test_disable_notebook_kernel_override(self, dag):
+        container = notebook_operator(dag, "name", "notebook_path", "repo", override_notebook_kernelspec=False)
         assert container.arguments == ["papermill notebook_path output.ipynb"]
 
     def test_that_log_output_is_added_to_cmds(self, dag):
