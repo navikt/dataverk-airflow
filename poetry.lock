@@ -503,17 +503,17 @@ apache-airflow = ">=2.5.0"
 
 [[package]]
 name = "apache-airflow-providers-slack"
-version = "8.6.2"
+version = "8.7.1"
 description = "Provider package apache-airflow-providers-slack for Apache Airflow"
 optional = false
 python-versions = "~=3.8"
 files = [
-    {file = "apache_airflow_providers_slack-8.6.2-py3-none-any.whl", hash = "sha256:a2aa5c25ced0c0bbb4816de200f20edc2e58340e53d0c69901a3ffc0ef40d00d"},
-    {file = "apache_airflow_providers_slack-8.6.2.tar.gz", hash = "sha256:70f30df095f33699f4b2b00eb3526a3fc1df62af61a78e499db32892ee3af7ca"},
+    {file = "apache_airflow_providers_slack-8.7.1-py3-none-any.whl", hash = "sha256:408f29cb17086d9003c413869cb1b3f05297276caf2c80abdc7dd1e73d14a7f1"},
+    {file = "apache_airflow_providers_slack-8.7.1.tar.gz", hash = "sha256:6afce534d6f950f4d729fc9a113b2086b354a6b6a20514f7a9cdd3f6b98f5721"},
 ]
 
 [package.dependencies]
-apache-airflow = ">=2.6.0"
+apache-airflow = ">=2.7.0"
 apache-airflow-providers-common-sql = ">=1.3.1"
 slack_sdk = ">=3.19.0"
 
@@ -1129,13 +1129,13 @@ idna = ">=2.0.0"
 
 [[package]]
 name = "exceptiongroup"
-version = "1.2.0"
+version = "1.2.1"
 description = "Backport of PEP 654 (exception groups)"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "exceptiongroup-1.2.0-py3-none-any.whl", hash = "sha256:4bfd3996ac73b41e9b9628b04e079f193850720ea5945fc96a08633c66912f14"},
-    {file = "exceptiongroup-1.2.0.tar.gz", hash = "sha256:91f5c769735f051a4290d52edd0858999b57e5876e9f85937691bd4c9fa3ed68"},
+    {file = "exceptiongroup-1.2.1-py3-none-any.whl", hash = "sha256:5258b9ed329c5bbdd31a309f53cbfb0b155341807f6ff7606a1e801a891b29ad"},
+    {file = "exceptiongroup-1.2.1.tar.gz", hash = "sha256:a4785e48b045528f5bfe627b6ad554ff32def154f42372786903b7abcfe1aa16"},
 ]
 
 [package.extras]
@@ -2156,18 +2156,18 @@ referencing = ">=0.31.0"
 
 [[package]]
 name = "knatch"
-version = "1.0.2"
+version = "1.0.4"
 description = ""
 optional = false
-python-versions = ">=3.8,<4.0"
+python-versions = "<4.0,>=3.8"
 files = [
-    {file = "knatch-1.0.2-py3-none-any.whl", hash = "sha256:ff10e10186852dd85a748e8fba29a141cc7bdb832612833848f1b8a21bbe8183"},
-    {file = "knatch-1.0.2.tar.gz", hash = "sha256:50ffcff3285307ed0e58096065f5f6b0250a59efda5cee1848d8c5f293894fbc"},
+    {file = "knatch-1.0.4-py3-none-any.whl", hash = "sha256:83f3969960d4503fb57b8f1ce957401c6f4204633d965e9e4ee34bb564d6a51f"},
+    {file = "knatch-1.0.4.tar.gz", hash = "sha256:68cb20f60d385c459d7b0e0201762beafafe52da2c088092240ad095bb29b1a6"},
 ]
 
 [package.dependencies]
 backoff = ">=2.2.1,<3.0.0"
-requests = ">=2.31.0,<3.0.0"
+requests = ">=2.32.2,<3.0.0"
 
 [[package]]
 name = "kubernetes"
@@ -2866,13 +2866,13 @@ files = [
 
 [[package]]
 name = "pluggy"
-version = "1.4.0"
+version = "1.5.0"
 description = "plugin and hook calling mechanisms for python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pluggy-1.4.0-py3-none-any.whl", hash = "sha256:7db9f7b503d67d1c5b95f59773ebb58a8c1c288129a88665838012cfb07b8981"},
-    {file = "pluggy-1.4.0.tar.gz", hash = "sha256:8c85c2876142a764e5b7548e7d9a0e0ddb46f5185161049a79b7e974454223be"},
+    {file = "pluggy-1.5.0-py3-none-any.whl", hash = "sha256:44e1ad92c8ca002de6377e165f3e0f1be63266ab4d554740532335b9d75ea669"},
+    {file = "pluggy-1.5.0.tar.gz", hash = "sha256:2cffa88e94fdc978c4c574f15f9e59b7f4201d439195c3715ca9e2486f1d0cf1"},
 ]
 
 [package.extras]
@@ -2946,13 +2946,13 @@ test = ["enum34", "ipaddress", "mock", "pywin32", "wmi"]
 
 [[package]]
 name = "pyaml"
-version = "23.12.0"
+version = "24.4.0"
 description = "PyYAML-based module to produce a bit more pretty and readable YAML-serialized data"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pyaml-23.12.0-py3-none-any.whl", hash = "sha256:90407d74c95a55d9b41d3860fcc1759640444d2795df748a328d077bc4f58393"},
-    {file = "pyaml-23.12.0.tar.gz", hash = "sha256:ce6f648efdfb1b3a5579f8cedb04facf0fa1e8f64846b639309b585bb322b4e5"},
+    {file = "pyaml-24.4.0-py3-none-any.whl", hash = "sha256:acc2b39c55cb0cbe4f694a6d3886f89ad3d2a5b3efcece526202f8de9a6b27de"},
+    {file = "pyaml-24.4.0.tar.gz", hash = "sha256:0e483d9289010e747a325dc43171bcc39d6562dd1dd4719e8cc7e7c96c99fce6"},
 ]
 
 [package.dependencies]
@@ -3031,13 +3031,13 @@ tests = ["coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)"]
 
 [[package]]
 name = "pytest"
-version = "8.1.1"
+version = "8.2.1"
 description = "pytest: simple powerful testing with Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pytest-8.1.1-py3-none-any.whl", hash = "sha256:2a8386cfc11fa9d2c50ee7b2a57e7d898ef90470a7a34c4b949ff59662bb78b7"},
-    {file = "pytest-8.1.1.tar.gz", hash = "sha256:ac978141a75948948817d360297b7aae0fcb9d6ff6bc9ec6d514b85d5a65c044"},
+    {file = "pytest-8.2.1-py3-none-any.whl", hash = "sha256:faccc5d332b8c3719f40283d0d44aa5cf101cec36f88cde9ed8f2bc0538612b1"},
+    {file = "pytest-8.2.1.tar.gz", hash = "sha256:5046e5b46d8e4cac199c373041f26be56fdb81eb4e67dc11d4e10811fc3408fd"},
 ]
 
 [package.dependencies]
@@ -3045,11 +3045,11 @@ colorama = {version = "*", markers = "sys_platform == \"win32\""}
 exceptiongroup = {version = ">=1.0.0rc8", markers = "python_version < \"3.11\""}
 iniconfig = "*"
 packaging = "*"
-pluggy = ">=1.4,<2.0"
+pluggy = ">=1.5,<2.0"
 tomli = {version = ">=1", markers = "python_version < \"3.11\""}
 
 [package.extras]
-testing = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "pygments (>=2.7.2)", "requests", "setuptools", "xmlschema"]
+dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "pygments (>=2.7.2)", "requests", "setuptools", "xmlschema"]
 
 [[package]]
 name = "pytest-datafiles"
@@ -3229,13 +3229,13 @@ rpds-py = ">=0.7.0"
 
 [[package]]
 name = "requests"
-version = "2.32.0"
+version = "2.32.3"
 description = "Python HTTP for Humans."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "requests-2.32.0-py3-none-any.whl", hash = "sha256:f2c3881dddb70d056c5bd7600a4fae312b2a300e39be6a118d30b90bd27262b5"},
-    {file = "requests-2.32.0.tar.gz", hash = "sha256:fa5490319474c82ef1d2c9bc459d3652e3ae4ef4c4ebdd18a21145a47ca4b6b8"},
+    {file = "requests-2.32.3-py3-none-any.whl", hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"},
+    {file = "requests-2.32.3.tar.gz", hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"},
 ]
 
 [package.dependencies]
@@ -4138,4 +4138,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8,<3.12"
-content-hash = "de11e945fd0edadebdd7d12f980c76d176a65e352d24370cc38dfa02ce4c0406"
+content-hash = "ece307bec052459c8766e08c75ea87c91a534120a14fa99d7097ccee9d17fdba"
