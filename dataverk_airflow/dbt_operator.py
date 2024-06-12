@@ -1,7 +1,6 @@
 import os
 from datetime import timedelta
 from typing import Callable
-from path import Path
 
 from airflow import DAG
 from kubernetes import client
@@ -120,4 +119,4 @@ def create_dbt_commands(dbt: dict):
             f"cd {project_dir}/target && curl -X PUT --fail-with-body --retry 2 -F manifest.json=@manifest.json -F catalog.json=@catalog.json -F index.html=@index.html https://{host}/docs/{team}/$DBT_PROJECT"
         ]
     else:
-        raise ValueError(f"Unsupported command {dbt.get("cmd")}. This operator supports the following commands: " + ", ".join(f"'{cmd}'" for cmd in SUPPORTED_COMMANDS[:-1]) + f" and '{SUPPORTED_COMMANDS[-1]}'")
+        raise ValueError(f"""Unsupported command '{dbt.get("cmd")}'. This operator supports the following commands: """ + ", ".join(f"'{cmd}'" for cmd in SUPPORTED_COMMANDS[:-1]) + f" and '{SUPPORTED_COMMANDS[-1]}'")
