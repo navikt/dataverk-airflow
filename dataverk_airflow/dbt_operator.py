@@ -117,7 +117,7 @@ def create_dbt_commands(dbt: dict, allowlist: list):
 
         return [
             f"{DBT_DOCS_GENERATE} --profiles-dir {profiles_dir} --project-dir {project_dir}",
-            f"export DBT_PROJECT=$(cat {project_dir}/dbt_project.yml | grep name: | cut -d' ' -f2 | tr -d \' | tr -d \")",
+            f"""export DBT_PROJECT=$(cat {project_dir}/dbt_project.yml | grep name: | cut -d' ' -f2 | tr -d \' | tr -d \")""",
             f"cd {project_dir}/target && curl -X PUT --fail-with-body --retry 2 -F manifest.json=@manifest.json -F catalog.json=@catalog.json -F index.html=@index.html https://{host}/docs/{team}/$DBT_PROJECT"
         ]
     else:
