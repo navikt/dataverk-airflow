@@ -82,7 +82,7 @@ def dbt_operator(
     if not image:
         image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")
 
-    cmds = create_dbt_commands(dbt)
+    cmds = create_dbt_commands(dbt, allowlist)
 
     kwargs = {
         "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
@@ -96,7 +96,7 @@ def dbt_operator(
     return kubernetes_operator(**kwargs)
 
 
-def create_dbt_commands(dbt: dict):
+def create_dbt_commands(dbt: dict, allowlist: list):
     profiles_dir = dbt.get("profiles_dir", ".")
     project_dir = dbt.get("project_dir", ".")
 
@@ -112,6 +112,8 @@ def create_dbt_commands(dbt: dict):
             host = "dbt.intern.nav.no"
         else:
             raise KeyError(f"docs_env parameter is required for the publish docs command, must be set to either dev or prod")
+        
+        allowlist.append(host)
 
         return [
             f"{DBT_DOCS_GENERATE} --profiles-dir {profiles_dir} --project-dir {project_dir}",

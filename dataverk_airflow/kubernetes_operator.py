@@ -306,4 +306,4 @@ def env_from_secret(secret_name: str):
         secret_ref = V1SecretEnvSource(
             name = secret_name,
         ),
-    ),
+    )
