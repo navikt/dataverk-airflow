@@ -17,9 +17,9 @@ SUPPORTED_COMMANDS = [CMD_BUILD, CMD_PUBLISH_DOCS]
 def dbt_operator(
         dag: DAG,
         name: str,
-        image: str,
-        repo: str = None,
         dbt: dict = {"profiles_dir": ".", "project_dir": ".", "cmd": "build", "team": os.getenv("TEAM"), "docs_env": "dev"},
+        repo: str = None,
+        image: str = None,
         branch: str = "main",
         email: str = None,
         slack_channel: str = None,
