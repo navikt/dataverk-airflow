@@ -10,8 +10,8 @@ from kubernetes import client
 from kubernetes.client.models import (
     V1ConfigMapVolumeSource,
     V1Container,
-    V1PodSecurityContext,
-    V1SeccompProfile,
+    V1EnvFromSource,
+    V1SecretEnvSource,
     V1SecretVolumeSource,
     V1Volume,
     V1VolumeMount,
@@ -55,6 +55,7 @@ def kubernetes_operator(
         on_success_callback: Callable = None,
         working_dir: str = None,
         use_uv_pip_install: bool = False,
+        env_from_secrets: list = [],
 ):
     """Simplified operator for creating KubernetesPodOperator.
 
@@ -94,6 +95,7 @@ def kubernetes_operator(
         section of the API.
     :param working_dir: str: Path to working directory
     :param use_uv_pip_install: bool: Use uv pip install, default False
+    :param env_from_secrets: list: List of kubernetes secrets to mount environment variables from
 
     :return: KubernetesPodOperator
     """
@@ -163,6 +165,7 @@ def kubernetes_operator(
         annotations={"allowlist": ",".join(allowlist)},
         image=image,
         env_vars=env_vars(is_composer, extra_envs),
+        env_from=[env_from_secret(secret) for secret in env_from_secrets],
         config_file=config_file(is_composer),
         do_xcom_push=do_xcom_push,
         container_resources=resources,
@@ -295,3 +298,10 @@ def volumes(is_composer: bool) -> List[V1Volume]:
         )
 
     return volumes
+
+def env_from_secret(secret_name: str):
+    return V1EnvFromSource(
+        secret_ref = V1SecretEnvSource(
+            name = secret_name,
+        ),
+    ),

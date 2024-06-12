@@ -33,6 +33,7 @@ def notebook_operator(
         container_uid: int = 50000,
         use_uv_pip_install: bool = False,
         override_notebook_kernelspec: bool = True,
+        env_from_secrets: list = [],
 ):
     """Operator for executing Jupyter notebooks.
 
@@ -59,6 +60,7 @@ def notebook_operator(
     :param on_success_callback: Callable
     :param use_uv_pip_install: bool: Use uv pip install, default False
     :param override_notebook_kernelspec: bool: Whether to override the kernelspec in the notebook metadata, default True (will ensure that python3 kernel is used)
+    :param env_from_secrets: list: List of kubernetes secrets to mount environment variables from
 
     :return: KubernetesPodOperator
     """
@@ -85,6 +87,7 @@ def notebook_operator(
         "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, 
         "retries": retries, "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
         "on_success_callback": on_success_callback, "working_dir": str(Path(nb_path).parent), "container_uid": container_uid, "use_uv_pip_install": use_uv_pip_install,
+        "env_from_secrets": env_from_secrets,
     }
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
 

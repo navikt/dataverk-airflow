@@ -31,6 +31,7 @@ def quarto_operator(
         container_uid: int = 50000,
         on_success_callback: Callable = None,
         use_uv_pip_install: bool = False,
+        env_from_secrets: list = [],
 ):
     """Operator for rendering Quarto.
 
@@ -57,6 +58,7 @@ def quarto_operator(
     :param container_uid: int: User ID for the container image. Root (id = 0) is not allowed, defaults to 50000 (standard uid for airflow).
     :param on_success_callback: Callable
     :param use_uv_pip_install: bool: Use uv pip install, default False
+    :param env_from_secrets: list: List of kubernetes secrets to mount environment variables from
 
     :return: KubernetesPodOperator
     """
@@ -100,6 +102,7 @@ def quarto_operator(
         "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, 
         "retries": retries, "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
         "on_success_callback": on_success_callback, "working_dir": str(working_dir), "container_uid": container_uid, "use_uv_pip_install": use_uv_pip_install,
+        "env_from_secrets": env_from_secrets,
     }
 
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
