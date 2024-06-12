@@ -4,4 +4,5 @@ from dataverk_airflow.kubernetes_operator import kubernetes_operator, MissingVal
 from dataverk_airflow.python_operator import python_operator
 from dataverk_airflow.notebook_operator import notebook_operator
 from dataverk_airflow.quarto_operator import quarto_operator
-from dataverk_airflow.dbt_operator import dbt_operator
+from dataverk_airflow.dbt_build_operator import dbt_operator
+from dataverk_airflow.dbt_docs_operator import dbt_docs_operator

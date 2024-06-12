@@ -7,17 +7,10 @@ from kubernetes import client
 
 from dataverk_airflow.kubernetes_operator import kubernetes_operator
 
-DBT_BUILD = "dbt build"
-DBT_DOCS_GENERATE = "dbt docs generate"
-
-CMD_BUILD = "build"
-CMD_PUBLISH_DOCS = "publish docs"
-SUPPORTED_COMMANDS = [CMD_BUILD, CMD_PUBLISH_DOCS]
-
 def dbt_operator(
         dag: DAG,
         name: str,
-        dbt: dict = {"profiles_dir": ".", "project_dir": ".", "cmd": "build", "team": os.getenv("TEAM"), "docs_env": "dev"},
+        dbt_cmd: str = "dbt build --profiles-dir . --project-dir .",
         repo: str = None,
         image: str = None,
         branch: str = "main",
@@ -37,7 +30,11 @@ def dbt_operator(
         use_uv_pip_install: bool = False,
         env_from_secrets: list = [],
 ):
-    """Operator for running dbt commands
+    """Operator for running dbt build
+
+    The working directory in the container environment will be the root folder of the cloned repo specified
+    by the repo input argument. One must therefore correctly configure the --profiles-dir and --project-dir options
+    in the dbt command as relative paths from the root folder of the cloned repo.
 
     If you use the slack_channel argument, the following host will also be added:
     - hooks.slack.com
@@ -53,7 +50,7 @@ def dbt_operator(
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
-    :param dbt: dict: Dictionary with dbt settings, needs the following values {"profiles_dir": "path/to/profiles/directory", "project_dir": "path/to/project/directory", "cmd": "dbt build", docs_env: "dev"}
+    :param dbt_cmd: str: The dbt command to be executed by the worker.
     :param image: str: Dockerimage the pod should use
     :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
@@ -82,10 +79,8 @@ def dbt_operator(
     if not image:
         image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")
 
-    cmds = create_dbt_commands(dbt, allowlist)
-
     kwargs = {
-        "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
+        "dag": dag, "name": name, "repo": repo, "image": image, "cmds": [dbt_cmd], "branch": branch, "email": email,
         "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist, "requirements_path": requirements_path,
         "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, 
         "retries": retries, "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
@@ -94,31 +89,3 @@ def dbt_operator(
     }
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
     return kubernetes_operator(**kwargs)
-
-
-def create_dbt_commands(dbt: dict, allowlist: list):
-    profiles_dir = dbt.get("profiles_dir", ".")
-    project_dir = dbt.get("project_dir", ".")
-
-    if dbt.get('cmd') == CMD_BUILD:
-        return [f"{DBT_BUILD} --profiles-dir {profiles_dir} --project-dir {project_dir}"]
-    elif dbt.get('cmd') == CMD_PUBLISH_DOCS:
-        team = dbt.get("team", os.getenv("TEAM", "default"))
-
-        docs_env = dbt.get("docs_env")
-        if docs_env == "dev":
-            host = "dbt.intern.dev.nav.no"
-        elif docs_env == "prod":
-            host = "dbt.intern.nav.no"
-        else:
-            raise KeyError(f"docs_env parameter is required for the publish docs command, must be set to either dev or prod")
-        
-        allowlist.append(host)
-
-        return [
-            f"{DBT_DOCS_GENERATE} --profiles-dir {profiles_dir} --project-dir {project_dir}",
-            f"""export DBT_PROJECT=$(cat {project_dir}/dbt_project.yml | grep name: | cut -d' ' -f2 | tr -d \\' | tr -d \\")""",
-            f"cd {project_dir}/target && curl -X PUT --fail-with-body --retry 2 -F manifest.json=@manifest.json -F catalog.json=@catalog.json -F index.html=@index.html https://{host}/docs/{team}/$DBT_PROJECT"
-        ]
-    else:
-        raise ValueError(f"""Unsupported command '{dbt.get("cmd")}'. This operator supports the following commands: """ + ", ".join(f"'{cmd}'" for cmd in SUPPORTED_COMMANDS[:-1]) + f" and '{SUPPORTED_COMMANDS[-1]}'")
