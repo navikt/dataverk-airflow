@@ -75,7 +75,12 @@ def notebook_operator(
         except KeyError:
             image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")
 
-    cmds = [f"papermill {Path(nb_path).name} output.ipynb"]
+    # Needs to override python3 kernelspec if using uv
+    if use_uv_pip_install:
+        cmds = [f"python -m ipykernel install --user --name=python3 --display-name 'Python (UV)' && papermill {Path(nb_path).name} output.ipynb"]
+    else:
+        cmds = [f"papermill {Path(nb_path).name} output.ipynb"]
+
     if log_output:
         cmds[-1] += " --log-output"
     if override_notebook_kernelspec:
