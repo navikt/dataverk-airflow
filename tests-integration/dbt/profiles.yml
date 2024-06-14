@@ -1,4 +1,4 @@
-dvh_familie:
+nada_dbt_test:
   target: dev
   outputs:
     dev:
