@@ -58,6 +58,7 @@ jobs:
           kubectl create ns composer-user-workloads
           kubectl create secret generic github-app-secret --from-literal=test=test
           kubectl create cm ca-bundle-pem --from-literal=test=test
+          kubectl apply -f ./tests-integration/dbt/k8s_resources
       - name: Setup Airflow
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
