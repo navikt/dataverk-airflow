@@ -112,10 +112,13 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
         dag=dag,
         name="dbt-build",
         repo="navikt/dataverk-airflow",
+        branch="dbt-operator",
         dbt_cmd="dbt build --profiles-dir tests-integration/dbt --project-dir tests-integration/dbt/nada_dbt_test",
         image="ghcr.io/navikt/knada/dataverk-airflow-test:v1",
         retries=0,
         env_from_secrets=["dbt-secret"],
+        startup_timeout_seconds=60,
+        delete_on_finish=False,
     )
 
     # py_op

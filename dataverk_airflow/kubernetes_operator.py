@@ -166,6 +166,7 @@ def kubernetes_operator(
         on_finish_action=on_finish_action,
         annotations={"allowlist": ",".join(allowlist)},
         image=image,
+        namespace=namespace,
         env_vars=env_vars(is_composer, extra_envs),
         env_from=[env_from_secret(secret) for secret in env_from_secrets],
         config_file=config_file(is_composer),
