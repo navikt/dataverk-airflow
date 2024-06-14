@@ -1,0 +1,13 @@
+dvh_familie:
+  target: dev
+  outputs:
+    dev:
+      type: oracle
+      user: usah
+      pass: "{{env_var('DBT_ENV_SECRET_PASS')}}"
+      protocol: tcp
+      host: oracledb
+      port: 1521
+      service: FREEPDB1
+      schema: usah
+      threads: 10
