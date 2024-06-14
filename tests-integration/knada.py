@@ -5,15 +5,16 @@ from dataverk_airflow import python_operator, notebook_operator, quarto_operator
 
 
 with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as dag:
-    # py_op = python_operator(
-    #     dag=dag,
-    #     name="python-op",
-    #     repo="navikt/dataverk-airflow",
-    #     script_path="tests-integration/notebooks/script.py",
-    #     requirements_path="tests-integration/notebooks/requirements.txt",
-    #     retries=0,
-    #     startup_timeout_seconds=60,
-    # )
+    py_op = python_operator(
+        dag=dag,
+        name="python-op",
+        repo="navikt/dataverk-airflow",
+        script_path="tests-integration/notebooks/script.py",
+        requirements_path="tests-integration/notebooks/requirements.txt",
+        retries=0,
+        startup_timeout_seconds=60,
+    )
+
     # py_op_uv = python_operator(
     #     dag=dag,
     #     name="python-op-uv",
@@ -121,7 +122,7 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
         delete_on_finish=False,
     )
 
-    # py_op
+    py_op
     # py_op_uv
     # nb_op
     # nb_op_uv
