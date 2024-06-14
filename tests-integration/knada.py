@@ -122,7 +122,7 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
         delete_on_finish=False,
     )
 
-    py_op
+    # py_op
     # py_op_uv
     # nb_op
     # nb_op_uv
