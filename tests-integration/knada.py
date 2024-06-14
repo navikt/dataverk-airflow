@@ -1,7 +1,7 @@
 from airflow import DAG
 from datetime import datetime
 from airflow.models import Variable
-from dataverk_airflow import python_operator, notebook_operator, quarto_operator
+from dataverk_airflow import python_operator, notebook_operator, quarto_operator, dbt_operator
 
 
 with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as dag:
@@ -108,6 +108,16 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
         use_uv_pip_install=True,
     )
 
+    dbt_build = dbt_operator(
+        dag=dag,
+        name="dbt-build",
+        repo="navikt/dataverk-airflow",
+        dbt_cmd="dbt build --profiles-dir tests-integration/dbt --project-dir tests-integration/dbt/nada_dbt_test",
+        image="ghcr.io/navikt/knada/dataverk-airflow-test:v1",
+        retries=0,
+        env_from_secrets=["dbt-secret"],
+    )
+
     py_op
     py_op_uv
     nb_op
@@ -116,3 +126,4 @@ with DAG('KnadaOperators', start_date=datetime(2023, 2, 15), schedule=None) as d
     quarto_op_uv
     quarto_book_op
     quarto_book_op_uv
+    dbt_build
