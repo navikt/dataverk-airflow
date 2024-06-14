@@ -58,6 +58,10 @@ jobs:
           kubectl create ns composer-user-workloads
           kubectl create secret generic github-app-secret --from-literal=test=test
           kubectl create cm ca-bundle-pem --from-literal=test=test
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: "480.0.0"
       - name: Setup Airflow
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
@@ -68,10 +72,10 @@ jobs:
           # envs
           echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/tests-integration" >> $GITHUB_ENV
 
-          gitsync_tag=$(gcloud artifacts docker images list "$GIT_SYNC_IMAGE" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags')
+          gitsync_tag=$(gcloud artifacts docker images list "$GIT_SYNC_IMAGE" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags' | jq -rc '.[0]')
           echo "CLONE_REPO_IMAGE=ghcr.io/navikt/knada-git-sync/git-sync:$gitsync_tag" >> $GITHUB_ENV
 
-          dataverk_airflow_tag=$(gcloud artifacts docker images list "$DATAVERK_AIRFLOW_IMAGE_BASE_URL-${{ matrix.version}}" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags')
+          dataverk_airflow_tag=$(gcloud artifacts docker images list "$DATAVERK_AIRFLOW_IMAGE_BASE_URL-${{ matrix.version}}" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags' | jq -rc '.[0]')
           echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow-python-${{ matrix.version }}:$dataverk_airflow_tag" >> $GITHUB_ENV
       - name: Run tests Knada
         env:
