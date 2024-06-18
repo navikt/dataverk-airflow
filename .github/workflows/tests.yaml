@@ -74,7 +74,6 @@ jobs:
           echo "AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/tests-integration" >> $GITHUB_ENV
 
           gitsync_tag=$(gcloud artifacts docker images list "$GIT_SYNC_IMAGE" --include-tags --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags' | jq -rc '.[0]')
-          echo $gitsync_tag
           echo "CLONE_REPO_IMAGE=ghcr.io/navikt/knada-git-sync/git-sync:$gitsync_tag" >> $GITHUB_ENV
           echo $CLONE_REPO_IMAGE
 

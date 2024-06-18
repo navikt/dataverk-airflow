@@ -11,6 +11,9 @@ Merk at hvis du kombinerer `repo` og `requirements_path`, må `requirements.txt`
 
 Ønsker du å benytte [UV](https://github.com/astral-sh/uv) for `pip install`, så kan du sette `use_uv_pip_install=True`.
 
+| :exclamation:  `UV` kjører i et virtual environment og man må da spesifisere alle pakker man trenger i `requirements.txt`, da man ikke har tilgang på de som finnes i default image. F.eks `pyyaml`, `nbformat`, `nbclient` |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
 ### Quarto operator (datafortelling)
 
 Denne kjører `quarto render` for deg, som lager en HTML-fil som kan lastes opp til Datamarkedsplassen.
