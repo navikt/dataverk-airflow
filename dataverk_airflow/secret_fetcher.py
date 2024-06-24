@@ -19,7 +19,7 @@ def fetch_gsm_secrets(
                 read_only=False
             ),
         ],
-        command=["python", "/scripts/secretfetch.py"],
+        command=["python", "/scripts/fetch_gsm_secrets.py"],
         args=[secrets_path, json.dumps(secrets)],
         security_context=k8s.V1SecurityContext(
             run_as_user=run_as_user,
