@@ -13,7 +13,7 @@ def fetch_gsm_secrets(
         image="europe-north1-docker.pkg.dev/knada-gcp/knada-north/dataverk-airflow-mantest:v5",
         volume_mounts=[
             k8s.V1VolumeMount(
-                name="secret",
+                name="secrets",
                 mount_path=secrets_path,
                 sub_path=None,
                 read_only=False
