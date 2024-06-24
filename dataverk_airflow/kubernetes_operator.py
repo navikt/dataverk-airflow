@@ -10,8 +10,6 @@ from kubernetes import client
 from kubernetes.client.models import (
     V1ConfigMapVolumeSource,
     V1Container,
-    V1EnvFromSource,
-    V1SecretEnvSource,
     V1SecretVolumeSource,
     V1PodSecurityContext,
     V1SeccompProfile,
@@ -19,7 +17,7 @@ from kubernetes.client.models import (
     V1VolumeMount,
 )
 
-from dataverk_airflow import git_clone, bucket_read
+from dataverk_airflow import git_clone, bucket_read, fetch_gsm_secrets
 from dataverk_airflow.notifications import (
     create_email_notification,
     create_slack_notification,
@@ -27,6 +25,7 @@ from dataverk_airflow.notifications import (
 
 CA_BUNDLE_PATH = "/etc/pki/tls/certs/ca-bundle.crt"
 POD_WORKSPACE_DIR = "/workspace"
+SECRETS_PATH = "/var/run/secrets/gsm"
 
 VALID_PYTHON_VERSIONS = ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
@@ -57,7 +56,7 @@ def kubernetes_operator(
         on_success_callback: Callable = None,
         working_dir: str = None,
         use_uv_pip_install: bool = False,
-        env_from_secrets: list = [],
+        gsm_secrets_as_envs: dict = {},
 ):
     """Simplified operator for creating KubernetesPodOperator.
 
@@ -150,6 +149,13 @@ def kubernetes_operator(
         allowlist.append("files.pythonhosted.org")
         allowlist.append("pypi.python.org")
 
+    if gsm_secrets_as_envs:
+        cmds = [
+                f"for filename in {SECRETS_PATH}/*; do" +
+                "env_name=$(echo $filename | awk -F/ '{print $NF}'); " +
+                "export $env_name=$(cat $filename); " +
+                "echo $env_name set as environment variable from GSM secret; done"] + cmds
+
     if resources is None:
         resources = client.V1ResourceRequirements(
             requests={
@@ -168,7 +174,6 @@ def kubernetes_operator(
         image=image,
         namespace=namespace,
         env_vars=env_vars(is_composer, extra_envs),
-        env_from=[env_from_secret(secret) for secret in env_from_secrets],
         config_file=config_file(is_composer),
         do_xcom_push=do_xcom_push,
         container_resources=resources,
@@ -189,7 +194,7 @@ def kubernetes_operator(
                 ]
             )
         ),
-        init_containers=init_containers(is_composer, repo, branch, container_uid),
+        init_containers=init_containers(is_composer, repo, branch, container_uid, gsm_secrets_as_envs),
         image_pull_secrets=os.getenv("K8S_IMAGE_PULL_SECRETS"),
         labels={
             "component": "worker",
@@ -197,9 +202,9 @@ def kubernetes_operator(
         },
         cmds=["/bin/sh", "-c"],
         arguments=[" && ".join(cmds)] if cmds is not None else None,
-        volume_mounts=volume_mounts(is_composer),
+        volume_mounts=volume_mounts(is_composer, len(gsm_secrets_as_envs)),
         service_account_name=os.getenv("TEAM", "default"),
-        volumes=volumes(is_composer),
+        volumes=volumes(is_composer, len(gsm_secrets_as_envs)),
         security_context=V1PodSecurityContext(
             fs_group=0,
             run_as_non_root=True,
@@ -238,18 +243,20 @@ def config_file(is_composer: bool) -> str:
         return "/home/airflow/composer_kube_config" if is_composer else None
 
 
-def init_containers(is_composer: bool, repo: str, branch: str, run_as_user: str) -> List[V1Container]:
+def init_containers(is_composer: bool, repo: str, branch: str, run_as_user: str, gsm_secrets_as_envs: dict) -> List[V1Container]:
+    init_containers = []
     if is_composer:
-        return [
-            bucket_read(POD_WORKSPACE_DIR)
-        ]
+        init_containers.append(bucket_read(POD_WORKSPACE_DIR))
     else:
-        return [
-            git_clone(repo, branch, POD_WORKSPACE_DIR, run_as_user)
-        ]
+        init_containers.append(git_clone(repo, branch, POD_WORKSPACE_DIR, run_as_user))
+    
+    if len(gsm_secrets_as_envs):
+        init_containers.append(fetch_gsm_secrets(gsm_secrets_as_envs))
+
+    return init_containers
 
 
-def volume_mounts(is_composer: bool) -> List[V1VolumeMount]:
+def volume_mounts(is_composer: bool, has_gsm_secrets: bool) -> List[V1VolumeMount]:
     volume_mounts = [
         V1VolumeMount(
             name="dags-data",
@@ -269,10 +276,19 @@ def volume_mounts(is_composer: bool) -> List[V1VolumeMount]:
             )
         )
 
+    if has_gsm_secrets:
+        volume_mounts.append(
+            V1VolumeMount(
+                name="secrets",
+                mount_path=SECRETS_PATH,
+                read_only=True,
+            )
+        )
+
     return volume_mounts
 
 
-def volumes(is_composer: bool) -> List[V1Volume]:
+def volumes(is_composer: bool, has_gsm_secrets: bool) -> List[V1Volume]:
     volumes = [
         V1Volume(
             name="dags-data"
@@ -300,11 +316,11 @@ def volumes(is_composer: bool) -> List[V1Volume]:
             )
         )
 
-    return volumes
+    if has_gsm_secrets:
+        volumes.append(
+            V1Volume(
+                name="secrets",
+            )
+        )
 
-def env_from_secret(secret_name: str):
-    return V1EnvFromSource(
-        secret_ref = V1SecretEnvSource(
-            name = secret_name,
-        ),
-    )
+    return volumes
