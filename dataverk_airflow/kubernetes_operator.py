@@ -96,7 +96,7 @@ def kubernetes_operator(
         section of the API.
     :param working_dir: str: Path to working directory
     :param use_uv_pip_install: bool: Use uv pip install, default False
-    :param env_from_secrets: list: List of kubernetes secrets to mount environment variables from
+    :param gsm_secrets_as_envs: dict: Map of desired environment variable and corresponding gsm secret path
 
     :return: KubernetesPodOperator
     """
