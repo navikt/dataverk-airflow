@@ -151,7 +151,7 @@ def kubernetes_operator(
 
     if gsm_secrets_as_envs:
         cmds = [
-                f"for filename in {SECRETS_PATH}/*; do" +
+                f"for filename in {SECRETS_PATH}/*; do " +
                 "env_name=$(echo $filename | awk -F/ '{print $NF}'); " +
                 "export $env_name=$(cat $filename); " +
                 "echo $env_name set as environment variable from GSM secret; done"] + cmds
