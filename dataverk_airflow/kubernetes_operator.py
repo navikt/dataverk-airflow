@@ -251,7 +251,7 @@ def init_containers(is_composer: bool, repo: str, branch: str, run_as_user: str,
         init_containers.append(git_clone(repo, branch, POD_WORKSPACE_DIR, run_as_user))
     
     if len(gsm_secrets_as_envs):
-        init_containers.append(fetch_gsm_secrets(gsm_secrets_as_envs))
+        init_containers.append(fetch_gsm_secrets(gsm_secrets_as_envs, SECRETS_PATH))
 
     return init_containers
 
