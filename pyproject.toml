@@ -27,7 +27,7 @@ pytest = ">=7.4.2,<9.0.0"
 pytest-datafiles = "^3.0.0"
 
 [tool.poetry.group.integration-test.dependencies]
-apache-airflow = "^2.9.2"
+apache-airflow = "^2.9.3"
 
 [build-system]
 requires = ["poetry-core"]
