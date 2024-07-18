@@ -166,13 +166,13 @@ trio = ["trio (>=0.23)"]
 
 [[package]]
 name = "apache-airflow"
-version = "2.9.2"
+version = "2.9.3"
 description = "Programmatically author, schedule and monitor data pipelines"
 optional = false
 python-versions = "<3.13,~=3.8"
 files = [
-    {file = "apache_airflow-2.9.2-py3-none-any.whl", hash = "sha256:6fd6501b1622ab58f4a3c1fc5bed4c216bd36915243bb9445b54415c3e625200"},
-    {file = "apache_airflow-2.9.2.tar.gz", hash = "sha256:c5d7b4bbcbc4d7b2bb3433af2d9307a3f3dc0b142c25fdbe8f187dd4cad5521d"},
+    {file = "apache_airflow-2.9.3-py3-none-any.whl", hash = "sha256:4a36cb5dbd9925448ef171b72f2db0656121383e16306eded723331963d169db"},
+    {file = "apache_airflow-2.9.3.tar.gz", hash = "sha256:f9a523a57e0e0faa9afabb8e17b58cfca32119ff6889612b54edbdd987ada17b"},
 ]
 
 [package.dependencies]
@@ -1161,13 +1161,13 @@ idna = ">=2.0.0"
 
 [[package]]
 name = "exceptiongroup"
-version = "1.2.1"
+version = "1.2.2"
 description = "Backport of PEP 654 (exception groups)"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "exceptiongroup-1.2.1-py3-none-any.whl", hash = "sha256:5258b9ed329c5bbdd31a309f53cbfb0b155341807f6ff7606a1e801a891b29ad"},
-    {file = "exceptiongroup-1.2.1.tar.gz", hash = "sha256:a4785e48b045528f5bfe627b6ad554ff32def154f42372786903b7abcfe1aa16"},
+    {file = "exceptiongroup-1.2.2-py3-none-any.whl", hash = "sha256:3111b9d131c238bec2f8f516e123e14ba243563fb135d3fe885990585aa7795b"},
+    {file = "exceptiongroup-1.2.2.tar.gz", hash = "sha256:47c2edf7c6738fafb49fd34290706d1a1a2f4d1c6df275526b62cbb4aa5393cc"},
 ]
 
 [package.extras]
@@ -4024,4 +4024,4 @@ test = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-it
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8,<3.12"
-content-hash = "26bceb4dcbf3034459528cdb9eeafb786076cac191327997237b4c87d19c6198"
+content-hash = "713a50293ebe7a41c51bf24b5df9a906efa36990c0edd4de53e816f0fafa2aa2"
