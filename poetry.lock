@@ -538,17 +538,17 @@ apache-airflow = ">=2.7.0"
 
 [[package]]
 name = "apache-airflow-providers-slack"
-version = "8.8.0"
+version = "8.9.0"
 description = "Provider package apache-airflow-providers-slack for Apache Airflow"
 optional = false
 python-versions = "~=3.8"
 files = [
-    {file = "apache_airflow_providers_slack-8.8.0-py3-none-any.whl", hash = "sha256:94f7b163f7e0ee16182f49dd32d3fbeef22b25e92edca9c35a5944cb0fa18f51"},
-    {file = "apache_airflow_providers_slack-8.8.0.tar.gz", hash = "sha256:d8350481b65b575161444a3339a60cdf343fec6672adb48153f79a118dbac8f1"},
+    {file = "apache_airflow_providers_slack-8.9.0-py3-none-any.whl", hash = "sha256:3d6574949e5f304eb9a894e33a3feb5eade2a128e95fa77cbe784b6e55f54ad6"},
+    {file = "apache_airflow_providers_slack-8.9.0.tar.gz", hash = "sha256:b80f602307aab6605d142e931e1c17c3316272ea20e8980b8efe772f1dad55fc"},
 ]
 
 [package.dependencies]
-apache-airflow = ">=2.7.0"
+apache-airflow = ">=2.8.0"
 apache-airflow-providers-common-sql = ">=1.3.1"
 slack_sdk = ">=3.19.0"
 
@@ -4061,4 +4061,4 @@ test = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-it
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8,<3.12"
-content-hash = "1b90689f44cb643200ff10feb0632937ba056f40aae683a8489ea4cdd82cb5ef"
+content-hash = "66d47846382280f12f8d3feb42678a16e2e00543fcae600b94cca84af70bb56f"
