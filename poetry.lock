@@ -178,13 +178,13 @@ trio = ["trio (>=0.23)"]
 
 [[package]]
 name = "apache-airflow"
-version = "2.10.0"
+version = "2.10.1"
 description = "Programmatically author, schedule and monitor data pipelines"
 optional = false
 python-versions = "<3.13,~=3.8"
 files = [
-    {file = "apache_airflow-2.10.0-py3-none-any.whl", hash = "sha256:a8985379cb923adf6c2da9df36e30efb23aab31e32332803a7be8ce7958b7dd4"},
-    {file = "apache_airflow-2.10.0.tar.gz", hash = "sha256:1948c72dfe58d2979e06819c6b9441a572b20395dc6b4e0dae5e4cfecbb07209"},
+    {file = "apache_airflow-2.10.1-py3-none-any.whl", hash = "sha256:1930fd97bb3651a413e6852cfc890ef64134eb11cd01e65acab9c25bcda6f635"},
+    {file = "apache_airflow-2.10.1.tar.gz", hash = "sha256:e97942ffc7063f37f30ae8653cb885066c0fcb9fa7dd644ca828493dc30cf054"},
 ]
 
 [package.dependencies]
@@ -538,17 +538,17 @@ apache-airflow = ">=2.7.0"
 
 [[package]]
 name = "apache-airflow-providers-slack"
-version = "8.8.0"
+version = "8.9.0"
 description = "Provider package apache-airflow-providers-slack for Apache Airflow"
 optional = false
 python-versions = "~=3.8"
 files = [
-    {file = "apache_airflow_providers_slack-8.8.0-py3-none-any.whl", hash = "sha256:94f7b163f7e0ee16182f49dd32d3fbeef22b25e92edca9c35a5944cb0fa18f51"},
-    {file = "apache_airflow_providers_slack-8.8.0.tar.gz", hash = "sha256:d8350481b65b575161444a3339a60cdf343fec6672adb48153f79a118dbac8f1"},
+    {file = "apache_airflow_providers_slack-8.9.0-py3-none-any.whl", hash = "sha256:3d6574949e5f304eb9a894e33a3feb5eade2a128e95fa77cbe784b6e55f54ad6"},
+    {file = "apache_airflow_providers_slack-8.9.0.tar.gz", hash = "sha256:b80f602307aab6605d142e931e1c17c3316272ea20e8980b8efe772f1dad55fc"},
 ]
 
 [package.dependencies]
-apache-airflow = ">=2.7.0"
+apache-airflow = ">=2.8.0"
 apache-airflow-providers-common-sql = ">=1.3.1"
 slack_sdk = ">=3.19.0"
 
@@ -2363,6 +2363,7 @@ description = "Expand standard functools to methods"
 optional = false
 python-versions = "*"
 files = [
+    {file = "methodtools-0.4.7-py2.py3-none-any.whl", hash = "sha256:5e188c780b236adc12e75b5f078c5afb419ef99eb648569fc6d7071f053a1f11"},
     {file = "methodtools-0.4.7.tar.gz", hash = "sha256:e213439dd64cfe60213f7015da6efe5dd4003fd89376db3baa09fe13ec2bb0ba"},
 ]
 
@@ -3832,6 +3833,7 @@ description = "'Turn functions and methods into fully controllable objects'"
 optional = false
 python-versions = "*"
 files = [
+    {file = "wirerope-0.4.7-py2.py3-none-any.whl", hash = "sha256:332973a3be6898f02fd0e73b2e20414c5102cc6c811d75856a938206677495c8"},
     {file = "wirerope-0.4.7.tar.gz", hash = "sha256:f3961039218276283c5037da0fa164619def0327595f10892d562a61a8603990"},
 ]
 
@@ -4059,4 +4061,4 @@ test = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-it
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8,<3.12"
-content-hash = "6d4640101533831a11d5323b39d0064cd01e51f915859b9d590a5ec5a2c19b10"
+content-hash = "66d47846382280f12f8d3feb42678a16e2e00543fcae600b94cca84af70bb56f"
