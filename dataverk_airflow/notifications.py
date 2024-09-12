@@ -22,6 +22,6 @@ def create_slack_notification(dag, slack_channel: str, name: str, namespace: str
             dag=dag,
             task_id="airflow_task_failed_slack",
             slack_conn_id="slack_connection",
-            text=f"@here Airflow task {name} i DAG {dag._dag_id} feilet i namespace {namespace} kl. {datetime.now().isoformat()}.",
+            text=f":error: DAG *{dag._dag_id}* feilet :error: \n Sjekk task _{name}_ i namespace {namespace}",
             channel=slack_channel,
     )
