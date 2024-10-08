@@ -22,12 +22,12 @@ exceptiongroup = "^1.2.2"
 knatch = "^1.0.5"
 
 [tool.poetry.group.test.dependencies]
-pyaml = "^24.7.0"
+pyaml = "^24.9.0"
 pytest = ">=7.4.2,<9.0.0"
 pytest-datafiles = "^3.0.0"
 
 [tool.poetry.group.integration-test.dependencies]
-apache-airflow = "^2.10.1"
+apache-airflow = "^2.10.2"
 
 [build-system]
 requires = ["poetry-core"]
