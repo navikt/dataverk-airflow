@@ -23,7 +23,7 @@ Quarto prosjekter brukes hovedsakelig for [book](https://quarto.org/docs/books/)
 Enkeltfiler bygges `self-contained`, som betyr at HTML-filen blir bygd med alle sine eksterne avhengighter (Javascript, CSS, og bilder).
 
 For å laste opp filer til Datamarkedsplassen må man ha et Quarto-token, som er unikt per team.
-Dette finner man under [Mine teams token](https://data.intern.nav.no/user/tokens) i menyen.
+Dette finner man under [Mine teams token](https://data.ansatt.nav.no/user/tokens) i menyen.
 
 ```python
 from airflow import DAG
