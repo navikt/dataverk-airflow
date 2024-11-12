@@ -14,8 +14,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 apache-airflow = "2.9.3"
-apache-airflow-providers-cncf-kubernetes = "^7.3.0"
-kubernetes = ">=21.7.0,<24"
+apache-airflow-providers-cncf-kubernetes = "8.3.3"
 pathlib = "^1.0.1"
 python = "^3.8,<3.12"
 apache-airflow-providers-slack = "8.7.1"
@@ -23,6 +22,8 @@ exceptiongroup = "^1.2.2"
 knatch = "^1.0.5"
 
 [tool.poetry.group.test.dependencies]
+apache-airflow = "2.9.3"
+apache-airflow-providers-cncf-kubernetes = "8.3.3"
 pyaml = "^24.9.0"
 pytest = ">=7.4.2,<9.0.0"
 pytest-datafiles = "^3.0.0"

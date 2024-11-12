@@ -24,9 +24,12 @@ liveness_probe: null
 name: clone-repo
 ports: null
 readiness_probe: null
+resize_policy: null
 resources: null
+restart_policy: null
 security_context:
   allow_privilege_escalation: False
+  app_armor_profile: null
   capabilities: null
   privileged: null
   proc_mount: null
@@ -49,12 +52,14 @@ volume_mounts:
     mount_propagation: null
     name: dags-data
     read_only: false
+    recursive_read_only: null
     sub_path: null
     sub_path_expr: null
   - mount_path: /keys
     mount_propagation: null
     name: airflow-git-secret
     read_only: null
+    recursive_read_only: null
     sub_path: null
     sub_path_expr: null
 working_dir: null
