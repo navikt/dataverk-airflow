@@ -169,6 +169,11 @@ def kubernetes_operator(
         retries=retries,
         on_success_callback=on_success_callback,
         retry_delay=retry_delay,
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(allowlist)}),
+            ),
+        },
         full_pod_spec=client.V1Pod(
             spec=client.V1PodSpec(
                 containers=[
