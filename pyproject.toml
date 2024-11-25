@@ -13,23 +13,23 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-apache-airflow = "2.9.3"
-apache-airflow-providers-cncf-kubernetes = "8.3.3"
+apache-airflow = "2.10.3"
+apache-airflow-providers-cncf-kubernetes = "8.4.2"
 pathlib = "^1.0.1"
 python = "^3.8,<3.12"
-apache-airflow-providers-slack = "8.7.1"
+apache-airflow-providers-slack = "8.9.0"
 exceptiongroup = "^1.2.2"
 knatch = "^1.0.5"
 
 [tool.poetry.group.test.dependencies]
-apache-airflow = "2.9.3"
-apache-airflow-providers-cncf-kubernetes = "8.3.3"
+apache-airflow = "2.10.3"
+apache-airflow-providers-cncf-kubernetes = "8.4.2"
 pyaml = "^24.9.0"
 pytest = ">=7.4.2,<9.0.0"
 pytest-datafiles = "^3.0.0"
 
 [tool.poetry.group.integration-test.dependencies]
-apache-airflow = "2.9.3"
+apache-airflow = "2.10.3"
 
 [build-system]
 requires = ["poetry-core"]
