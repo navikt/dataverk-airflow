@@ -25,8 +25,7 @@ def bucket_read(
                 "ephemeral-storage": "100Mi",
             },
             limits={
-                "memory": "128Mi", 
-                "ephemeral-storage": "100Mi",
+                "memory": "128Mi",
             }
         ),
     )
