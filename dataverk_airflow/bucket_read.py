@@ -21,11 +21,8 @@ def bucket_read(
         ],
         resources=k8s.V1ResourceRequirements(
             requests={
-                "memory": "128Mi", 
+                "memory": "256Mi", 
                 "ephemeral-storage": "100Mi",
             },
-            limits={
-                "memory": "128Mi",
-            }
         ),
     )
