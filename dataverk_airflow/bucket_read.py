@@ -17,13 +17,13 @@ def bucket_read(
         ],
         command=["/bin/sh", "-c"],
         args=[
-            f"gsutil rsync -r -x '^logs/*|^.*-build/*' gs://{os.environ['GCS_BUCKET']} {mount_path} && chmod -R 777 {mount_path}"
+            f"gcloud storage rsync --recursive -x '^logs/*|^.*-build/*' gs://{os.environ['GCS_BUCKET']} {mount_path} && chmod -R 777 {mount_path}"
         ],
         resources=k8s.V1ResourceRequirements(
             requests={
-                "memory": "1Gi", 
+                "memory": "2Gi", 
                 "cpu": "500m",
-                "ephemeral-storage": "1Gi",
+                "ephemeral-storage": "2Gi",
             },
         ),
     )
