@@ -19,7 +19,7 @@ pathlib = "^1.0.1"
 python = "^3.8,<3.12"
 apache-airflow-providers-slack = "8.7.1"
 exceptiongroup = "^1.2.2"
-knatch = "^1.0.6"
+knatch = "1.0.6"
 
 [tool.poetry.group.test.dependencies]
 apache-airflow = "2.9.3"
