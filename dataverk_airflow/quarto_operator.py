@@ -39,7 +39,7 @@ def quarto_operator(
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
-    :param quarto: dict: Dict of Quarto configuration, needs the following values {"path": "path/to/index.qmd", "folder": "path/to/folder", "env": "dev/prod", "id":"uuid", "token": "quarto-token", "format": "html"}
+    :param quarto: dict: Dict of Quarto configuration, needs the following values {"path": "path/to/index.qmd", "folder": "path/to/folder", "env": "dev/prod", "id":"uuid", "token": "quarto-token", "format": "html", "batch-size": 10, "ignore-extensions": None}
     :param image: str: Dockerimage the pod should use
     :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
@@ -116,7 +116,9 @@ def create_quarto_cmds(quarto: dict, host: str) -> list:
             f"""curl --fail-with-body --retry 2 -X PUT -F index.html=@index.html {url} -H "Authorization:Bearer {quarto['token']}" """
         ]
     else:
+        batch_size = quarto.get("batch-size", 10)
+        ignore_extensions = quarto.get("ignore-extensions", None)
         return [
             f"quarto render --execute --output-dir output || true",
-            f"knatch {quarto['id']} output {quarto['token']} --host {host}"
+            f"knatch {quarto['id']} output {quarto['token']} --host {host} --batch-size {batch_size} --ignore-extensions {ignore_extensions}"
         ]
