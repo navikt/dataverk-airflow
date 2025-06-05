@@ -55,6 +55,7 @@ def kubernetes_operator(
         on_success_callback: Callable = None,
         working_dir: str = None,
         use_uv_pip_install: bool = False,
+        **kwargs,
 ):
     """Simplified operator for creating KubernetesPodOperator.
 
@@ -206,6 +207,7 @@ def kubernetes_operator(
                 type="RuntimeDefault"
             )
         ) if not is_composer else None,
+        **kwargs,
     )
 
 
