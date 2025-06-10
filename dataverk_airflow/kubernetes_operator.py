@@ -26,7 +26,7 @@ from dataverk_airflow.notifications import (
 CA_BUNDLE_PATH = "/etc/pki/tls/certs/ca-bundle.crt"
 POD_WORKSPACE_DIR = "/workspace"
 
-VALID_PYTHON_VERSIONS = ["3.8", "3.9", "3.10", "3.11", "3.12"]
+VALID_PYTHON_VERSIONS = ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
 
 
 class MissingValueException(Exception):
@@ -55,6 +55,7 @@ def kubernetes_operator(
         on_success_callback: Callable = None,
         working_dir: str = None,
         use_uv_pip_install: bool = False,
+        **kwargs,
 ):
     """Simplified operator for creating KubernetesPodOperator.
 
@@ -206,6 +207,7 @@ def kubernetes_operator(
                 type="RuntimeDefault"
             )
         ) if not is_composer else None,
+        **kwargs,
     )
 
 

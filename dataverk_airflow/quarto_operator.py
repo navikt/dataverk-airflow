@@ -31,6 +31,7 @@ def quarto_operator(
         container_uid: int = 50000,
         on_success_callback: Callable = None,
         use_uv_pip_install: bool = False,
+        **kwargs,
 ):
     """Operator for rendering Quarto.
 
@@ -39,7 +40,7 @@ def quarto_operator(
     :param dag: DAG: owner DAG
     :param name: str: Name of task
     :param repo: str: Github repo
-    :param quarto: dict: Dict of Quarto configuration, needs the following values {"path": "path/to/index.qmd", "folder": "path/to/folder", "env": "dev/prod", "id":"uuid", "token": "quarto-token", "format": "html"}
+    :param quarto: dict: Dict of Quarto configuration, needs the following values {"path": "path/to/index.qmd", "folder": "path/to/folder", "env": "dev/prod", "id":"uuid", "token": "quarto-token", "format": "html", "batch-size": 10}
     :param image: str: Dockerimage the pod should use
     :param branch: str: Branch in repo, default "main"
     :param email: str: Email of owner
@@ -100,6 +101,7 @@ def quarto_operator(
         "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, 
         "retries": retries, "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
         "on_success_callback": on_success_callback, "working_dir": str(working_dir), "container_uid": container_uid, "use_uv_pip_install": use_uv_pip_install,
+        **kwargs,
     }
 
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
@@ -116,7 +118,8 @@ def create_quarto_cmds(quarto: dict, host: str) -> list:
             f"""curl --fail-with-body --retry 2 -X PUT -F index.html=@index.html {url} -H "Authorization:Bearer {quarto['token']}" """
         ]
     else:
+        batch_size = quarto.get("batch-size", 10)
         return [
             f"quarto render --execute --output-dir output || true",
-            f"knatch {quarto['id']} output {quarto['token']} --host {host}"
+            f"knatch {quarto['id']} output {quarto['token']} --host {host} --batch-size {batch_size}"
         ]
