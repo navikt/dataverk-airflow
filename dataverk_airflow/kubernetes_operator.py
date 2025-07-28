@@ -161,7 +161,10 @@ def kubernetes_operator(
         task_id=name,
         startup_timeout_seconds=startup_timeout_seconds,
         on_finish_action=on_finish_action,
-        annotations={"allowlist": ",".join(allowlist)},
+        annotations={
+          "allowlist": ",".join(allowlist),
+          "cluster-autoscaler.kubernetes.io/safe-to-evict": "false",
+        },
         image=image,
         env_vars=env_vars(is_composer, extra_envs),
         config_file=config_file(is_composer),
@@ -172,11 +175,7 @@ def kubernetes_operator(
         retry_delay=retry_delay,
         executor_config={
             "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={
-                    "allowlist": ",".join(allowlist),
-                    "cluster-autoscaler.kubernetes.io/safe-to-evict": "false",
-                  }
-                ),
+                metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(allowlist)}),
             ),
         },
         full_pod_spec=client.V1Pod(
