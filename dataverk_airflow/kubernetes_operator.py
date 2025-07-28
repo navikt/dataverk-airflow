@@ -172,7 +172,11 @@ def kubernetes_operator(
         retry_delay=retry_delay,
         executor_config={
             "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(allowlist)}),
+                metadata=client.V1ObjectMeta(annotations={
+                    "allowlist": ",".join(allowlist),
+                    "cluster-autoscaler.kubernetes.io/safe-to-evict": "false",
+                  }
+                ),
             ),
         },
         full_pod_spec=client.V1Pod(
