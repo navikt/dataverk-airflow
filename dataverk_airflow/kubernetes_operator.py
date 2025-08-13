@@ -161,7 +161,10 @@ def kubernetes_operator(
         task_id=name,
         startup_timeout_seconds=startup_timeout_seconds,
         on_finish_action=on_finish_action,
-        annotations={"allowlist": ",".join(allowlist)},
+        annotations={
+          "allowlist": ",".join(allowlist),
+          "cluster-autoscaler.kubernetes.io/safe-to-evict": "false",
+        },
         image=image,
         env_vars=env_vars(is_composer, extra_envs),
         config_file=config_file(is_composer),
