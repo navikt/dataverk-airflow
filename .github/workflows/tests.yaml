@@ -15,7 +15,7 @@ jobs:
   unit-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.AIRFLOW_PYTHON_VERSION }}
@@ -29,7 +29,7 @@ jobs:
       matrix:
         version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.AIRFLOW_PYTHON_VERSION }}
@@ -45,7 +45,7 @@ jobs:
           pip3 install poetry
           poetry install --with integration-test
       - name: Start kind cluster
-        uses: helm/kind-action@v1.10.0
+        uses: helm/kind-action@v1.12.0
       - name: Verify cluster up
         run: |
           kubectl cluster-info
