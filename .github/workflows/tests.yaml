@@ -15,7 +15,7 @@ jobs:
   unit-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.AIRFLOW_PYTHON_VERSION }}
@@ -29,13 +29,13 @@ jobs:
       matrix:
         version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.AIRFLOW_PYTHON_VERSION }}
       - id: auth
         name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v2
+        uses: google-github-actions/auth@v3
         with:
           token_format: access_token
           workload_identity_provider: projects/193123067890/locations/global/workloadIdentityPools/ci-knada-images/providers/ci-knada-images
@@ -45,7 +45,7 @@ jobs:
           pip3 install poetry
           poetry install --with integration-test
       - name: Start kind cluster
-        uses: helm/kind-action@v1.10.0
+        uses: helm/kind-action@v1.12.0
       - name: Verify cluster up
         run: |
           kubectl cluster-info
@@ -57,7 +57,7 @@ jobs:
           kubectl create secret generic github-app-secret --from-literal=test=test
           kubectl create cm ca-bundle-pem --from-literal=test=test
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+        uses: google-github-actions/setup-gcloud@v3
         with:
           version: "480.0.0"
       - name: Setup Airflow
