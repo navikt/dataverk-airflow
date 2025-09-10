@@ -87,3 +87,13 @@ class TestKubernetesOperator:
 
         assert container.arguments == [
             f"uv venv .local && . .local/bin/activate && uv pip install -r /workspace/requirements.txt --no-cache-dir && python script.py"]
+        
+    def test_that_default_container_command_is_overidden(self, dag):
+        container = kubernetes_operator(dag, "name", "repo", "image",
+                                        entrypoint=["dbt", "run"],
+                                        requirements_path="requirements.txt")
+
+        assert container.command == [
+            "dbt", 
+            "run",
+        ]
