@@ -39,7 +39,7 @@ def kubernetes_operator(
         image: str,
         repo: str = None,
         entrypoint: List[str] = None,
-        cmds: list = None,
+        cmds: list = [],
         branch: str = "main",
         email: str = None,
         slack_channel: str = None,
