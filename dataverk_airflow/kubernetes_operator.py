@@ -202,7 +202,7 @@ def kubernetes_operator(
             "release": "airflow"
         },
         cmds=container_command,
-        arguments=[" && ".join(cmds)] if cmds is not None else None,
+        arguments=[" && ".join(cmds)] if cmds is not None and len(cmds) > 0 else None,
         volume_mounts=volume_mounts(is_composer),
         service_account_name=os.getenv("TEAM", "default"),
         volumes=volumes(is_composer),
