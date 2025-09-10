@@ -73,7 +73,7 @@ def python_operator(
     cmds = [f"python {Path(script_path).name}"]
 
     kwargs = {
-        "dag": dag, "name": name, "repo": repo, "image": image, "cmds": cmds, "branch": branch, "email": email,
+        "dag": dag, "name": name, "repo": repo, "entrypoint": None, "image": image, "cmds": cmds, "branch": branch, "email": email,
         "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist, "requirements_path": requirements_path,
         "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, 
         "retries": retries, "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
