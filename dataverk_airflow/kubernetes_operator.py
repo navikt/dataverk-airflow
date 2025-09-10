@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta
-from typing import Callable, List
+from typing import Callable, List, Tuple
 
 from airflow import DAG
 
@@ -37,6 +37,7 @@ def kubernetes_operator(
         dag: DAG,
         name: str,
         image: str,
+        entrypoint: List[str] = None,
         repo: str = None,
         cmds: list = None,
         branch: str = "main",
@@ -135,6 +136,8 @@ def kubernetes_operator(
     else:
         working_dir = POD_WORKSPACE_DIR
 
+    container_command = entrypoint if entrypoint else ["/bin/sh", "-c"]
+
     if requirements_path:
         if use_uv_pip_install:
             cmds = [
@@ -198,7 +201,7 @@ def kubernetes_operator(
             "component": "worker",
             "release": "airflow"
         },
-        cmds=["/bin/sh", "-c"],
+        cmds=container_command,
         arguments=[" && ".join(cmds)] if cmds is not None else None,
         volume_mounts=volume_mounts(is_composer),
         service_account_name=os.getenv("TEAM", "default"),
