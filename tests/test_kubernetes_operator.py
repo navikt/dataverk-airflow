@@ -93,7 +93,7 @@ class TestKubernetesOperator:
                                         entrypoint=["dbt", "run"],
                                         requirements_path="requirements.txt")
 
-        assert container.command == [
+        assert container.cmds == [
             "dbt", 
             "run",
         ]
