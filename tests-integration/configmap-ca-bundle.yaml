@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  ca-bundle.pem: |
+    blahblahblah
+kind: ConfigMap
+metadata:
+  name: ca-bundle-pem
+  namespace: default
