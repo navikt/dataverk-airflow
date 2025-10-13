@@ -4,7 +4,7 @@ on: push
 
 env:
   GIT_SYNC_IMAGE: europe-north1-docker.pkg.dev/knada-gcp/knada-north/git-sync
-  DATAVERK_AIRFLOW_IMAGE_BASE_URL: europe-north1-docker.pkg.dev/knada-gcp/knada-north/dataverk-airflow-python
+  DATAVERK_AIRFLOW_IMAGE_BASE_URL: europe-north1-docker.pkg.dev/knada-gcp/knada-north/dataverk-airflow-cg-python
   AIRFLOW_PYTHON_VERSION: 3.11
 
 permissions:
@@ -74,7 +74,7 @@ jobs:
           echo "CLONE_REPO_IMAGE=ghcr.io/navikt/knada-git-sync/git-sync:$gitsync_tag" >> $GITHUB_ENV
 
           dataverk_airflow_tag=$(gcloud artifacts docker images list "$DATAVERK_AIRFLOW_IMAGE_BASE_URL-${{ matrix.version}}" --include-tags --filter="tags:*" --sort-by=~Update_Time --limit=1 --format=json | jq -rc '.[0].tags' | jq -rc '.[0]')
-          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow-python-${{ matrix.version }}:$dataverk_airflow_tag" >> $GITHUB_ENV
+          echo "KNADA_AIRFLOW_OPERATOR_IMAGE=ghcr.io/navikt/knada-images/dataverk-airflow-cg-python-${{ matrix.version }}:$dataverk_airflow_tag" >> $GITHUB_ENV
       - name: Run tests Knada
         env:
           AIRFLOW_CONN_SQLITE_DEFAULT: sqlite://?mode=ro
