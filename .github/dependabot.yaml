@@ -21,6 +21,8 @@ updates:
       - dependency-name: "apache-airflow"
         versions:
           - "< 3.0.0"
+        update-types: 
+          - "version-update:semver-major"
     groups:
       pip:
         patterns:
