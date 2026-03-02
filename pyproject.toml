@@ -24,8 +24,8 @@ knatch = "^1.1.0"
 [tool.poetry.group.test.dependencies]
 apache-airflow = "2.11.1"
 apache-airflow-providers-cncf-kubernetes = "^10.12.4"
-pyaml = "^25.5.0"
-pytest = ">=8.4.2,<9.0.0"
+pyaml = "^26.2.1"
+pytest = ">=8.4.2,<10.0.0"
 pytest-datafiles = "^3.0.1"
 
 [tool.poetry.group.integration-test.dependencies]
