@@ -27,6 +27,7 @@ readiness_probe: null
 resize_policy: null
 resources: null
 restart_policy: null
+restart_policy_rules: null
 security_context:
   allow_privilege_escalation: False
   app_armor_profile: null
