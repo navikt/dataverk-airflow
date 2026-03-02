@@ -17,6 +17,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "apache-airflow"
+        versions:
+          - "< 3.0.0"
     groups:
       pip:
         patterns:
