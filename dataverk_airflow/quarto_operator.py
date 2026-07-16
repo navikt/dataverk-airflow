@@ -6,32 +6,35 @@ from typing import Callable
 from airflow import DAG
 from kubernetes import client
 
-from dataverk_airflow.kubernetes_operator import kubernetes_operator, VALID_PYTHON_VERSIONS
+from dataverk_airflow.kubernetes_operator import (
+    kubernetes_operator,
+    VALID_PYTHON_VERSIONS,
+)
 
 
 def quarto_operator(
-        dag: DAG,
-        name: str,
-        quarto: dict,
-        repo: str = None,
-        image: str = None,
-        branch: str = "main",
-        email: str = None,
-        slack_channel: str = None,
-        extra_envs: dict = {},
-        allowlist: list = [],
-        requirements_path: str = None,
-        python_version: str = "3.11",
-        resources: client.V1ResourceRequirements = None,
-        startup_timeout_seconds: int = None,
-        retries: int = None,
-        delete_on_finish: bool = True,
-        retry_delay: timedelta = None,
-        do_xcom_push: bool = False,
-        container_uid: int = 50000,
-        on_success_callback: Callable = None,
-        use_uv_pip_install: bool = False,
-        **kwargs,
+    dag: DAG,
+    name: str,
+    quarto: dict,
+    repo: str = None,
+    image: str = None,
+    branch: str = "main",
+    email: str = None,
+    slack_channel: str = None,
+    extra_envs: dict = {},
+    allowlist: list = [],
+    requirements_path: str = None,
+    python_version: str = "3.11",
+    resources: client.V1ResourceRequirements = None,
+    startup_timeout_seconds: int = None,
+    retries: int = None,
+    delete_on_finish: bool = True,
+    retry_delay: timedelta = None,
+    do_xcom_push: bool = False,
+    container_uid: int = 50000,
+    on_success_callback: Callable = None,
+    use_uv_pip_install: bool = False,
+    **kwargs,
 ):
     """Operator for rendering Quarto.
 
@@ -64,25 +67,26 @@ def quarto_operator(
     if not image:
         if python_version not in VALID_PYTHON_VERSIONS:
             raise ValueError(
-                f"When using the default image the python_version argument must be set to " \
-                f"{', '.join(VALID_PYTHON_VERSIONS[:-1])} or {VALID_PYTHON_VERSIONS[-1]}: value '{python_version}' is not supported" 
+                f"When using the default image the python_version argument must be set to "
+                f"{', '.join(VALID_PYTHON_VERSIONS[:-1])} or {VALID_PYTHON_VERSIONS[-1]}: value '{python_version}' is not supported"
             )
         try:
-            image = os.environ["DATAVERK_IMAGE_PYTHON_" + python_version.replace(".","")]
+            image = os.environ[
+                "DATAVERK_IMAGE_PYTHON_" + python_version.replace(".", "")
+            ]
         except KeyError:
             image = os.getenv("KNADA_AIRFLOW_OPERATOR_IMAGE")
-
 
     working_dir = None
     try:
         if quarto.get("path"):
-            working_dir = Path(quarto['path']).parent
+            working_dir = Path(quarto["path"]).parent
         else:
-            working_dir = Path(quarto['folder'])
+            working_dir = Path(quarto["folder"])
 
         if os.getenv("MARKEDSPLASSEN_HOST"):
             host = os.getenv("MARKEDSPLASSEN_HOST")
-        elif quarto['env'] == "prod":
+        elif quarto["env"] == "prod":
             host = "datamarkedsplassen.intern.nav.no"
         else:
             host = "datamarkedsplassen.intern.dev.nav.no"
@@ -90,17 +94,35 @@ def quarto_operator(
         cmds = create_quarto_cmds(quarto, host)
     except KeyError as err:
         raise KeyError(
-            f"path or folder and environment, id and token must be provided in the Quarto configuration. Missing  {err}")
+            f"path or folder and environment, id and token must be provided in the Quarto configuration. Missing  {err}"
+        )
 
     allowlist.append(host)
     allowlist.append("cdnjs.cloudflare.com")
 
     kwargs = {
-        "dag": dag, "name": name, "repo": repo, "entrypoint": None, "image": image, "cmds": cmds, "branch": branch, "email": email,
-        "slack_channel": slack_channel, "extra_envs": extra_envs, "allowlist": allowlist, "requirements_path": requirements_path,
-        "resources": resources, "startup_timeout_seconds": startup_timeout_seconds, 
-        "retries": retries, "delete_on_finish": delete_on_finish, "retry_delay": retry_delay, "do_xcom_push": do_xcom_push,
-        "on_success_callback": on_success_callback, "working_dir": str(working_dir), "container_uid": container_uid, "use_uv_pip_install": use_uv_pip_install,
+        "dag": dag,
+        "name": name,
+        "repo": repo,
+        "entrypoint": None,
+        "image": image,
+        "cmds": cmds,
+        "branch": branch,
+        "email": email,
+        "slack_channel": slack_channel,
+        "extra_envs": extra_envs,
+        "allowlist": allowlist,
+        "requirements_path": requirements_path,
+        "resources": resources,
+        "startup_timeout_seconds": startup_timeout_seconds,
+        "retries": retries,
+        "delete_on_finish": delete_on_finish,
+        "retry_delay": retry_delay,
+        "do_xcom_push": do_xcom_push,
+        "on_success_callback": on_success_callback,
+        "working_dir": str(working_dir),
+        "container_uid": container_uid,
+        "use_uv_pip_install": use_uv_pip_install,
         **kwargs,
     }
 
@@ -109,17 +131,19 @@ def quarto_operator(
 
 
 def create_quarto_cmds(quarto: dict, host: str) -> list:
-    url = f"https://{host}/quarto/update/{quarto['id']}"
+    quarto_id = quarto["id"].strip()
+    token = quarto["token"].strip()
+    url = f"https://{host}/quarto/update/{quarto_id}"
 
     if quarto.get("path"):
-        quarto_format = quarto.get('format', "html")
+        quarto_format = quarto.get("format", "html").strip()
         return [
             f"quarto render {Path(quarto['path']).name} --to {quarto_format} --execute --output index.html -M self-contained:True",
-            f"""curl --fail-with-body --retry 2 -X PUT -F index.html=@index.html {url} -H "Authorization:Bearer {quarto['token']}" """
+            f"""curl --fail-with-body --retry 2 -X PUT -F index.html=@index.html {url} -H "Authorization:Bearer {token}" """,
         ]
     else:
         batch_size = quarto.get("batch-size", 10)
         return [
             f"quarto render --execute --output-dir output",
-            f"knatch {quarto['id']} output {quarto['token']} --host {host} --batch-size {batch_size}"
+            f"knatch {quarto_id} output {token} --host {host} --batch-size {batch_size}",
         ]

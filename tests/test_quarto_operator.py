@@ -7,15 +7,20 @@ from airflow import DAG
 from dataverk_airflow.quarto_operator import quarto_operator
 
 
-@mock.patch.dict(os.environ, {"KNADA_TEAM_SECRET": "team-secret",
-                              "NAMESPACE": "namespace",
-                              "KNADA_AIRFLOW_OPERATOR_IMAGE": "operator-image",
-                              "DATAVERK_IMAGE_PYTHON_38": "operator-image-python-3.8",
-                              "DATAVERK_IMAGE_PYTHON_39": "operator-image-python-3.9",
-                              "DATAVERK_IMAGE_PYTHON_310": "operator-image-python-3.10",
-                              "DATAVERK_IMAGE_PYTHON_311": "operator-image-python-3.11",
-                              "DATAVERK_IMAGE_PYTHON_312": "operator-image-python-3.12",
-                              "K8S_IMAGE_PULL_SECRETS": "image-pull-secret"})
+@mock.patch.dict(
+    os.environ,
+    {
+        "KNADA_TEAM_SECRET": "team-secret",
+        "NAMESPACE": "namespace",
+        "KNADA_AIRFLOW_OPERATOR_IMAGE": "operator-image",
+        "DATAVERK_IMAGE_PYTHON_38": "operator-image-python-3.8",
+        "DATAVERK_IMAGE_PYTHON_39": "operator-image-python-3.9",
+        "DATAVERK_IMAGE_PYTHON_310": "operator-image-python-3.10",
+        "DATAVERK_IMAGE_PYTHON_311": "operator-image-python-3.11",
+        "DATAVERK_IMAGE_PYTHON_312": "operator-image-python-3.12",
+        "K8S_IMAGE_PULL_SECRETS": "image-pull-secret",
+    },
+)
 class TestQuartoOperator:
     """Test quarto_operator.py"""
 
@@ -29,14 +34,16 @@ class TestQuartoOperator:
             "path": "/path/to/quarto.qmd",
             "env": "dev",
             "id": "uuid",
-            "token": "quarto-token"
+            "token": "quarto-token",
         }
 
     def test_that_knada_operator_image_is_used(self, dag, quarto):
         container = quarto_operator(dag, "name", quarto, "repo")
         assert container.image == "operator-image-python-3.11"
 
-    def test_select_different_python_version_for_knada_operator_image(self, dag, quarto):
+    def test_select_different_python_version_for_knada_operator_image(
+        self, dag, quarto
+    ):
         container = quarto_operator(dag, "name", quarto, "repo", python_version="3.12")
         assert container.image == "operator-image-python-3.12"
 
@@ -46,21 +53,24 @@ class TestQuartoOperator:
         assert err
 
     def test_that_personal_operator_image_is_used(self, dag, quarto):
-        container = quarto_operator(
-            dag, "name", quarto, "repo", image="personal-image")
+        container = quarto_operator(dag, "name", quarto, "repo", image="personal-image")
         assert container.image == "personal-image"
 
     def test_that_cmds_are_correct(self, dag, quarto):
         container = quarto_operator(dag, "name", quarto, "repo")
-        correct_cmds = ["quarto render quarto.qmd --to html --execute --output index.html -M self-contained:True && "
-                        f"""curl --fail-with-body --retry 2 -X PUT -F index.html=@index.html https://datamarkedsplassen.intern.dev.nav.no/quarto/update/{quarto['id']} -H "Authorization:Bearer {quarto['token']}" """]
+        correct_cmds = [
+            "quarto render quarto.qmd --to html --execute --output index.html -M self-contained:True && "
+            f"""curl --fail-with-body --retry 2 -X PUT -F index.html=@index.html https://datamarkedsplassen.intern.dev.nav.no/quarto/update/{quarto["id"]} -H "Authorization:Bearer {quarto["token"]}" """
+        ]
         assert container.arguments == correct_cmds
 
     def test_that_quarto_format_is_changed(self, dag, quarto):
         quarto["format"] = "pdf"
         container = quarto_operator(dag, "name", quarto, "repo")
-        correct_cmds = ["quarto render quarto.qmd --to pdf --execute --output index.html -M self-contained:True && "
-                        f"""curl --fail-with-body --retry 2 -X PUT -F index.html=@index.html https://datamarkedsplassen.intern.dev.nav.no/quarto/update/{quarto['id']} -H "Authorization:Bearer {quarto['token']}" """]
+        correct_cmds = [
+            "quarto render quarto.qmd --to pdf --execute --output index.html -M self-contained:True && "
+            f"""curl --fail-with-body --retry 2 -X PUT -F index.html=@index.html https://datamarkedsplassen.intern.dev.nav.no/quarto/update/{quarto["id"]} -H "Authorization:Bearer {quarto["token"]}" """
+        ]
         assert container.arguments == correct_cmds
 
     def test_that_quarto_deps_is_added_to_allowlist(self, dag, quarto):
@@ -75,3 +85,64 @@ class TestQuartoOperator:
         with pytest.raises(KeyError) as err:
             quarto_operator(dag, "name", {}, "repo")
         assert err
+
+    def test_folder_based_knatch_command_token_with_newline(self, dag):
+        """Token with trailing newline (e.g. copy-pasted into Airflow Variable) should be stripped."""
+        quarto = {
+            "folder": "stories/kartleggingssporsmal",
+            "env": "prod",
+            "id": "b4f1c856-d903-428c-a3aa-9841f00496dc",
+            "token": "some-token\n",
+        }
+        container = quarto_operator(dag, "name", quarto, "repo")
+        assert "some-token\n" not in container.arguments[0]
+        assert "some-token" in container.arguments[0]
+
+    def test_folder_based_knatch_command_id_with_whitespace(self, dag):
+        """id with surrounding whitespace should be stripped."""
+        quarto = {
+            "folder": "stories/kartleggingssporsmal",
+            "env": "prod",
+            "id": "  b4f1c856-d903-428c-a3aa-9841f00496dc  ",
+            "token": "some-token",
+        }
+        container = quarto_operator(dag, "name", quarto, "repo")
+        assert "  b4f1c856" not in container.arguments[0]
+        assert "b4f1c856-d903-428c-a3aa-9841f00496dc" in container.arguments[0]
+
+    def test_path_based_cmds_strip_whitespace(self, dag):
+        """id, token and format with surrounding whitespace/newlines should be stripped."""
+        quarto = {
+            "path": "/path/to/quarto.qmd",
+            "env": "dev",
+            "id": "  uuid  ",
+            "token": "  quarto-token\n",
+            "format": " html ",
+        }
+        container = quarto_operator(dag, "name", quarto, "repo")
+        cmd = container.arguments[0]
+        assert "  uuid  " not in cmd
+        assert "uuid" in cmd
+        assert "quarto-token\n" not in cmd
+        assert "quarto-token" in cmd
+        assert "--to  html " not in cmd
+        assert "--to html" in cmd
+
+    def test_folder_based_knatch_command(self, dag):
+        """Reproduces the kartleggingssporsmal DAG config to inspect the exact knatch command."""
+        quarto = {
+            "folder": "stories/kartleggingssporsmal",
+            "env": "prod",
+            "id": "b4f1c856-d903-428c-a3aa-9841f00496dc",
+            "token": "some-token",
+        }
+        container = quarto_operator(dag, "name", quarto, "repo")
+        print("\n--- Generated shell command ---")
+        print(container.arguments[0])
+        print("-------------------------------")
+        expected = (
+            "quarto render --execute --output-dir output && "
+            "knatch b4f1c856-d903-428c-a3aa-9841f00496dc output some-token "
+            "--host datamarkedsplassen.intern.nav.no --batch-size 10"
+        )
+        assert container.arguments == [expected]

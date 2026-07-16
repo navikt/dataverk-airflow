@@ -1,0 +1,15 @@
+[tools]
+python = "3.12"
+poetry = "latest"
+
+[tasks.install]
+run = "poetry install --with test"
+description = "Install dependencies"
+
+[tasks.test]
+run = "poetry run pytest tests/ -v"
+description = "Run tests"
+
+[tasks.test-quarto]
+run = "poetry run pytest tests/test_quarto_operator.py -v -s"
+description = "Run quarto operator tests with output"
